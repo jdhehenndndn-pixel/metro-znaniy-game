@@ -548,6 +548,71 @@ body.is-intro .panel.scene .scene-content{min-height:calc(100svh - 32px)}
   .scene-content{max-width:none;background:linear-gradient(0deg,rgba(var(--scrim),.95) 0%,rgba(var(--scrim),.75) 55%,rgba(var(--scrim),.2) 100%)}
 }
 @media (prefers-reduced-motion: reduce){.shake,.pop,.tf .hl,.tf .beam{animation:none}.tunnel.ride .ring{animation-play-state:paused}.tunnel.ride .world{animation:none}.bar span{transition:none}}
+/* депо: осмотр поезда перед выходом на линию (пока только у красной ветки) */
+.dp{display:flex;flex-direction:column;gap:14px}
+.dp-h{font-size:clamp(26px,4vw,38px)}
+.dp-sub{color:var(--soft);font-size:16px}
+.dp-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(240px,1fr);gap:14px;align-items:start}
+.dp-scene{border-radius:20px;overflow:hidden;border:1px solid var(--edge);background:#0B1430}
+.dp-scene svg{display:block;width:100%;height:auto}
+.dp-msg{padding:12px 16px;background:var(--card);border-top:1px solid var(--edge);min-height:3.4em;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:16px}
+.dp-msg b{font-weight:800}
+.dp-msg.bad b{color:var(--bad)}.dp-msg.ok b{color:var(--ok)}
+.dp-card{background:var(--card);border:1px solid var(--edge);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.dp-card h3{margin:0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);font-weight:800}
+.dp-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.dp-list li{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--soft)}
+.dp-row{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer;border-radius:10px;padding:3px 4px}
+.dp-row:hover{background:rgba(255,255,255,.05)}
+.dp-row:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.dp-row i{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--edge-2);display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:800}
+.dp-row small{margin-left:auto;font-size:12px;color:var(--muted);font-weight:600}
+.dp-list li.done{color:var(--ink)}
+.dp-list li.done i{background:var(--ok);border-color:var(--ok);color:#062B22}
+.dp-list li.fault i{background:var(--bad);border-color:var(--bad);color:#2A0E05}
+.dp-fixbtn{font:800 12px var(--f-body);border:none;border-radius:999px;padding:5px 10px;background:var(--amber);color:var(--amber-ink);cursor:pointer;flex:none}
+.dp-fixbtn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.dp-gauge{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dp-gauge svg{width:92px;height:92px;flex:none}
+.dp .btn:disabled{opacity:.4;cursor:default;box-shadow:none;transform:none}
+.dp-gauge .btn.ping,.dp-ping-btn{box-shadow:0 0 0 4px rgba(255,200,97,.5)}
+.dp-hot{cursor:pointer}
+.dp-hot:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.dp-ring{fill:none;stroke:var(--amber);stroke-width:2.5;stroke-dasharray:5 5;opacity:.9;animation:dpSpin 6s linear infinite;transform-box:fill-box;transform-origin:center}
+.dp-hot.done .dp-ring{display:none}
+.dp-hot.ping .dp-ring{stroke:#FFFFFF;stroke-width:4;animation:dpSpin 6s linear infinite,dpPing .5s ease-in-out 3}
+@keyframes dpSpin{to{transform:rotate(360deg)}}
+@keyframes dpPing{50%{stroke-opacity:.2}}
+.dp-leaf{transition:transform .5s ease}
+.dp-wiper{transition:transform .35s ease-in-out}
+.dp-mech{transition:transform 1.2s ease}
+/* мастерская: ремонт по шагам вместе с мастером Михалычем */
+.dp-rep{position:fixed;inset:0;z-index:60;background:rgba(5,10,25,.74);display:grid;place-items:center;padding:16px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+.dp-rep-card{width:min(760px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--card);border:1px solid var(--edge-2);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.dp-rep-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.dp-rep-top h3{margin:0;font:400 20px/1.1 var(--f-display)}
+.dp-steps{display:flex;gap:6px}.dp-steps i{width:24px;height:6px;border-radius:3px;background:var(--edge)}.dp-steps i.on{background:var(--amber)}.dp-steps i.ok{background:var(--ok)}
+.dp-talk{display:flex;gap:12px;align-items:flex-start}
+.dp-talk svg{width:52px;height:52px;flex:none}
+.dp-bubble{margin:0;background:#24407E;border-radius:4px 16px 16px 16px;padding:10px 14px;font-size:16px;min-height:44px}
+.dp-bubble.bad{background:#4A2F55}.dp-bubble.ok{background:#1A4C66}
+.dp-stage svg{display:block;width:100%;height:auto;border-radius:16px;background:#0E1733}
+.dp-stage svg *{pointer-events:none}
+.dp-stage .dp-tap,.dp-stage .dp-tap *{pointer-events:auto}
+.dp-tap{cursor:pointer}
+.dp-tap:focus-visible{outline:2px solid var(--amber)}
+.dp-picks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.dp-pick{font:700 14px var(--f-body);color:var(--ink);background:#233B73;border:2px solid var(--edge-2);border-radius:16px;padding:8px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:112px}
+.dp-pick svg{width:76px;height:56px}
+.dp-pick:hover{border-color:var(--amber)}
+.dp-pick.no{border-color:var(--bad);opacity:.55;cursor:default}
+.dp-pick:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.dp-hold{position:relative;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.dp-hold .dp-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(26,18,6,.25)}
+.dp-hold .dp-lbl{position:relative}
+.dp-mv{transform-box:fill-box;transform-origin:center;transition:transform .9s ease,opacity .6s ease}
+@media (max-width:760px){.dp-grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.dp-ring{animation:none}.dp-leaf,.dp-wiper,.dp-mech,.dp-mv{transition:none}}
 </style>
 
 <div class="wrap">
@@ -2093,7 +2158,8 @@ function renderPanel(){
   if(task&&view==='station'&&!task.finished){const it=ST[STOPS[S.cur].id].task.items[task.step];if(it&&it.kind==='tf'&&!task.answered&&task.tfStep!==task.step){task.tfStep=task.step;task.tfStart=performance.now()}}
   p.classList.toggle('scene',view==='intro'||view==='ride'||view==='arrival');
   document.body.classList.toggle('is-intro',view==='intro');
-  p.innerHTML=view==='intro'?vIntro():view==='ride'?vRide():view==='arrival'?vArrival():view==='final'?vFinal():vStation();
+  p.innerHTML=view==='intro'?vIntro():view==='depot'?vDepot():view==='ride'?vRide():view==='arrival'?vArrival():view==='final'?vFinal():vStation();
+  if(view==='depot')depotBind();
   if(document.getElementById('ped')&&!task.answered)pedStart();else pedStop();
   const f=view==='station'&&task&&task.fb&&p.querySelector('.fb');
   if(f){const r=f.getBoundingClientRect();if(r.bottom>innerHeight-8||r.top<0)f.scrollIntoView({block:'nearest',behavior:reduce?'auto':'smooth'})}
@@ -2626,6 +2692,288 @@ function resetAll(all){
   else{S.cur=-1;S.done=[]}
   save();view='intro';task=null;render();window.scrollTo(0,0);
 }
+// ---------- депо: перед первой станцией машинист осматривает поезд (пока только красная ветка) ----------
+const DEPOT_LINES={red:true};
+let DP=null;
+// старт ветки с первой станции: если у ветки есть депо — сначала осмотр поезда
+function startLine(isTransfer){
+  if(DEPOT_LINES[S.line]){openDepot();return}
+  if(isTransfer)transfer=true;
+  ride(0);
+}
+function openDepot(){
+  hush();
+  DP={done:{},busy:{},fixing:false,found:false,tapped:0,wheelOk:[false,false,false,false],lampLit:false,radioUsed:false,gone:false,
+    fault:Math.random()<.5?{k:'lamp'}:{k:'wheels',i:Math.floor(Math.random()*4)},msg:null};
+  view='depot';render();try{window.scrollTo({top:0,behavior:reduce?'auto':'smooth'})}catch(e){}
+  const nm=S.name.trim();
+  dpMsg(`${nm?esc(nm)+', поезд':'Поезд'} стоит в депо. Перед рейсом обойди его и проверь всё по листу осмотра.`);
+}
+const DP_ITEMS=[{k:'lamp',t:'Фара'},{k:'doors',t:'Двери'},{k:'wheels',t:'Колёса'},{k:'wiper',t:'Стеклоочиститель'},{k:'brake',t:'Тормоз'}];
+const dpPlain=h=>h.replace(/<[^>]+>/g,'');
+function dpTone(f,dur,type,vol){const a=ac();if(!a||!S.sound)return;try{const o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(vol||.2,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+dur);o.connect(g).connect(a.destination);o.start();o.stop(a.currentTime+dur)}catch(e){}}
+function dpHiss(dur){const a=ac();if(!a||!S.sound)return;try{const n=a.createBuffer(1,Math.floor(a.sampleRate*dur),a.sampleRate),d=n.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length)*.25;const s=a.createBufferSource();s.buffer=n;const f=a.createBiquadFilter();f.type='highpass';f.frequency.value=2500;s.connect(f).connect(a.destination);s.start()}catch(e){}}
+function dpRing(){dpTone(1320,.6,'sine',.18);dpTone(1980,.4,'sine',.08)}
+// сообщение под поездом; голос читает его вслух
+function dpMsg(h,cls,btn){DP.msg={h,cls,btn};dpDrawMsg();say(dpPlain(h))}
+function dpDrawMsg(){const m=$('#dpMsg');if(!m||!DP.msg)return;const {h,cls,btn}=DP.msg;m.className='dp-msg'+(cls?' '+cls:'');m.innerHTML=h;
+  if(btn){const b=document.createElement('button');b.className='btn primary solo small';b.type='button';b.textContent=btn.t;b.addEventListener('click',btn.f);m.appendChild(b)}}
+
+function vDepot(){
+  const nm=S.name.trim();
+  return `<section class="dp">
+    <div><p class="eyebrow">Перед выходом на линию</p><h2 class="dp-h">Депо ${esc(LN().gen)}</h2><p class="dp-sub">Поезд № 101${nm?' · машинист '+esc(nm):''} · выход на линию в 5:32</p></div>
+    <div class="dp-grid">
+      <div class="dp-scene">
+        <svg id="dpSvg" viewBox="0 0 900 380" role="img" aria-label="Поезд в депо">
+          <defs>
+            <linearGradient id="dpHall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A2850"/><stop offset="1" stop-color="#0E1733"/></linearGradient>
+            <linearGradient id="dpBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4E9BE6"/><stop offset="1" stop-color="#2F72C0"/></linearGradient>
+            <radialGradient id="dpBeam" cx="0" cy=".5" r="1"><stop offset="0" stop-color="#FFE9A8" stop-opacity=".75"/><stop offset="1" stop-color="#FFE9A8" stop-opacity="0"/></radialGradient>
+          </defs>
+          <rect width="900" height="380" fill="url(#dpHall)"/>
+          <g fill="#24386A"><rect x="80" y="50" width="120" height="40" rx="4"/><rect x="390" y="50" width="120" height="40" rx="4"/><rect x="700" y="50" width="120" height="40" rx="4"/></g>
+          <g fill="#FFE9A8" opacity=".85"><circle cx="150" cy="30" r="5"/><circle cx="450" cy="30" r="5"/><circle cx="750" cy="30" r="5"/></g>
+          <path d="M0 36 H900 M150 36 V30 M450 36 V30 M750 36 V30" stroke="#2B3F70" stroke-width="2"/>
+          <text x="40" y="104" fill="#3C5590" font-family="Onest,sans-serif" font-weight="800" font-size="22">ПУТЬ 7</text>
+          <rect x="0" y="318" width="900" height="62" fill="#121C3C"/><rect x="0" y="318" width="900" height="6" fill="#55627E"/>
+          <path d="M0 330 H900" stroke="#8C9CB6" stroke-width="4"/><rect x="0" y="342" width="900" height="38" fill="#0A1028"/>
+          <g id="dpCar">
+            <path id="dpBeamL" d="M862 246 L900 210 L900 290 Z" fill="url(#dpBeam)" opacity="0"/>
+            <path d="M40 118 H800 Q858 118 866 168 L872 268 Q872 300 840 300 H40 Z" fill="url(#dpBody)" stroke="#173E73" stroke-width="2"/>
+            <rect x="40" y="248" width="826" height="10" fill="${LN().color}"/>
+            <rect x="40" y="118" width="760" height="10" fill="#9DC7F2" opacity=".5"/>
+            <g id="dpWins" fill="#14223F" stroke="#0B1530" stroke-width="2"></g>
+            <g id="dpDoors"></g>
+            <path d="M812 140 Q850 140 856 186 L858 206 H812 Z" fill="#14223F" stroke="#0B1530" stroke-width="2"/>
+            <line id="dpWiper" class="dp-wiper" x1="834" y1="204" x2="822" y2="150" stroke="#0A0F1E" stroke-width="3.5" stroke-linecap="round" style="transform-origin:834px 204px"/>
+            <text x="760" y="232" text-anchor="middle" font-family="Onest,sans-serif" font-weight="800" font-size="16" fill="#E8F0FB">101</text>
+            <circle id="dpLamp" cx="862" cy="246" r="8" fill="#55627E" stroke="#0B1530" stroke-width="2"/>
+            <g fill="#1D2433"><rect x="120" y="290" width="150" height="18" rx="5"/><rect x="620" y="290" width="150" height="18" rx="5"/></g>
+            <g id="dpWheels"></g>
+          </g>
+          <g id="dpMech" class="dp-mech" style="transform:translate(-80px,0)">
+            <circle cx="0" cy="250" r="11" fill="#F2C9A0"/><path d="M-12 246 Q0 230 12 246 Z" fill="#FFC861"/>
+            <rect x="-13" y="262" width="26" height="36" rx="7" fill="#F08A2C"/><rect x="-13" y="276" width="26" height="4" fill="#EEF2F8"/>
+            <rect x="-11" y="296" width="9" height="22" rx="3" fill="#2B3448"/><rect x="2" y="296" width="9" height="22" rx="3" fill="#2B3448"/>
+            <path d="M13 270 L28 260" stroke="#8C9CB6" stroke-width="4" stroke-linecap="round"/>
+          </g>
+          <g id="dpHots"></g>
+        </svg>
+        <div class="dp-msg" id="dpMsg" role="status"></div>
+      </div>
+      <aside class="dp-card">
+        <h3>Лист осмотра</h3>
+        <ul class="dp-list" id="dpList"></ul>
+        <h3>Пульт в кабине</h3>
+        <div class="dp-gauge">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="44" fill="#0B1220" stroke="#55627E" stroke-width="3"/>
+            <path d="M22 72 A34 34 0 0 1 78 72" fill="none" stroke="#2B3448" stroke-width="8"/>
+            <path d="M80.6 35.1 A34 34 0 0 1 78 72" fill="none" stroke="#5EE6C1" stroke-width="8" opacity=".7"/>
+            <text x="17" y="82" font-family="Onest,sans-serif" font-size="9" fill="#A3B3CF">0</text><text x="78" y="82" font-family="Onest,sans-serif" font-size="9" fill="#A3B3CF">6</text>
+            <text x="50" y="86" text-anchor="middle" font-family="Onest,sans-serif" font-size="10" fill="#A3B3CF">атм</text>
+            <text id="dpAtm" x="50" y="66" text-anchor="middle" font-family="Onest,sans-serif" font-weight="800" font-size="14" fill="#EEF2F8">0</text>
+            <line id="dpNeedle" x1="50" y1="50" x2="22" y2="72" stroke="#FF8F6B" stroke-width="3" stroke-linecap="round" style="transform-origin:50px 50px;transition:transform 1.4s ease"/>
+            <circle cx="50" cy="50" r="4" fill="#EEF2F8"/>
+          </svg>
+          <button class="btn small" id="dpBrake" type="button">Проверить тормоз</button>
+        </div>
+        <button class="btn primary solo small" id="dpRadio" type="button" disabled>Диспетчер, к выходу готов!</button>
+      </aside>
+    </div>
+  </section>`;
+}
+
+const NS_SVG='http://www.w3.org/2000/svg';
+function dpEl(t,a,p){const e=document.createElementNS(NS_SVG,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+let dpLeaves=[],dpWheelEls=[];
+// рисуем поезд и горячие точки по текущему состоянию осмотра (после любой перерисовки панели)
+function depotBind(){
+  if(!DP)return;
+  [[60,80],[215,100],[395,100],[575,100],[750,40]].forEach(([x,w])=>dpEl('rect',{x,y:146,width:w,height:62,rx:6},$('#dpWins')));
+  dpLeaves=[];[150,330,510,690].forEach(x=>{const g=$('#dpDoors');dpEl('rect',{x:x-2,y:142,width:58,height:118,fill:'#173E73'},g);
+    const a=dpEl('g',{class:'dp-leaf'},g),b=dpEl('g',{class:'dp-leaf'},g);
+    [a,b].forEach((lf,i)=>{dpEl('rect',{x:x+i*27,y:144,width:27,height:114,fill:'#3F86D2',stroke:'#173E73','stroke-width':1.5},lf);dpEl('rect',{x:x+i*27+5,y:152,width:17,height:52,rx:4,fill:'#14223F'},lf)});dpLeaves.push([a,b])});
+  dpWheelEls=[150,240,650,740].map((x,i)=>{const g=dpEl('g',{},$('#dpWheels'));dpEl('circle',{cx:x,cy:310,r:20,fill:'#2B3448',stroke:'#8C9CB6','stroke-width':3},g);dpEl('circle',{cx:x,cy:310,r:6,fill:'#8C9CB6'},g);
+    const crack=dpEl('path',{d:`M${x+6} 293 l-5 9 l6 4 l-4 8`,stroke:'#FF8F6B','stroke-width':2.5,fill:'none',opacity:DP.found&&DP.fault.k==='wheels'&&DP.fault.i===i&&!DP.wheelOk[i]?1:0},g);return {x,crack}});
+  if(DP.lampLit)dpLampOn();
+  if(DP.done.brake){$('#dpNeedle').style.transform='rotate(213deg)';$('#dpAtm').textContent='5,0';$('#dpBrake').disabled=true}
+  dpHot('lamp',862,246,20,'Фара',dpLampClick);
+  dpHot('doors',355,200,64,'Двери',dpDoorsClick);
+  dpWheelEls.forEach((w,i)=>dpHot('w'+i,w.x,310,30,'Колесо '+(i+1),()=>dpWheelClick(i)));
+  dpHot('wiper',834,175,30,'Стеклоочиститель',dpWiperClick);
+  ['lamp','doors','wiper'].forEach(k=>{if(DP.done[k])dpMark(k)});DP.wheelOk.forEach((ok,i)=>{if(ok)dpMark('w'+i)});
+  $('#dpBrake').addEventListener('click',dpBrakeClick);
+  $('#dpRadio').addEventListener('click',dpRadio);
+  $('#dpList').addEventListener('click',dpListClick);
+  if(DP.gone){const c=$('#dpCar');c.style.transform='translateX(1000px)'}
+  dpList();dpDrawMsg();
+}
+function dpHot(id,cx,cy,r,label,fn){const g=dpEl('g',{class:'dp-hot',tabindex:0,role:'button','aria-label':label,id:'dpH-'+id},$('#dpHots'));
+  dpEl('circle',{class:'dp-ring',cx,cy,r},g);dpEl('circle',{cx,cy,r:Math.max(r,46),fill:'transparent'},g);
+  g.addEventListener('click',fn);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fn()}})}
+function dpMark(id){const h=document.getElementById('dpH-'+id);if(h)h.classList.add('done')}
+function dpList(){
+  const L=$('#dpList');if(!L)return;
+  L.innerHTML=DP_ITEMS.map(it=>{const d=DP.done[it.k],f=DP.found&&DP.fault.k===it.k&&!d;
+    const extra=it.k==='wheels'&&!d&&!f?`<small>${DP.tapped} из 4</small>`:'';
+    return `<li class="${d?'done':f?'fault':''}"><button class="dp-row" type="button" data-k="${it.k}"><i>${d?'✓':f?'!':''}</i>${it.t}${extra}</button>${f&&!DP.fixing?'<button class="dp-fixbtn" type="button" data-fix="1">Позвать мастера</button>':''}</li>`}).join('');
+  $('#dpRadio').disabled=!DP_ITEMS.every(it=>DP.done[it.k])||DP.radioUsed;
+}
+// нажатие на строку листа: подсвечиваем, где это на поезде
+function dpListClick(e){
+  if(e.target.closest('[data-fix]')){dpCallFix();return}
+  const b=e.target.closest('[data-k]');if(!b)return;const k=b.dataset.k;
+  if(k==='brake'){const t=$('#dpBrake');t.classList.add('dp-ping-btn');t.focus();setTimeout(()=>t.classList.remove('dp-ping-btn'),1500);if(!DP.done.brake)dpMsg('Тормоз проверяют с пульта в кабине: нажми «Проверить тормоз».');return}
+  const ids=k==='wheels'?DP.wheelOk.map((ok,i)=>ok?null:'dpH-w'+i).filter(Boolean):['dpH-'+k];
+  ids.forEach(id=>{const h=document.getElementById(id);if(!h)return;h.classList.remove('ping');void h.getBoundingClientRect();h.classList.add('ping');setTimeout(()=>h.classList.remove('ping'),1600)});
+  const where={lamp:'Фара спереди, внизу у кабины.',doors:'Двери посередине вагона.',wheels:'Колёса внизу, под вагоном. Простучи каждое.',wiper:'Дворник на лобовом стекле кабины.'};
+  if(!DP.done[k])dpMsg(where[k]);
+}
+function dpDone(k,text){DP.done[k]=true;dpMark(k);dpList();dpMsg(text,'ok');dpCheckAll()}
+function dpCheckAll(){
+  if(DP_ITEMS.every(it=>DP.done[it.k])){dpMsg('<b>Всё в порядке!</b> Теперь свяжись с диспетчером.','ok',{t:'Связаться с диспетчером',f:dpRadio});return}
+  const left=DP_ITEMS.filter(it=>!DP.done[it.k]);
+  if(DP.found&&!DP.fixing&&left.length===1&&left[0].k===DP.fault.k)dpMsg(`<b>Осталось одно:</b> ${DP.fault.k==='lamp'?'фара не горит':'колесо с трещиной'}. С такой поломкой на линию не выпустят.`,'bad',{t:'Позвать мастера',f:dpCallFix});
+}
+function dpLampOn(){DP.lampLit=true;const l=$('#dpLamp');if(l)l.setAttribute('fill','#FFE9A8');const b=$('#dpBeamL');if(b)b.setAttribute('opacity','1')}
+function dpLampClick(){if(DP.done.lamp||DP.fixing)return;
+  if(DP.fault.k==='lamp'){DP.found=true;dpList();const l=$('#dpLamp');[['#FFE9A8',0],['#55627E',150],['#FFE9A8',300],['#55627E',420]].forEach(([c,t])=>setTimeout(()=>l&&l.setAttribute('fill',c),t));
+    dpMsg('<b>Фара мигнула и погасла.</b> Лампа перегорела.','bad',{t:'Позвать мастера',f:dpCallFix});return}
+  dpLampOn();dpDone('lamp','<b>Фара горит.</b> В тоннеле будет светло.')}
+function dpDoorsClick(){if(DP.done.doors||DP.busy.doors)return;DP.busy.doors=true;dpHiss(.6);
+  dpLeaves.forEach(([a,b])=>{a.style.transform='translateX(-24px)';b.style.transform='translateX(24px)'});
+  setTimeout(()=>{dpHiss(.5);dpLeaves.forEach(([a,b])=>{a.style.transform='';b.style.transform=''})},1100);
+  setTimeout(()=>dpDone('doors','<b>Двери открываются и закрываются.</b> Пассажиры не застрянут.'),1600)}
+// осмотрщик простукивает колесо: целое звенит, с трещиной глухо стучит
+function dpWheelClick(i){if(DP.wheelOk[i]||DP.fixing)return;
+  if(DP.fault.k==='wheels'&&DP.fault.i===i){dpTone(140,.15,'square',.12);dpWheelEls[i].crack.setAttribute('opacity',1);DP.found=true;dpList();
+    dpMsg('<b>Колесо стукнуло глухо.</b> Смотри, на нём трещина!','bad',{t:'Позвать мастера',f:dpCallFix});return}
+  dpRing();dpWheelDone(i,'<b>Дзынь!</b> Колесо целое.')}
+function dpWheelDone(i,t){DP.wheelOk[i]=true;dpMark('w'+i);DP.tapped++;dpList();
+  if(DP.wheelOk.every(Boolean))dpDone('wheels',t+' Все колёса проверены.');else dpMsg(t+' Простучи остальные.','ok')}
+function dpWiperClick(){if(DP.done.wiper||DP.busy.wiper)return;DP.busy.wiper=true;const w=$('#dpWiper');let n=0;
+  const swing=()=>{if(w)w.style.transform=n%2?'':'rotate(-55deg)';n++;if(n<4)setTimeout(swing,380);else setTimeout(()=>dpDone('wiper','<b>Дворник работает.</b> Стекло будет чистым.'),400)};swing()}
+function dpBrakeClick(){if(DP.done.brake||DP.busy.brake)return;DP.busy.brake=true;$('#dpBrake').disabled=true;dpHiss(1);$('#dpNeedle').style.transform='rotate(213deg)';
+  let v=0;const t=setInterval(()=>{v+=.5;const a=$('#dpAtm');if(a)a.textContent=v.toFixed(1).replace('.',',');if(v>=5){clearInterval(t);dpDone('brake','<b>Давление 5 атмосфер.</b> Тормоз держит.')}},140)}
+function dpCallFix(){if(DP.fixing)return;
+  const after=DP.fault.k==='lamp'?()=>{dpLampOn();dpDone('lamp','<b>Вы с Михалычем заменили лампу.</b> Фара горит!')}
+    :()=>{const i=DP.fault.i;dpWheelEls[i].crack.setAttribute('opacity',0);dpRing();dpWheelDone(i,'<b>Колёсную пару заменили.</b> Звенит как надо!')};
+  DP.fixing=true;dpList();const x=DP.fault.k==='lamp'?862:dpWheelEls[DP.fault.i].x,m=$('#dpMech');
+  dpMsg('Мастер Михалыч идёт к поезду…');if(m)m.style.transform=`translate(${x-26}px,0)`;
+  setTimeout(()=>dpRepair(DP.fault.k,()=>{DP.fixing=false;after();const mm=$('#dpMech');if(mm)mm.style.transform='translate(-80px,0)'}),1300)}
+function dpRadio(){if(DP.radioUsed)return;DP.radioUsed=true;dpList();dpTone(880,.12,'square',.08);
+  const nm=S.name.trim();
+  dpMsg(`<b>Машинист${nm?' '+esc(nm):''}:</b> «Диспетчер, поезд сто один к выходу готов».`);
+  setTimeout(()=>{if(view!=='depot')return;dpTone(660,.12,'square',.08);dpMsg('<b>Диспетчер:</b> «Сто первый, выход на линию разрешаю. Счастливого пути!»','ok',{t:'Выехать на линию',f:dpDepart})},2600)}
+function dpDepart(){if(DP.gone)return;DP.gone=true;dpLampOn();const c=$('#dpCar');c.style.transition=reduce?'none':'transform 2.6s ease-in';c.style.transform='translateX(1000px)';dpHiss(.4);
+  DP.msg={h:'Поезд выехал из депо…',cls:'ok'};dpDrawMsg();
+  setTimeout(()=>{if(view==='depot'){DP=null;ride(0)}},reduce?200:2700)}
+
+// мастерская: ремонт по шагам, мастер подсказывает, машинист делает руками
+const DP_MIH='<svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="25" fill="#24407E"/><circle cx="26" cy="22" r="11" fill="#F2C9A0"/><path d="M15 19 Q26 6 37 19 Z" fill="#FFC861"/><path d="M20 26 Q26 30 32 26" stroke="#8C9CB6" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M12 50 Q14 36 26 35 Q38 36 40 50 Z" fill="#F08A2C"/><rect x="14" y="42" width="24" height="3" fill="#EEF2F8"/></svg>';
+const DP_PICK={
+  hammer:'<svg viewBox="0 0 76 56" aria-hidden="true"><rect x="34" y="16" width="8" height="38" rx="3" fill="#B07A45"/><rect x="18" y="6" width="40" height="14" rx="3" fill="#8C9CB6"/></svg>',
+  wrench:'<svg viewBox="0 0 76 56" aria-hidden="true"><path d="M20 46 L46 20" stroke="#8C9CB6" stroke-width="9" stroke-linecap="round"/><path d="M44 8 a12 12 0 1 0 14 14 l-8-2-4-4z" fill="#8C9CB6"/></svg>',
+  screw:'<svg viewBox="0 0 76 56" aria-hidden="true"><rect x="30" y="30" width="16" height="22" rx="5" fill="#E0414B"/><rect x="36" y="4" width="4" height="28" fill="#C9CED8"/><path d="M38 2 l-3 4 h6z" fill="#C9CED8"/></svg>',
+  lampFlat:'<svg viewBox="0 0 76 56" aria-hidden="true"><circle cx="38" cy="20" r="16" fill="#F4F8FF" stroke="#C9CED8" stroke-width="2"/><rect x="30" y="34" width="16" height="8" fill="#C9CED8"/><rect x="31" y="42" width="4" height="10" fill="#8C9CB6"/><rect x="41" y="42" width="4" height="10" fill="#8C9CB6"/></svg>',
+  lampCrack:'<svg viewBox="0 0 76 56" aria-hidden="true"><circle cx="38" cy="20" r="16" fill="#F4F8FF" stroke="#C9CED8" stroke-width="2"/><path d="M30 10 l6 8 -4 5 7 7" stroke="#5A6272" stroke-width="1.6" fill="none"/><rect x="30" y="34" width="16" height="8" fill="#C9CED8"/><circle cx="33" cy="47" r="3" fill="#8C9CB6"/><circle cx="43" cy="47" r="3" fill="#8C9CB6"/></svg>',
+  lampOk:'<svg viewBox="0 0 76 56" aria-hidden="true"><circle cx="38" cy="20" r="16" fill="#F4F8FF" stroke="#C9CED8" stroke-width="2"/><path d="M33 22 q5 -8 10 0" stroke="#C98A1A" stroke-width="1.6" fill="none"/><rect x="30" y="34" width="16" height="8" fill="#C9CED8"/><circle cx="33" cy="47" r="3" fill="#8C9CB6"/><circle cx="43" cy="47" r="3" fill="#8C9CB6"/></svg>',
+  wheelSmall:'<svg viewBox="0 0 76 56" aria-hidden="true"><circle cx="38" cy="34" r="14" fill="#2B3448" stroke="#8C9CB6" stroke-width="4"/><circle cx="38" cy="34" r="4" fill="#8C9CB6"/></svg>',
+  wheelCrack:'<svg viewBox="0 0 76 56" aria-hidden="true"><circle cx="38" cy="28" r="24" fill="#2B3448" stroke="#8C9CB6" stroke-width="5"/><circle cx="38" cy="28" r="6" fill="#8C9CB6"/><path d="M52 9 l-4 7 5 3 -4 6" stroke="#FF8F6B" stroke-width="1.8" fill="none"/></svg>',
+  wheelOk:'<svg viewBox="0 0 76 56" aria-hidden="true"><circle cx="38" cy="28" r="24" fill="#2B3448" stroke="#B9C4D6" stroke-width="5"/><circle cx="38" cy="28" r="6" fill="#8C9CB6"/></svg>'
+};
+const DP_LAMP_SCENE=`<svg viewBox="0 0 600 300" role="img" aria-label="Фара крупно">
+  <rect width="600" height="300" fill="#3F86D2"/><rect y="250" width="600" height="18" fill="#D93744"/>
+  <circle cx="300" cy="140" r="96" fill="#173E73"/>
+  <g><rect x="268" y="176" width="64" height="34" rx="7" fill="#55627E"/><circle cx="287" cy="193" r="5.5" fill="#0B1220"/><circle cx="313" cy="193" r="5.5" fill="#0B1220"/></g>
+  <g id="dpLOld" class="dp-mv dp-tap"><circle class="dp-ring" cx="300" cy="140" r="52" opacity="0"/><circle cx="300" cy="128" r="36" fill="#5E6878" stroke="#8C9CB6" stroke-width="2"/><path d="M288 132 l7 -8 M305 124 l7 8" stroke="#2B3448" stroke-width="2.5" stroke-linecap="round"/><rect x="282" y="160" width="36" height="16" fill="#C9CED8"/></g>
+  <g id="dpLNew" class="dp-mv" opacity="0" style="transform:translateY(120px)"><circle cx="300" cy="128" r="36" fill="#F4F8FF" stroke="#C9CED8" stroke-width="2"/><path d="M290 132 q10 -14 20 0" stroke="#C98A1A" stroke-width="2.5" fill="none"/><rect x="282" y="160" width="36" height="16" fill="#C9CED8"/></g>
+  <circle id="dpLGlow" cx="300" cy="135" r="120" fill="#FFE9A8" opacity="0" style="transition:opacity .5s"/>
+  <g id="dpLCover" class="dp-mv"><circle cx="300" cy="140" r="88" fill="#9DC7F2" fill-opacity=".22" stroke="#C9CED8" stroke-width="16"/></g>
+  <g id="dpSc0" class="dp-mv dp-tap"><circle class="dp-ring" cx="300" cy="52" r="20" opacity="0"/><circle cx="300" cy="52" r="36" fill="transparent"/><circle cx="300" cy="52" r="11" fill="#E4E8EF" stroke="#8C9CB6" stroke-width="2"/><path d="M294 52 h12 M300 46 v12" stroke="#5A6272" stroke-width="2.5"/></g>
+  <g id="dpSc1" class="dp-mv dp-tap"><circle class="dp-ring" cx="300" cy="228" r="20" opacity="0"/><circle cx="300" cy="228" r="36" fill="transparent"/><circle cx="300" cy="228" r="11" fill="#E4E8EF" stroke="#8C9CB6" stroke-width="2"/><path d="M294 228 h12 M300 222 v12" stroke="#5A6272" stroke-width="2.5"/></g>
+  <g><rect x="470" y="170" width="100" height="70" rx="8" fill="#2B3448"/><text x="520" y="212" text-anchor="middle" font-family="Onest,sans-serif" font-weight="800" font-size="15" fill="#A3B3CF">в утиль</text></g>
+</svg>`;
+const DP_WHEEL_SCENE=`<svg viewBox="0 0 600 300" role="img" aria-label="Тележка вагона крупно">
+  <rect y="256" width="600" height="44" fill="#121C3C"/><path d="M0 258 H600" stroke="#8C9CB6" stroke-width="5"/>
+  <g fill="#FFC861"><rect x="30" y="60" width="26" height="196"/><rect x="544" y="60" width="26" height="196"/></g>
+  <g fill="#1A1206" opacity=".55"><path d="M30 80 l26 18 v12 l-26 -18z M30 130 l26 18 v12 l-26 -18z M30 180 l26 18 v12 l-26 -18z M544 80 l26 18 v12 l-26 -18z M544 130 l26 18 v12 l-26 -18z M544 180 l26 18 v12 l-26 -18z"/></g>
+  <g id="dpWCar" style="transition:transform .1s linear">
+    <rect x="56" y="118" width="70" height="12" fill="#C9A23A"/><rect x="474" y="118" width="70" height="12" fill="#C9A23A"/>
+    <rect x="70" y="44" width="460" height="72" rx="6" fill="#3F86D2"/><rect x="70" y="92" width="460" height="12" fill="#D93744"/>
+    <rect x="150" y="130" width="300" height="40" rx="8" fill="#1D2433"/>
+    <path d="M200 116 v14 M400 116 v14" stroke="#8C9CB6" stroke-width="10"/>
+  </g>
+  <g><circle cx="220" cy="214" r="42" fill="#2B3448" stroke="#B9C4D6" stroke-width="7"/><circle cx="220" cy="214" r="11" fill="#8C9CB6"/></g>
+  <g id="dpWOld" class="dp-mv dp-tap"><circle class="dp-ring" cx="380" cy="214" r="52" opacity="0"/><circle cx="380" cy="214" r="42" fill="#2B3448" stroke="#8C9CB6" stroke-width="7"/><circle cx="380" cy="214" r="11" fill="#8C9CB6"/><path d="M402 178 l-6 12 8 5 -6 10" stroke="#FF8F6B" stroke-width="3" fill="none"/></g>
+  <g id="dpWNew" class="dp-mv dp-tap" style="transform:translateX(340px) rotate(420deg)"><circle class="dp-ring" cx="380" cy="214" r="52" opacity="0"/><circle cx="380" cy="214" r="42" fill="#2B3448" stroke="#B9C4D6" stroke-width="7"/><circle cx="380" cy="214" r="11" fill="#8C9CB6"/></g>
+</svg>`;
+const DP_TAP_LABEL={dpSc0:'Верхний винт',dpSc1:'Нижний винт',dpLOld:'Старая лампа',dpWOld:'Колесо с трещиной',dpWNew:'Новое колесо'};
+function dpRepair(type,onDone){
+  let R=$('#dpRep');if(!R){R=document.createElement('div');R.id='dpRep';R.className='dp-rep';document.body.appendChild(R)}
+  R.hidden=false;
+  R.innerHTML=`<div class="dp-rep-card" role="dialog" aria-modal="true" aria-label="Ремонт">
+    <div class="dp-rep-top"><h3>${type==='lamp'?'Меняем лампу в фаре':'Меняем колёсную пару'}</h3><div class="dp-steps" id="dpSteps"></div></div>
+    <div class="dp-talk">${DP_MIH}<p class="dp-bubble" id="dpSay"></p></div>
+    <div class="dp-stage">${type==='lamp'?DP_LAMP_SCENE:DP_WHEEL_SCENE}</div>
+    <div class="dp-picks" id="dpPicks"></div></div>`;
+  const STEPS=type==='lamp'?DP_LAMP_STEPS:DP_WHEEL_STEPS;let n=0;
+  const g=id=>document.getElementById(id);
+  const c={
+    say(t,cls){const b=g('dpSay');b.className='dp-bubble'+(cls?' '+cls:'');b.innerHTML=t;say(dpPlain(t))},
+    next(){n++;show()},
+    picks(list){const box=g('dpPicks');box.innerHTML='';list.forEach(p=>{const b=document.createElement('button');b.type='button';b.className='dp-pick';b.innerHTML=(p.icon?DP_PICK[p.icon]:'')+`<span>${p.t}</span>`;
+      b.addEventListener('click',()=>{if(b.classList.contains('no')||box.dataset.busy)return;
+        if(p.ok){box.dataset.busy='1';dpTone(990,.25,'sine',.15);c.say(p.ok,'ok');setTimeout(()=>{delete box.dataset.busy;p.then?p.then():c.next()},900)}
+        else{dpTone(150,.15,'square',.08);b.classList.add('no');c.say(p.no,'bad')}});box.appendChild(b)})},
+    // кнопку надо держать, пока полоска не заполнится; отпустил — подъёмник стоит на месте
+    hold(label,onP,onFull){const box=g('dpPicks');box.innerHTML='';const b=document.createElement('button');b.type='button';b.className='btn primary solo small dp-hold';b.innerHTML=`<span class="dp-fill"></span><span class="dp-lbl">${label}</span>`;
+      let p=0,t=null;const f=b.querySelector('.dp-fill');
+      const stop=()=>{clearInterval(t);t=null};
+      const up=d=>{if(p>=1)return;p=Math.min(1,p+d);f.style.width=p*100+'%';onP(p);if(p>=1){stop();b.disabled=true;dpHiss(.3);onFull()}};
+      b.addEventListener('pointerdown',e=>{e.preventDefault();if(!t)t=setInterval(()=>up(.03),40)});
+      ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,stop));
+      b.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();up(.06)}});
+      box.appendChild(b);b.focus()},
+    tap(id,fn){const el=g(id),ring=el.querySelector('.dp-ring');if(ring)ring.setAttribute('opacity','1');el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-label',DP_TAP_LABEL[id]||'Нажми');
+      const h=e=>{if(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')return;if(e.type==='keydown')e.preventDefault();
+        el.removeEventListener('click',h);el.removeEventListener('keydown',h);el.removeAttribute('tabindex');if(ring)ring.setAttribute('opacity','0');fn(el)};
+      el.addEventListener('click',h);el.addEventListener('keydown',h)},
+    finish(t){c.say(t,'ok');const box=g('dpPicks');box.innerHTML='';const b=document.createElement('button');b.type='button';b.className='btn primary solo small';b.textContent='Готово';
+      b.addEventListener('click',()=>{R.hidden=true;R.innerHTML='';onDone()});box.appendChild(b);b.focus()}
+  };
+  function show(){g('dpSteps').innerHTML=STEPS.map((_,i)=>`<i class="${i<n?'ok':i===n?'on':''}"></i>`).join('');STEPS[n](c,g)}
+  show();
+}
+const DP_LAMP_STEPS=[
+  c=>{c.say('Лампа перегорела, машинист. Сначала снимем крышку фары. Какой инструмент возьмёшь?');
+    c.picks([{icon:'hammer',t:'Молоток',no:'Молотком стекло разобьём! Подумай ещё.'},{icon:'wrench',t:'Гаечный ключ',no:'Ключом крутят гайки. А тут винты с крестиком.'},{icon:'screw',t:'Отвёртка',ok:'Точно! Крестовая отвёртка.'}])},
+  (c,g)=>{c.say('Открути два винта на крышке. Нажми на каждый.');c.picks([]);let k=0;
+    ['dpSc0','dpSc1'].forEach(id=>c.tap(id,el=>{dpTone(700,.08,'square',.06);setTimeout(()=>dpTone(760,.08,'square',.06),120);el.style.transform='translate(40px,-30px) rotate(720deg)';el.style.opacity='.35';
+      if(++k===2)setTimeout(()=>{g('dpLCover').style.transform='translateY(-330px)';c.say('Крышку сняли! Видишь, внутри лампы порвалась ниточка? Нажми на старую лампу, чтобы вытащить её.');setTimeout(c.next,900)},700)}))},
+  c=>{c.tap('dpLOld',el=>{el.style.transform='translate(220px,40px) scale(.45)';el.style.opacity='0';dpTone(300,.1,'square',.06);setTimeout(c.next,900)})},
+  (c,g)=>{c.say('Теперь новая. Посмотри на гнездо: какие в нём дырочки? Выбери лампу, которая подойдёт.');
+    c.picks([{icon:'lampFlat',t:'Лампа 1',no:'У этой ножки плоские, а дырочки круглые. Не влезет.'},{icon:'lampCrack',t:'Лампа 2',no:'Ножки подходят, но стекло треснуло. Такая быстро сгорит.'},
+      {icon:'lampOk',t:'Лампа 3',ok:'Ножки круглые, стекло целое. Подходит!',then:()=>{const l=g('dpLNew');l.setAttribute('opacity','1');l.style.transform='none';setTimeout(c.next,1000)}}])},
+  (c,g)=>{c.say('Ставим крышку на место. Теперь закрути винты обратно.');c.picks([]);g('dpLCover').style.transform='none';let k=0;
+    setTimeout(()=>['dpSc0','dpSc1'].forEach(id=>c.tap(id,el=>{dpTone(760,.08,'square',.06);setTimeout(()=>dpTone(700,.08,'square',.06),120);el.style.transform='none';el.style.opacity='1';if(++k===2)setTimeout(c.next,800)})),700)},
+  (c,g)=>{c.say('Всё собрали. Проверяем!');c.picks([{t:'Включить фару',ok:'Горит!',then:()=>{g('dpLGlow').setAttribute('opacity','.55');dpTone(1320,.5,'sine',.15);setTimeout(()=>c.finish('Горит ярко! Ты настоящий мастер, машинист.'),900)}}])}
+];
+const DP_WHEEL_STEPS=[
+  (c,g)=>{c.say('Колесо с трещиной чинить нельзя, его меняют вместе с осью. Сначала поднимем вагон: держи кнопку, пока он не поднимется.');
+    c.hold('Держи: поднять вагон',p=>{g('dpWCar').style.transform=`translateY(${-36*p}px)`},()=>setTimeout(c.next,500))},
+  c=>{c.say('Вагон поднят. Выкати старую колёсную пару: нажми на колесо с трещиной.');c.picks([]);
+    c.tap('dpWOld',el=>{el.style.transform='translateX(340px) rotate(420deg)';dpHiss(.6);setTimeout(c.next,1000)})},
+  (c,g)=>{c.say('Со склада привезли три колеса. Годится только одно. Смотри внимательно!');
+    c.picks([{icon:'wheelSmall',t:'Колесо 1',no:'Маленькое! С ним вагон будет хромать.'},{icon:'wheelCrack',t:'Колесо 2',no:'Присмотрись: у этого тоже трещина.'},
+      {icon:'wheelOk',t:'Колесо 3',ok:'Ровное и без трещин. Берём!',then:()=>{g('dpWNew').style.transform='none';dpHiss(.6);setTimeout(c.next,1000)}}])},
+  (c,g)=>{c.say('Колесо на месте. Опускай вагон: держи кнопку.');c.hold('Держи: опустить вагон',p=>{g('dpWCar').style.transform=`translateY(${-36*(1-p)}px)`},()=>setTimeout(c.next,500))},
+  c=>{c.say('А теперь простучи новое колесо, как настоящий осмотрщик.');c.picks([]);
+    c.tap('dpWNew',()=>{dpRing();setTimeout(()=>c.finish('Дзынь! Колесо целое. Можно ехать.'),700)})}
+];
+
 // переход на другую ветку: при пересадке поезд сразу едет на её первую станцию
 function switchLine(k,isTransfer){
   if(!LINES[k]||!unlocked(k))return;
@@ -2633,13 +2981,13 @@ function switchLine(k,isTransfer){
   if(S.done.length>=STOPS.length){view='final';render();return}
   if(S.cur>=0){view='station';task=newTask();render();return}
   view='intro';render();
-  if(isTransfer){transfer=true;ride(0)}
+  if(isTransfer)startLine(true);
 }
 
 $('#panel').addEventListener('click',e=>{
   const b=e.target.closest('[data-act]');if(!b||moving)return;
   const a=b.dataset.act,s=S.cur>=0?STOPS[S.cur]:null,d=s?ST[s.id]:null;
-  if(a==='start'){const inp=$('#kidName');S.name=inp?inp.value.trim().slice(0,24):'';save();ride(0);try{window.scrollTo({top:0,behavior:reduce?'auto':'smooth'})}catch(e){}}
+  if(a==='start'){const inp=$('#kidName');S.name=inp?inp.value.trim().slice(0,24):'';save();startLine(false);try{window.scrollTo({top:0,behavior:reduce?'auto':'smooth'})}catch(e){}}
   else if(a==='say-up'){say(d.up)}
   else if(a==='say-q'){
     const t=d.task,q=t.items[task.step];
