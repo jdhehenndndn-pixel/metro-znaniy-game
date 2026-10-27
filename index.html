@@ -1724,9 +1724,12 @@ function load(){
   try{const o=JSON.parse(localStorage.getItem('sinyaya-vetka-v2')||'null');if(o&&Array.isArray(o.done))return {name:o.name||'',sound:o.sound!==false,line:'blue',lines:{blue:{cur:o.cur,done:o.done}}}}catch(e){}
   return null;
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+// ссылка с ?red открывает начало красной ветки для просмотра: синяя считается пройденной, ничего не сохраняется
+const DEMO_RED=/[?&#]red(?![\w-])/.test(location.search+location.hash);
+function save(){if(DEMO_RED)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
-let S=load()||{name:'',sound:true,line:'blue',lines:{}};
+let S=DEMO_RED?{name:'',sound:true,line:'red',lines:{blue:{cur:LINES.blue.stations.length-1,done:LINES.blue.stations.map(s=>s[1])},red:{cur:-1,done:[]}}}
+  :(load()||{name:'',sound:true,line:'blue',lines:{}});
 if(typeof S.sound!=='boolean')S.sound=true;
 if(!LINES[S.line])S.line='blue';
 ORDER.forEach(k=>{
