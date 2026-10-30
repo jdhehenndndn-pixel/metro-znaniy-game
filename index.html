@@ -615,6 +615,46 @@ body.is-intro .panel.scene .scene-content{min-height:calc(100svh - 32px)}
 .dp-mv{transform-box:fill-box;transform-origin:center;transition:transform .9s ease,opacity .6s ease}
 @media (max-width:760px){.dp-grid{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.dp-ring,.dp-sring{animation:none}.dp-leaf,.dp-wiper,.dp-mech,.dp-mv{transition:none}}
+/* красная ветка: машинист сам ведёт поезд по линии скорости */
+.drv{display:flex;flex-direction:column;gap:12px}
+.drv-win{position:relative;border-radius:18px;overflow:hidden;border:3px solid #0B1220;background:#060C1E;aspect-ratio:8/3}
+#drvTun{position:absolute;inset:0;width:100%;height:100%;display:block}
+.drv-board{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:#05080F;border:1px solid #3a2a10;border-radius:6px;padding:4px 12px;font:800 13px var(--f-body);color:var(--amber);white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;z-index:2}
+.drv-sign{position:absolute;right:8%;top:22%;width:58px;height:58px;border-radius:50%;background:#fff;border:7px solid #D93744;display:grid;place-items:center;font:400 22px var(--f-display);color:#111;z-index:2;box-shadow:0 4px 14px rgba(0,0,0,.5);transition:transform .3s ease,opacity .3s ease}
+.drv-sign.hide{opacity:0;transform:scale(.6)}
+.drv-strip{background:#101A33;border:1px solid var(--edge);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.drv-strip h3{margin:0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.drv-strip h3 span{letter-spacing:0;text-transform:none;font-weight:700;color:var(--ink)}
+.drv-strip svg{width:100%;height:auto;display:block}
+.drv-desk{background:linear-gradient(#2B3448,#1D2433);border-radius:18px;border:1px solid #3B475E;padding:14px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
+.drv-gauge svg{width:180px;height:auto;display:block}
+.drv-right{display:flex;flex-direction:column;gap:12px;min-width:0}
+.drv-ars{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--soft)}
+.drv-ars b{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-right:4px}
+.drv-ars i{font-style:normal;min-width:34px;text-align:center;padding:4px 0;border-radius:6px;background:#141A26;border:1px solid #3B475E;font:800 14px var(--f-body);color:#5A6478}
+.drv-ars i.on{background:#103A30;color:#5EE6C1;border-color:#5EE6C1;box-shadow:0 0 10px rgba(94,230,193,.4)}
+.drv-ars i.over{background:#4A1E1E;color:#FF8F6B;border-color:#FF8F6B}
+.drv-ctrl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.drv-btn{font:800 17px var(--f-body);color:var(--ink);background:#141A26;border:2px solid #4A566E;border-radius:14px;padding:14px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;touch-action:manipulation}
+.drv-btn small{font:600 12px var(--f-body);color:var(--muted)}
+.drv-btn:hover{border-color:var(--edge-2)}
+.drv-btn:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.drv-btn.on{border-color:var(--amber);background:#2A2412;box-shadow:0 0 0 3px rgba(255,200,97,.25)}
+.drv-btn.brake.on{border-color:#FF8F6B;background:#3A1A1A;box-shadow:0 0 0 3px rgba(255,143,107,.25)}
+.drv-btn.go.on{border-color:#5EE6C1;background:#10302A;box-shadow:0 0 0 3px rgba(94,230,193,.25)}
+.drv-talk{background:var(--card);border:1px solid var(--edge);border-radius:20px;padding:14px;display:flex;gap:12px;align-items:flex-start;min-height:104px}
+.drv-ava svg{width:72px;height:72px;display:block}
+.drv-col{flex:1;display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:0}
+.drv-chip{font:800 13px var(--f-body);border-radius:999px;padding:3px 10px;background:#141A26;color:var(--soft);border:1.5px solid #3B475E;transition:background .2s,color .2s,border-color .2s}
+.drv-chip.ok{color:#5EE6C1;border-color:#5EE6C1;background:#10302A}.drv-chip.slow{color:#C4D0E6;border-color:#8C9CB6}.drv-chip.fast{color:#FF8F6B;border-color:#FF8F6B;background:#3A1A1A}
+.drv-say{margin:0;align-self:stretch;background:#24407E;border-radius:4px 16px 16px 16px;padding:10px 14px;font-size:16px;transition:background .3s}
+.drv-say small{display:block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.drv-say.ok{background:#1A4C66}.drv-say.bad{background:#4A2F55}.drv-say.warn{background:#5A2A22}
+.drv-result{background:var(--card);border:1px solid var(--amber);border-radius:20px;padding:14px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.drv-result b{font:400 22px var(--f-display)}
+.drv-stars{font-size:30px;letter-spacing:4px;color:#3B475E}.drv-stars i{font-style:normal}.drv-stars .on{color:var(--amber)}
+.drv-result small{font-size:15px;color:var(--soft)}
+@media (max-width:700px){.drv-desk{grid-template-columns:1fr;justify-items:center}.drv-right{width:100%}.drv-gauge svg{width:190px}.drv-win{aspect-ratio:4/3}.drv-btn{font-size:15px;padding:16px 4px}.drv-sign{width:46px;height:46px;font-size:18px;border-width:6px}.drv-ava svg{width:56px;height:56px}}
 </style>
 
 <div class="wrap">
@@ -2163,8 +2203,9 @@ function renderPanel(){
   if(task&&view==='station'&&!task.finished){const it=ST[STOPS[S.cur].id].task.items[task.step];if(it&&it.kind==='tf'&&!task.answered&&task.tfStep!==task.step){task.tfStep=task.step;task.tfStart=performance.now()}}
   p.classList.toggle('scene',view==='intro'||view==='ride'||view==='arrival');
   document.body.classList.toggle('is-intro',view==='intro');
-  p.innerHTML=view==='intro'?vIntro():view==='depot'?vDepot():view==='ride'?vRide():view==='arrival'?vArrival():view==='final'?vFinal():vStation();
+  p.innerHTML=view==='intro'?vIntro():view==='depot'?vDepot():view==='drive'?vDrive():view==='ride'?vRide():view==='arrival'?vArrival():view==='final'?vFinal():vStation();
   if(view==='depot')depotBind();
+  if(view==='drive')driveBind();
   if(document.getElementById('ped')&&!task.answered)pedStart();else pedStop();
   const f=view==='station'&&task&&task.fb&&p.querySelector('.fb');
   if(f){const r=f.getBoundingClientRect();if(r.bottom>innerHeight-8||r.top<0)f.scrollIntoView({block:'nearest',behavior:reduce?'auto':'smooth'})}
@@ -2193,6 +2234,7 @@ function rideSound(total,acc,dec){
   const srcs=[o];return ()=>{try{g.gain.cancelScheduledValues(a.currentTime);g.gain.setTargetAtTime(0,a.currentTime,.05);o.stop(a.currentTime+.2)}catch(e){}};
 }
 function ride(to){
+  if(DRIVE_LINES[S.line]){drive(to);return}
   const fromI=curLineI(),toI=STOPS[to].i,name=STOPS[to].name;
   moving=true;rideTo=to;view='ride';renderPanel();cabBind();
   // поезд стоит, пока звучит «Осторожно, двери закрываются»
@@ -2821,6 +2863,16 @@ const RP={
     <path d="M19 -95 l9 -16" stroke="#8C9CB6" stroke-width="3.2" stroke-linecap="round"/><path d="M26 -114 a4 4 0 1 1 5 3 l-2 -3z" fill="#8C9CB6"/>
     <rect x="-3" y="-134" width="6" height="7" fill="#E1A97F"/>${rpFace(0,-143,{moustache:'#6A5A4A',brow:'#6A5A4A',wr:1})}
     <path d="M-10.5 -148 Q-10 -161 0 -161 Q10 -161 10.5 -148Z" fill="url(#rp-helmet)"/><path d="M-12.5 -148 h25" stroke="#C9961C" stroke-width="2.4" stroke-linecap="round"/><path d="M0 -161 v13" stroke="#E0B030" stroke-width="1.4"/>`,
+  // турист: кепка, очки, ветровка, рюкзак, фотоаппарат на шее, в руке бумажная карта
+  tourist:()=>`${rpLegs('url(#rp-jeans)','#5A3A22',-60)}
+    <path d="M-17 -124 h7 v40 h-8z" fill="#3B4558"/>
+    <path d="M-13 -126 Q0 -130 13 -126 L16 -60 Q0 -56 -16 -60Z" fill="#2E8C8C"/><path d="M0 -126 v66" stroke="#1E6464" stroke-width="1"/><path d="M-13 -96 h29" stroke="#1E6464" stroke-width="1"/>
+    <path d="M-6 -126 v18 M6 -126 v18" stroke="#3B4558" stroke-width="2"/><rect x="-5" y="-112" width="10" height="7" rx="1.5" fill="#1D2433"/><circle cx="0" cy="-108.5" r="2.2" fill="#55627E"/>
+    <path d="M-13 -124 Q-18 -108 -16 -88 l5 1 Q-11 -106 -9 -118Z" fill="#2E8C8C"/>${rpHand(-13.5,-86)}
+    <path d="M13 -124 Q22 -112 24 -100 l-5 2 Q15 -110 10 -118Z" fill="#1E6464"/>${rpHand(22,-99)}
+    <path d="M20 -112 l16 -4 l3 14 l-16 4z" fill="#F4EBD0"/><path d="M24 -110 l3 12 M30 -112 l3 12" stroke="#C9B98A" stroke-width=".8"/><path d="M22 -106 l14 -3" stroke="#3F86D2" stroke-width="1.4"/>
+    <rect x="-3" y="-134" width="6" height="7" fill="#E1A97F"/>${rpFace(0,-143,{mood:'grin',glasses:'#1D2433',eye:'#4A7AA8',brow:'#C9A060'})}
+    <path d="M-9 -145 Q-9 -158 0 -158 Q9 -158 9 -145Z" fill="#E0414B"/><path d="M5 -146 h11 q1 2 -1 3 h-10z" fill="#B5222E"/><path d="M-8.4 -144 q-1 4 0 7" stroke="#D8B070" stroke-width="2"/>`,
   // оставленная сумка: клубок и спицы
   bag:()=>`<circle cx="6" cy="-26" r="6" fill="url(#rp-red)"/><path d="M1 -29 q5 3 10 0 M1 -24 q5 3 10 0" stroke="#8A1F28" stroke-width="1" fill="none"/>
     <path d="M-4 -36 l4 14 M2 -38 l1 16" stroke="#C9CED8" stroke-width="1.6"/><circle cx="-4" cy="-36" r="1.5" fill="#C9CED8"/><circle cx="2" cy="-38" r="1.5" fill="#C9CED8"/>
@@ -2832,9 +2884,12 @@ function rpPort(kind){
   const B={
     driver:`<path d="M-16 30 Q-14 14 0 12 Q14 14 16 30Z" fill="url(#rp-navy)"/><path d="M-4 12 L0 20 L4 12Z" fill="#F4F8FF"/>${rpFace(0,0)}<path d="M-9 -7 Q0 -17 9 -7Z" fill="#1A2744"/><rect x="-10" y="-8" width="20" height="3" rx="1.2" fill="#0B0F18"/><circle cx="0" cy="-12" r="1.6" fill="#FFC861"/>`,
     boy:`<path d="M-15 30 Q-13 14 0 12 Q13 14 15 30Z" fill="url(#rp-green)"/><path d="M-6 13 v16 M6 13 v16" stroke="#E07A24" stroke-width="2"/>${rpFace(0,0,{mood:'worry',eye:'#3A5A7A',brow:'#7A4A22'})}<path d="M-9.5 -4 Q0 -19 9.5 -4Z" fill="url(#rp-red)"/><rect x="-10" y="-6" width="20" height="4" rx="2" fill="#EEF2F8"/><circle cx="0" cy="-18" r="3" fill="#EEF2F8"/>`,
+    boyHappy:`<path d="M-15 30 Q-13 14 0 12 Q13 14 15 30Z" fill="url(#rp-green)"/><path d="M-6 13 v16 M6 13 v16" stroke="#E07A24" stroke-width="2"/>${rpFace(0,0,{mood:'grin',eye:'#3A5A7A',brow:'#7A4A22'})}<path d="M-8.6 -3 Q-9 -14 0 -14 Q9 -14 8.6 -3 Q6 -9 1 -9.4 Q-1 -6 -5 -6.4 Q-7 -6 -8.6 -3Z" fill="#6B4A2E"/>`,
     woman:`<path d="M-16 30 Q-14 14 0 12 Q14 14 16 30Z" fill="#2E7A8C"/><path d="M-10 -6 Q-14 8 -11 18 Q-7 12 -7 2Z M10 -6 Q14 8 11 18 Q7 12 7 2Z" fill="#3A2416"/>${rpFace(0,0,{mood:'worry',lash:1,brow:'#3A2416'})}<path d="M-9 -2 Q-9 -13 0 -13 Q9 -13 9 -2 Q5 -8 0 -8 Q-6 -8 -9 -2Z" fill="#3A2416"/>`,
     man:`<path d="M-16 30 Q-14 14 0 12 Q14 14 16 30Z" fill="url(#rp-orange)"/><path d="M-15 24 h30" stroke="#E9EEF4" stroke-width="2.4"/>${rpFace(0,0,{moustache:'#3A2A1A',brow:'#3A2A1A'})}<path d="M-8.5 -4 Q-8 -13 0 -13 Q8 -13 8.5 -4 Q4 -8 0 -8.5 Q-4 -8 -8.5 -4Z" fill="#3A2A1A"/>`,
     disp:`<path d="M-16 30 Q-14 14 0 12 Q14 14 16 30Z" fill="url(#rp-grey)"/>${rpFace(0,0,{lash:1,brow:'#B07A2A'})}<path d="M-9 -2 Q-9 -13 0 -13 Q9 -13 9 -2 Q5 -8 0 -8 Q-6 -8 -9 -2Z" fill="#D9A040"/><path d="M-10 0 a10 10 0 0 1 20 0" stroke="#1D2433" stroke-width="2" fill="none"/><rect x="-11.5" y="-1" width="3.6" height="6" rx="1.4" fill="#1D2433"/><rect x="7.9" y="-1" width="3.6" height="6" rx="1.4" fill="#1D2433"/><path d="M-9 5 q1.5 4.5 6 4" stroke="#1D2433" stroke-width="1.2" fill="none"/>`,
+    tourist:`<path d="M-16 30 Q-14 14 0 12 Q14 14 16 30Z" fill="#2E8C8C"/><path d="M-6 13 v17 M6 13 v17" stroke="#3B4558" stroke-width="2"/>${rpFace(0,0,{mood:'smile',glasses:'#1D2433',eye:'#4A7AA8',brow:'#C9A060'})}<path d="M-9 -2 Q-9 -15 0 -15 Q9 -15 9 -2Z" fill="#E0414B"/><path d="M5 -3 h11 q1 2 -1 3 h-10z" fill="#B5222E"/>`,
+    lady:`<path d="M-16 30 Q-14 14 0 12 Q14 14 16 30Z" fill="url(#rp-purple)"/><path d="M-6 12 Q0 18 6 12 l-1 5 Q0 21 -5 17Z" fill="#E8B04A"/><path d="M-10 -6 Q-14 8 -11 18 Q-7 12 -7 2Z M10 -6 Q14 8 11 18 Q7 12 7 2Z" fill="#3A2416"/>${rpFace(0,0,{mood:'worry',lash:1,brow:'#3A2416'})}<path d="M-9 -2 Q-9 -13 0 -13 Q9 -13 9 -2 Q5 -8 0 -8 Q-6 -8 -9 -2Z" fill="#3A2416"/>`,
     mech:`<path d="M-16 30 Q-14 14 0 12 Q14 14 16 30Z" fill="url(#rp-orange)"/><path d="M-15.6 22 h31" stroke="#E9EEF4" stroke-width="2.4"/>${rpFace(0,0,{moustache:'#6A5A4A',brow:'#6A5A4A',wr:1})}<path d="M-10.5 -5 Q-10 -18 0 -18 Q10 -18 10.5 -5Z" fill="url(#rp-helmet)"/><path d="M-12.5 -5 h25" stroke="#C9961C" stroke-width="2.4" stroke-linecap="round"/>`
   }[kind];
   return `<svg viewBox="0 0 52 52" aria-hidden="true">${RP_DEFS}<clipPath id="rpc-${kind}"><circle cx="26" cy="26" r="25"/></clipPath><circle cx="26" cy="26" r="25" fill="#24407E"/><g clip-path="url(#rpc-${kind})"><g transform="translate(26 25) scale(1.55)">${B}</g></g></svg>`;
@@ -3120,6 +3175,405 @@ const DP_WHEEL_STEPS=[
   c=>{c.say('А теперь простучи новое колесо, как настоящий осмотрщик.');c.picks([]);
     c.tap('dpWNew',()=>{dpRing();setTimeout(()=>c.finish('Дзынь! Колесо целое. Можно ехать.'),700)})}
 ];
+
+// ---------- тоннель с настоящей перспективой и станции-залы (тот же, что в прототипе «Разгон») ----------
+// ---------- тоннель: вид из кабины с настоящей перспективой ----------
+// круглый тоннель из чугунных тюбингов (кольцо ~1 м), бетонное основание, шпалы и рельсы, контактный рельс справа,
+// кабели на кронштейнах слева, светильники, пикеты каждые 100 м, светофоры. Путь плавно поворачивает и чуть идёт вверх-вниз.
+function makeTN(cv,opt={}){
+  const cx2=cv.getContext('2d'),surf=!!opt.surf;
+  const R=2.75,FLOOR=-1.72,EYE=-0.2,GAUGE=0.76,LEN=700,STEP=1;
+  let W=0,H=0,F=0,odo=0,pos=0,vis=0,last=performance.now(),t=0,kmh=0,run=true;
+  function size(){const r=cv.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1);W=Math.round(r.width*d);H=Math.round(r.height*d);cv.width=W;cv.height=H;F=H*1.15}
+  // кривизна и уклон пути в точке s (метры от начала перегона)
+  const curv=s=>.0042*Math.sin(s/140+.6)+.0022*Math.sin(s/57+2.1);
+  const grade=s=>.0008*Math.sin(s/210+1);
+  // смещение оси тоннеля относительно камеры на глубине z
+  const straight=s=>Math.min(1,Math.max(0,(LEN-110-40-s)/220)); // за 260 м до станции поворот плавно сходит на нет
+  function axis(z){const m=odo+z*.5,f=straight(odo+z),k=curv(m)*f,g=grade(m)*f;return [.5*k*z*z,.5*g*z*z]}
+  let shakeX=0,shakeY=0;
+  function P(x,y,z){const [ax,ay]=axis(z),s=F/z;return [W/2+(ax+x-shakeX)*s,H*.47-(ay+y-EYE-shakeY)*s,s]}
+  // свет фар: близкое ярко, дальнее тонет в темноте; светильники на стене светят пятнами
+  const lampAt=s=>{const m=((s%25)+25)%25;return Math.min(m,25-m)};
+  function light(z){if(surf)return .95;const s=odo+z,d=lampAt(s),toSt=LEN-110-s;return Math.min(1,.03+.62*Math.exp(-z/9)+(toSt>40?.5*Math.exp(-d*d/6):0)+(toSt>0?.55*Math.exp(-toSt/9):0))}
+  const col=(r,g,b,l)=>`rgb(${Math.round(r*l)},${Math.round(g*l)},${Math.round(b*l)})`;
+  function frame(now){
+    const dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
+    if(run){odo+=(pos-odo)*Math.min(1,dt*2.2)}
+    const v=kmh/60;shakeX=Math.sin(t*9.3)*.012*v+Math.sin(t*2.1)*.02*v;shakeY=Math.sin(t*13.7)*.008*v;
+    if(!cv.isConnected)return; // экран поездки закрыт — рисовать больше нечего
+    draw();requestAnimationFrame(frame);
+  }
+  // ---------- станционный зал в конце тоннеля ----------
+  // У каждой станции свой настоящий тип и отделка (по Википедии):
+  //  column — колонная трёхсводчатая: свод над путём опирается на ряд колонн, между колоннами арки в центральный зал;
+  //  pylon  — пилонная: массивные пилоны и арочные проёмы в центральный зал;
+  //  single — односводчатая: один огромный свод над обоими путями, широкая платформа без колонн.
+  const HALL=110,STOP_U=81,XLs=-2.3;
+  // Типы станций красной ветки — по Википедии (статья «Кировско-Выборгская линия»); цвета отделки — приблизительные:
+  //  ground — крытая наземная (Девяткино); column — колонная трёхсводчатая глубокого заложения;
+  //  flat — колонная трёхпролётная мелкого заложения (ровный потолок); pylon — пилонная; single — односводчатая.
+  const STATIONS={
+    'ДЕВЯТКИНО':{type:'ground',wall:[196,200,206],ceil:[206,214,222],plinth:[120,126,134],floor:[132,134,136],end:[180,186,194],letters:'#2B4A8A',lamp:'panel'},
+    'ГРАЖДАНСКИЙ ПРОСПЕКТ':{type:'column',wall:[226,208,168],ceil:[240,238,232],plinth:[168,146,104],floor:[150,144,134],end:[205,172,92],letters:'#B88A2A',lamp:'gold'},
+    'АКАДЕМИЧЕСКАЯ':{type:'column',wall:[214,212,206],ceil:[238,238,234],plinth:[120,118,114],floor:[132,128,122],end:[196,194,188],letters:'#A8843A',lamp:'gold'},
+    'ПОЛИТЕХНИЧЕСКАЯ':{type:'single',wall:[200,192,176],ceil:[232,228,220],plinth:[118,110,98],floor:[140,136,128],end:[188,180,166],letters:'#9A7A3A',lamp:'gold'},
+    'ПЛОЩАДЬ МУЖЕСТВА':{type:'single',wall:[156,160,166],ceil:[220,218,212],plinth:[112,116,122],floor:[146,146,144],end:[176,180,186],letters:'#D2B060',lamp:'bowl',slogan:'СЛАВА ГЕРОЯМ, ТЕБЯ, ЛЕНИНГРАД, ОТСТОЯВШИМ'},
+    'ЛЕСНАЯ':{type:'column',wall:[204,198,186],ceil:[236,234,228],plinth:[96,104,92],floor:[128,126,120],end:[188,184,172],letters:'#7A8A3A',lamp:'gold'},
+    'ВЫБОРГСКАЯ':{type:'column',wall:[214,200,176],ceil:[238,234,226],plinth:[140,120,96],floor:[136,130,122],end:[196,182,158],letters:'#A87A3A',lamp:'gold'},
+    'ПЛОЩАДЬ ЛЕНИНА':{type:'pylon',wall:[226,222,212],ceil:[236,232,224],plinth:[90,86,82],floor:[110,106,100],end:[210,204,192],letters:'#B8964A',lamp:'chandelier'},
+    'ЧЕРНЫШЕВСКАЯ':{type:'pylon',wall:[230,226,218],ceil:[238,236,230],plinth:[110,108,104],floor:[120,116,110],end:[214,210,200],letters:'#B8964A',lamp:'chandelier'},
+    'ПЛОЩАДЬ ВОССТАНИЯ':{type:'pylon',wall:[150,58,50],ceil:[230,222,204],plinth:[26,26,28],floor:[100,96,92],end:[156,66,56],letters:'#E8CF95',lamp:'chandelier',cornice:true},
+    'ВЛАДИМИРСКАЯ':{type:'pylon',wall:[214,220,226],ceil:[232,232,228],plinth:[132,136,144],floor:[76,74,72],end:[200,206,212],letters:'#B8964A',lamp:'chandelier'},
+    'ПУШКИНСКАЯ':{type:'pylon',wall:[232,228,220],ceil:[238,236,230],plinth:[100,92,86],floor:[112,106,100],end:[216,210,200],letters:'#B8964A',lamp:'chandelier',cornice:true},
+    'ТЕХНОЛОГИЧЕСКИЙ ИНСТИТУТ':{type:'column',wall:[200,178,156],ceil:[236,232,224],plinth:[120,96,80],floor:[124,118,110],end:[186,164,142],letters:'#8A5A2A',lamp:'gold'},
+    'БАЛТИЙСКАЯ':{type:'column',wall:[214,206,190],ceil:[238,236,230],plinth:[90,100,116],floor:[130,126,120],end:[198,190,174],letters:'#2E5A8A',lamp:'gold'},
+    'НАРВСКАЯ':{type:'pylon',wall:[234,230,220],ceil:[240,238,232],plinth:[120,112,104],floor:[118,112,106],end:[218,212,202],letters:'#B8964A',lamp:'chandelier',cornice:true},
+    'КИРОВСКИЙ ЗАВОД':{type:'column',wall:[182,176,172],ceil:[232,230,226],plinth:[90,88,86],floor:[120,118,114],end:[170,164,160],letters:'#8A8A8A',lamp:'gold'},
+    'АВТОВО':{type:'flat',wall:[236,232,222],ceil:[242,240,234],plinth:[150,140,120],floor:[150,140,128],end:[220,214,200],letters:'#B8964A',lamp:'chandelier',glass:true},
+    'ЛЕНИНСКИЙ ПРОСПЕКТ':{type:'flat',wall:[206,202,194],ceil:[232,230,224],plinth:[110,106,100],floor:[130,126,120],end:[192,188,180],letters:'#8A6A3A',lamp:'panel'},
+    'ПРОСПЕКТ ВЕТЕРАНОВ':{type:'flat',wall:[212,208,198],ceil:[234,232,226],plinth:[118,112,104],floor:[134,130,124],end:[196,192,182],letters:'#8A6A3A',lamp:'panel'}
+  };
+  let STN='ДЕВЯТКИНО',SC=STATIONS[STN];
+  // люди на платформе — те же полуреалистичные, что в игре (картинки из people-real.js)
+  const peopleImg=(()=>{const mk=f=>{const im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-45 -175 90 180" width="180" height="360">${RP_DEFS}${f}</svg>`);return im};
+    return typeof RP==='undefined'?[]:['mom','grandpa','police','granny','tourist','doc','duty','boy'].map(k=>({im:mk(RP[k]()),kid:k==='boy'}))})();
+  // [u — метр зала, x — поперёк, номер картинки]; часть людей стоит в центральном зале за колоннами
+  const PPL=[[9,2.6,0],[14,3.0,4],[22,2.3,1],[27,5.4,3],[35,2.8,7],[44,2.5,2],[50,6.2,0],[58,2.9,5],[66,2.4,4],[71,5.8,1],[78,3.1,3],[88,2.6,6],[93,2.2,0],[100,2.9,7],[104,2.3,6]];
+  function hall(c,zA){
+    const start=LEN-HALL,zW=HALL+8+start-odo,T=SC.type,XL=T==='single'?-2.6:-2.3,YP=FLOOR+1.1,EDGE=1.5;
+    const XR=T==='single'?11:3.6,FLAT=T==='flat'||T==='ground',CEIL=T==='ground'?3.4:2.3,TOP=T==='single'?6.2:FLAT?CEIL:3.7;
+    const sh=(rgb,k)=>`rgb(${Math.round(rgb[0]*k)},${Math.round(rgb[1]*k)},${Math.round(rgb[2]*k)})`;
+    const quad=(a,b,d,e,fill)=>{c.fillStyle=fill;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.lineTo(d[0],d[1]);c.lineTo(e[0],e[1]);c.fill()};
+    const lit=z=>.7+.3*Math.exp(-Math.max(0,z-zA)/50);
+    const U=z=>odo+z-start;
+    // свод: светлый фон, к верху чуть темнее
+    const gr=c.createLinearGradient(0,0,0,H);gr.addColorStop(0,sh(SC.ceil,.78));gr.addColorStop(.6,sh(SC.ceil,.95));gr.addColorStop(1,sh(SC.ceil,.9));c.fillStyle=gr;c.fillRect(0,0,W,H);
+    // торцевая стена в конце зала: портал тоннеля, часы интервала, сигнал
+    {const z=zW;if(z>zA){const a=P(XL,FLOOR,z),b=P(T==='single'?14:XR+2,TOP+1,z);c.fillStyle=sh(SC.end,.9);c.fillRect(a[0],b[1],b[0]-a[0],a[1]-b[1]);
+      const pl=P(-1.75,FLOOR,z),pr=P(1.75,FLOOR,z),pt=P(0,FLOOR+3.9,z),ph=P(0,FLOOR+3.1,z);c.fillStyle=sh(SC.end,.6);c.beginPath();c.moveTo(pl[0]-.3*pl[2],pl[1]);c.lineTo(pl[0]-.3*pl[2],ph[1]);c.quadraticCurveTo(pt[0],pt[1]-.5*pl[2],pr[0]+.3*pl[2],ph[1]);c.lineTo(pr[0]+.3*pl[2],pr[1]);c.fill();
+      c.fillStyle='#0E0C0A';c.beginPath();c.moveTo(pl[0],pl[1]);c.lineTo(pl[0],ph[1]);c.quadraticCurveTo(pt[0],pt[1],pr[0],ph[1]);c.lineTo(pr[0],pr[1]);c.fill();
+      // часы интервала над порталом, чуть левее — чтобы не прятались за стойкой кабины
+      const ck=P(-1.15,FLOOR+4.4,z),s=ck[2];c.fillStyle='#0B0D10';c.fillRect(ck[0]-.55*s,ck[1]-.22*s,1.1*s,.44*s);c.fillStyle='#FF4A3D';c.font=`700 ${Math.max(5,.3*s)}px monospace`;c.textAlign='center';c.textBaseline='middle';c.fillText('2:15',ck[0],ck[1]+.02*s);
+      const sg=P(-2.0,FLOOR+2.2,z);c.fillStyle='#0B0D10';c.fillRect(sg[0]-.12*s,sg[1]-.3*s,.24*s,.6*s);c.fillStyle='#E0414B';c.beginPath();c.arc(sg[0],sg[1]-.14*s,.08*s,0,6.3);c.fill();c.fillStyle='#2A2E36';c.beginPath();c.arc(sg[0],sg[1]+.14*s,.08*s,0,6.3);c.fill();
+      if(SC.slogan){const sl=P(XR/2+2,FLOOR+5.2,z);c.fillStyle=SC.letters;c.font=`400 ${Math.max(5,.32*s)}px "Dela Gothic One",sans-serif`;c.fillText(SC.slogan,sl[0],sl[1])}}}
+    // зал по срезам: от дальнего к ближнему
+    for(let z=Math.min(zW,zA+130);z>zA;z-=.5){const z1=z,z2=Math.max(zA,z-.5),u=U(z2),k=lit(z2);if(u>HALL+8)continue;
+      // путевая стена: мрамор, светлее вверху; внизу цоколь; у «Площади Восстания» лепной карниз
+      quad(P(XL,FLOOR,z1),P(XL,1.9,z1),P(XL,1.9,z2),P(XL,FLOOR,z2),sh(SC.wall,k*.97));
+      quad(P(XL,FLOOR,z1),P(XL,FLOOR+.55,z1),P(XL,FLOOR+.55,z2),P(XL,FLOOR,z2),sh(SC.plinth,k));
+      if(SC.cornice)quad(P(XL,1.75,z1),P(XL,1.95,z1),P(XL,1.95,z2),P(XL,1.75,z2),sh([236,226,204],k));
+      // ровный потолок у станций мелкого заложения и у крытой наземной; у наземной в стене окна
+      if(FLAT){quad(P(XL,1.9,z1),P(XL,CEIL,z1),P(XL,CEIL,z2),P(XL,1.9,z2),sh(SC.wall,k*.93));const ti=(Math.floor(u/3)%2)?1:.95;
+        quad(P(XL,CEIL,z1),P(XR+3,CEIL,z1),P(XR+3,CEIL,z2),P(XL,CEIL,z2),sh(SC.ceil,k*ti));
+        if(T==='ground'&&((u%3)+3)%3<2.2)quad(P(XL+.01,.4,z1),P(XL+.01,1.8,z1),P(XL+.01,1.8,z2),P(XL+.01,.4,z2),sh([182,210,232],k))}
+      // путь
+      quad(P(-1.65,FLOOR,z1),P(EDGE,FLOOR,z1),P(EDGE,FLOOR,z2),P(-1.65,FLOOR,z2),sh([62,60,57],k));
+      // платформа: под свесом тёмная ниша, кромка, гранит с плитами, светлая полоса у края
+      quad(P(EDGE+.35,FLOOR,z1),P(EDGE+.35,YP-.25,z1),P(EDGE+.35,YP-.25,z2),P(EDGE+.35,FLOOR,z2),'#16130F');
+      quad(P(EDGE,YP-.25,z1),P(EDGE,YP,z1),P(EDGE,YP,z2),P(EDGE,YP-.25,z2),sh([118,112,104],k));
+      const tile=(Math.floor(u/1.5)%2)?1:.93;
+      quad(P(EDGE,YP,z1),P(XR+3,YP,z1),P(XR+3,YP,z2),P(EDGE,YP,z2),sh(SC.floor,k*tile));
+      quad(P(EDGE,YP,z1),P(EDGE+.12,YP,z1),P(EDGE+.12,YP,z2),P(EDGE,YP,z2),sh([238,226,180],k));
+      quad(P(EDGE+.12,YP,z1),P(EDGE+.5,YP,z1),P(EDGE+.5,YP,z2),P(EDGE+.12,YP,z2),sh([176,170,160],k));
+      // односводчатая: за широкой платформой второй путь и дальняя стена
+      if(T==='single'){quad(P(XR+3,FLOOR,z1),P(XR+3,YP,z1),P(XR+3,YP,z2),P(XR+3,FLOOR,z2),sh([96,92,86],k));
+        quad(P(14.5,FLOOR,z1),P(14.5,1.9,z1),P(14.5,1.9,z2),P(14.5,FLOOR,z2),sh(SC.wall,k*.9))}
+      // колонны и арки (column) или пилоны и проёмы (pylon)
+      if(T==='column'){const cu=((u%6)+6)%6;
+        if(cu<.7){quad(P(XR,YP,z1),P(XR,2.05,z1),P(XR,2.05,z2),P(XR,YP,z2),sh(SC.wall,k));if(cu<.5)quad(P(XR,YP,z1),P(XR+.7,YP,z1),P(XR+.7,2.05,z1),P(XR,2.05,z1),sh(SC.wall,k*.8))}
+        else{const tt=(cu-.7)/5.3,ty=2.05+.75*Math.sin(Math.PI*tt);quad(P(XR,YP,z1),P(XR,ty,z1),P(XR,ty,z2),P(XR,YP,z2),sh([250,244,226],k));quad(P(XR,ty,z1),P(XR,3.1,z1),P(XR,3.1,z2),P(XR,ty,z2),sh(SC.ceil,k*.92))}}
+      if(T==='pylon'){const pu=((u%8)+8)%8;
+        if(pu<5){quad(P(XR,YP,z1),P(XR,3.2,z1),P(XR,3.2,z2),P(XR,YP,z2),sh(SC.wall,k));if(pu<.5)quad(P(XR,YP,z1),P(XR+1.4,YP,z1),P(XR+1.4,3.2,z1),P(XR,3.2,z1),sh(SC.wall,k*.78))}
+        else{const tt=(pu-5)/3,ty=1.9+.8*Math.sin(Math.PI*tt);quad(P(XR,YP,z1),P(XR,ty,z1),P(XR,ty,z2),P(XR,YP,z2),sh([248,238,212],k));quad(P(XR,ty,z1),P(XR,3.2,z1),P(XR,3.2,z2),P(XR,ty,z2),sh(SC.wall,k*.95));
+          if(pu>7.5)quad(P(XR,YP,z1),P(XR+1.4,YP,z1),P(XR+1.4,3.2,z1),P(XR,3.2,z1),sh(SC.wall,k*.7))}}
+      // колонны у станций мелкого заложения (у «Автово» — стеклянные с позолотой), у наземной — тонкие стальные стойки
+      if(FLAT){const cw=T==='ground'?.3:.6,cu=((u%6)+6)%6,cc=SC.glass?[214,232,238]:T==='ground'?[120,128,140]:SC.wall;
+        if(cu<cw){quad(P(XR,YP,z1),P(XR,CEIL,z1),P(XR,CEIL,z2),P(XR,YP,z2),sh(cc,k));if(cu<.5)quad(P(XR,YP,z1),P(XR+cw,YP,z1),P(XR+cw,CEIL,z1),P(XR,CEIL,z1),sh(cc,k*.8));
+          if(SC.glass)quad(P(XR,CEIL-.35,z1),P(XR,CEIL,z1),P(XR,CEIL,z2),P(XR,CEIL-.35,z2),sh([212,176,90],k))}
+        else quad(P(XR,CEIL-.3,z1),P(XR,CEIL,z1),P(XR,CEIL,z2),P(XR,CEIL-.3,z2),sh(SC.ceil,k*.85))}
+      // рёбра свода над путём на каждой колонне или пилоне
+      const bay=T==='column'?6:T==='pylon'?8:T==='single'?7:6;
+      if(!FLAT&&((u%bay)+bay)%bay<.5){c.strokeStyle=sh(SC.ceil,k*.82);const a=P(XL,1.9,z2);c.lineWidth=Math.max(1,.07*a[2]);c.beginPath();
+        for(let i=0;i<=16;i++){const q=i/16,x=XL+(XR-XL)*q,y=(T==='single'?1.9+4.3*Math.sin(Math.PI*q):1.95+1.7*Math.sin(Math.PI*q)),p=P(x,y,z2);i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])}c.stroke()}
+      // светильники: золотистые полосы (Гражданский), люстры (Владимирская, Восстания), «чаши огня» на стенах (Мужества)
+      if(((u%bay)+bay)%bay>bay/2-.25&&((u%bay)+bay)%bay<bay/2+.25&&u>1&&u<HALL+4){
+        if(SC.lamp==='gold'){const l1=P(XL+.5,2.8,z2),l2=P(XR-.4,2.8,z2),s=l1[2];const g=c.createLinearGradient(l1[0],l1[1],l2[0],l2[1]);g.addColorStop(0,'#E8C468');g.addColorStop(1,'#B8902C');c.strokeStyle=g;c.lineWidth=Math.max(1,.16*s);c.beginPath();c.moveTo(l1[0],l1[1]);c.lineTo(l2[0],l2[1]);c.stroke();
+          const m=P((XL+XR)/2,2.75,z2);const gl=c.createRadialGradient(m[0],m[1],0,m[0],m[1],2*s);gl.addColorStop(0,'rgba(255,240,200,.45)');gl.addColorStop(1,'rgba(255,240,200,0)');c.fillStyle=gl;c.beginPath();c.arc(m[0],m[1],2*s,0,6.3);c.fill()}
+        if(SC.lamp==='panel'){[[-.9,.9],[2,3.2]].forEach(([p,q])=>quad(P(p,CEIL-.02,z1),P(q,CEIL-.02,z1),P(q,CEIL-.02,z2),P(p,CEIL-.02,z2),'#FFFBEE'))}
+        if(SC.lamp==='chandelier'){const cy=FLAT?CEIL-.7:2.5,m=P(.9,cy,z2),s=m[2];c.strokeStyle='#8A6A2A';c.lineWidth=Math.max(1,.03*s);c.beginPath();c.moveTo(m[0],m[1]);c.lineTo(m[0],P(.9,FLAT?CEIL:3.3,z2)[1]);c.stroke();
+          const gl=c.createRadialGradient(m[0],m[1],0,m[0],m[1],1.6*s);gl.addColorStop(0,'rgba(255,236,190,.6)');gl.addColorStop(1,'rgba(255,236,190,0)');c.fillStyle=gl;c.beginPath();c.arc(m[0],m[1],1.6*s,0,6.3);c.fill();
+          c.strokeStyle='#C9A040';c.lineWidth=Math.max(1,.05*s);c.beginPath();c.ellipse(m[0],m[1],.5*s,.12*s,0,0,6.3);c.stroke();c.fillStyle='#FFF4D6';for(let i=0;i<6;i++){const q=i/6*Math.PI*2;c.beginPath();c.arc(m[0]+Math.cos(q)*.5*s,m[1]+Math.sin(q)*.12*s-.05*s,.05*s,0,6.3);c.fill()}}
+        if(SC.lamp==='bowl'){[[XL+.15,1],[14.35,1]].forEach(([x])=>{const m=P(x,1.3,z2),s=m[2];c.fillStyle='#7A6A50';c.beginPath();c.moveTo(m[0]-.3*s,m[1]);c.quadraticCurveTo(m[0],m[1]+.35*s,m[0]+.3*s,m[1]);c.fill();
+          const gl=c.createRadialGradient(m[0],m[1]-.2*s,0,m[0],m[1]-.2*s,1.3*s);gl.addColorStop(0,'rgba(255,214,140,.7)');gl.addColorStop(1,'rgba(255,214,140,0)');c.fillStyle=gl;c.beginPath();c.arc(m[0],m[1]-.2*s,1.3*s,0,6.3);c.fill()})}
+        // блик светильника на граните платформы
+        const f=P(2.6,YP,z2),s=f[2];const gl=c.createRadialGradient(f[0],f[1],0,f[0],f[1],1.4*s);gl.addColorStop(0,'rgba(255,248,230,.25)');gl.addColorStop(1,'rgba(255,248,230,0)');c.fillStyle=gl;c.beginPath();c.ellipse(f[0],f[1],1.4*s,.35*s,0,0,6.3);c.fill()}
+      // указатели над платформой, знак остановки первого вагона, зеркало и дежурная у конца платформы
+      if(u>=30&&u<30.5||u>=64&&u<64.5){const m=P(2.7,1.75,z2),s=m[2];c.fillStyle='#1F3B73';c.fillRect(m[0]-.9*s,m[1]-.2*s,1.8*s,.4*s);c.fillStyle='#fff';c.font=`700 ${Math.max(4,.17*s)}px Onest,sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(u<40?'Выход в город →':'К поездам ↑',m[0],m[1]);
+        c.strokeStyle='#55627E';c.lineWidth=Math.max(1,.03*s);c.beginPath();c.moveTo(m[0],m[1]-.2*s);c.lineTo(m[0],P(2.7,3.0,z2)[1]);c.stroke()}
+      if(u>=STOP_U&&u<STOP_U+.5){const b=P(EDGE+.3,YP,z2),t=P(EDGE+.3,YP+2.1,z2),s=b[2];c.strokeStyle='#8C9CB6';c.lineWidth=Math.max(1,.05*s);c.beginPath();c.moveTo(b[0],b[1]);c.lineTo(t[0],t[1]);c.stroke();
+        c.fillStyle='#fff';c.fillRect(t[0]-.28*s,t[1]-.2*s,.56*s,.42*s);c.strokeStyle='#C2353F';c.lineWidth=Math.max(1,.04*s);c.strokeRect(t[0]-.28*s,t[1]-.2*s,.56*s,.42*s);c.fillStyle='#C2353F';c.font=`800 ${Math.max(4,.16*s)}px Onest,sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText('СТОП',t[0],t[1]-.07*s);c.font=`700 ${Math.max(3,.1*s)}px Onest,sans-serif`;c.fillText('1 вагон',t[0],t[1]+.1*s)}
+      if(u>=HALL-4&&u<HALL-3.5){const b=P(EDGE+.25,YP,z2),t=P(EDGE+.25,YP+2.4,z2),s=b[2];c.strokeStyle='#8C9CB6';c.lineWidth=Math.max(1,.05*s);c.beginPath();c.moveTo(b[0],b[1]);c.lineTo(t[0],t[1]);c.stroke();
+        c.fillStyle='#3B4558';c.beginPath();c.arc(t[0],t[1],.32*s,0,6.3);c.fill();const gm=c.createRadialGradient(t[0]-.1*s,t[1]-.1*s,0,t[0],t[1],.3*s);gm.addColorStop(0,'#E9EEF4');gm.addColorStop(1,'#7A8698');c.fillStyle=gm;c.beginPath();c.arc(t[0],t[1],.27*s,0,6.3);c.fill()}
+      // люди
+      PPL.forEach(([pu,px,pi],idx)=>{if(pu>=u&&pu<u+.5&&peopleImg.length){const P0=peopleImg[pi%peopleImg.length];if(!P0.im.complete)return;if(T==='column'&&px>XR&&((pu%6)+6)%6<.9)return;if(T==='pylon'&&px>XR&&((pu%8)+8)%8<5)return;
+        const f=P(px,YP,z2),s=f[2],h=(P0.kid?1.35:1.85)*s,w=h*.5;c.drawImage(P0.im,f[0]-w/2,f[1]-h*(175/180),w,h)}});
+    }
+    // название станции: металлические буквы прямо на путевой стене, в перспективе, дважды за станцию
+    [16,60].forEach(u0=>{const cl=.62;for(let i=0;i<STN.length;i++){const za=u0+i*cl+start-odo;if(za<zA+.3||za>55)continue;
+      const o=P(XL+.02,1.2,za),ex=P(XL+.02,1.2,za+cl),ey=P(XL+.02,.45,za);
+      c.save();c.setTransform((ex[0]-o[0])/100,(ex[1]-o[1])/100,(ey[0]-o[0])/100,(ey[1]-o[1])/100,o[0],o[1]);
+      c.fillStyle=SC.letters;c.font='400 92px "Dela Gothic One",sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(STN[i],50,52);c.restore()}});
+    // рельсы и контактный рельс в зале
+    let prev=null;for(let z=Math.min(zW,zA+130);z>zA;z-=1){const a=P(-GAUGE,FLOOR+.16,z),b=P(GAUGE,FLOOR+.16,z),e=P(1.25,FLOOR+.22,z);
+      if(prev){c.lineCap='round';c.strokeStyle='#D2D8E0';c.lineWidth=Math.max(1,.07*a[2]);c.beginPath();c.moveTo(prev[0][0],prev[0][1]);c.lineTo(a[0],a[1]);c.moveTo(prev[1][0],prev[1][1]);c.lineTo(b[0],b[1]);c.stroke();
+        c.strokeStyle='#7A6A48';c.lineWidth=Math.max(1,.12*e[2]);c.beginPath();c.moveTo(prev[2][0],prev[2][1]);c.lineTo(e[0],e[1]);c.stroke()}
+      prev=[a,b,e]}
+  }
+  function draw(){
+    if(!W)size();const c=cx2;c.setTransform(1,0,0,1,0,0);c.fillStyle='#020306';c.fillRect(0,0,W,H);
+    const remain=LEN-odo;                              // сколько осталось до платформы
+    const z0=1.4,frac=((odo%STEP)+STEP)%STEP;
+    const hallAt=remain-HALL;                          // где начинается зал станции
+    const zMax=Math.min(90,Math.max(z0,hallAt));
+    // 1. кольца тоннеля: от ближних к дальним, каждое следующее обрезано предыдущим
+    if(surf){ // небо, земля, столбы ограждения; впереди — крытая станция
+      const sk=c.createLinearGradient(0,0,0,H*.5);sk.addColorStop(0,'#9AA8BA');sk.addColorStop(1,'#D2D8DE');c.fillStyle=sk;c.fillRect(0,0,W,H*.5);
+      c.fillStyle='#5E6452';c.fillRect(0,H*.47,W,H*.53);
+      for(let z=Math.min(80,zMax);z>=z0;z-=.25){const sAb=odo+z;if(((sAb%9)+9)%9>.25)continue;[-3.6,3.6].forEach(px=>{const a=P(px,FLOOR,z),b=P(px,FLOOR+1.4,z);c.strokeStyle='#4A4E56';c.lineWidth=Math.max(1,.07*a[2]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()})}
+      if(hallAt<95&&hallAt>z0){const fa=P(-6,FLOOR,hallAt),fb=P(12,4.8,hallAt);c.fillStyle='#8A9098';c.fillRect(fa[0],fb[1],fb[0]-fa[0],fa[1]-fb[1]);
+        const oa=P(XLs,FLOOR,hallAt),ob=P(7,3.4,hallAt);c.save();c.beginPath();c.rect(oa[0],ob[1],ob[0]-oa[0],oa[1]-ob[1]);c.clip();hall(c,hallAt);c.restore()}
+      else if(hallAt<=z0)hall(c,z0);
+    }
+    c.save();
+    if(!surf)for(let n=0;;n++){const z=z0+n*STEP-frac;if(z<z0-.001)continue;if(z>zMax)break;
+      const [x,y,s]=P(0,0,z),r=R*s,l=light(z),alt=(Math.floor(odo+z)%2)?1:.93;
+      c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.clip();
+      c.fillStyle=col(70,63,56,l*alt);c.fill();
+      c.lineWidth=Math.max(1,.13*s);c.strokeStyle=col(26,24,22,l);c.stroke();
+      // потёки и сажа на отдельных кольцах
+      if(((Math.floor(odo+z)*37)%11)<2){c.strokeStyle=col(92,62,40,l*.8);c.lineWidth=Math.max(1,.05*s);c.beginPath();c.arc(x,y,r*.93,2.2,2.9);c.stroke()}
+      // болты по шву на ближних кольцах
+      if(z<14){c.fillStyle=col(120,118,112,l);for(let a=0;a<20;a++){const q=a/20*Math.PI*2+.08;c.beginPath();c.arc(x+Math.cos(q)*r*.985,y+Math.sin(q)*r*.985,Math.max(.8,.035*s),0,6.3);c.fill()}}
+    }
+    // зал станции в конце тоннеля
+    if(hallAt<95&&!surf)hall(c,Math.max(z0,hallAt));
+    c.restore();
+    // 2. всё, что на полу и на стенах: от дальнего к ближнему
+    const ZS=[];for(let z=Math.min(zMax,80);z>=z0;z-=.5)ZS.push(z);
+    for(let i=0;i<ZS.length-1;i++){const z1=ZS[i],z2=ZS[i+1],l=light(z2);
+      const a=P(-1.5,FLOOR,z1),b=P(1.5,FLOOR,z1),cc=P(1.5,FLOOR,z2),d=P(-1.5,FLOOR,z2);
+      c.fillStyle=col(96,94,88,l);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.lineTo(cc[0],cc[1]);c.lineTo(d[0],d[1]);c.fill();
+      // лоток для воды по центру
+      const m1=P(0,FLOOR,z1),m2=P(0,FLOOR,z2);c.strokeStyle=col(50,50,48,l);c.lineWidth=Math.max(1,.18*m2[2]);c.beginPath();c.moveTo(m1[0],m1[1]);c.lineTo(m2[0],m2[1]);c.stroke();
+    }
+    // шпалы
+    for(let z=Math.min(zMax,60);z>=z0;z-=.1){const s0=odo+z;if(((s0%.75)+.75)%.75>.1)continue;const l=light(z);
+      const a=P(-1.05,FLOOR+.06,z),b=P(1.05,FLOOR+.06,z);c.strokeStyle=col(58,52,46,l);c.lineWidth=Math.max(1,.2*a[2]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+    // рельсы, контактный рельс, кабели — ломаными от дальнего к ближнему
+    function rail(x,y,w,rgb,hi){for(let i=0;i<ZS.length-1;i++){const z1=ZS[i],z2=ZS[i+1],l=light(z2),p1=P(x,y,z1),p2=P(x,y,z2);
+      c.strokeStyle=col(rgb[0],rgb[1],rgb[2],Math.min(1,l*hi));c.lineWidth=Math.max(1,w*p2[2]);c.beginPath();c.moveTo(p1[0],p1[1]);c.lineTo(p2[0],p2[1]);c.stroke()}}
+    rail(-GAUGE,FLOOR+.16,.07,[205,212,222],1.25);rail(GAUGE,FLOOR+.16,.07,[205,212,222],1.25);
+    rail(1.32,FLOOR+.22,.12,[150,128,70],1);                       // контактный рельс под защитным коробом
+    const wall=(ang,k=.965)=>[Math.cos(ang)*R*k,Math.sin(ang)*R*k];
+    if(!surf)[[3.5],[3.56],[3.62],[3.7]].forEach(([ang],i)=>{const [x,y]=wall(ang);rail(x,y,.055,i===2?[60,40,30]:[26,26,30],1)});
+    if(!surf){const [px,py]=wall(-.35,.97);rail(px,py,.09,[70,74,80],1)}      // труба на правой стене
+    // кронштейны кабелей, светильники, пикеты и светофоры
+    if(!surf)for(let z=Math.min(zMax,70);z>=z0;z-=.05){const s=odo+z,l=light(z);
+      if(Math.abs(((s%1.5)+1.5)%1.5)<.05&&z<40){const a=P(...wall(3.45,.99),z),b=P(...wall(3.78,.99),z);c.strokeStyle=col(70,70,74,l);c.lineWidth=Math.max(1,.04*a[2]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+      if(Math.abs(((s%25)+25)%25)<.05&&s<LEN-110-40){const [x,y,sc]=P(...wall(2.45,.95),z);const g=c.createRadialGradient(x,y,0,x,y,.9*sc);g.addColorStop(0,'rgba(255,236,190,.9)');g.addColorStop(1,'rgba(255,236,190,0)');c.fillStyle=g;c.beginPath();c.arc(x,y,.9*sc,0,6.3);c.fill();c.fillStyle='#FFF3D6';c.fillRect(x-.18*sc,y-.06*sc,.36*sc,.12*sc)}
+      if(Math.abs(((s%100)+100)%100-50)<.05&&z<30){const [x,y,sc]=P(...wall(-.12,.96),z);c.fillStyle=col(235,235,228,Math.max(.35,l));c.fillRect(x-.22*sc,y-.15*sc,.44*sc,.3*sc);
+        if(sc>14){c.fillStyle='#1A1A1A';c.font=`700 ${Math.round(.2*sc)}px Onest,sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(String(Math.round((s-50)/100)+12),x,y)}}
+      if(Math.abs(((s%230)+230)%230-120)<.05&&remain>40){const [x,y,sc]=P(...wall(-.55,.95),z);c.fillStyle='#0A0C10';c.fillRect(x-.16*sc,y-.42*sc,.32*sc,.84*sc);
+        const near=remain<260;[['#5EE6C1',-.2,!near],['#FFC861',.18,near]].forEach(([cl,dy,on])=>{c.fillStyle=on?cl:'#1E2229';c.beginPath();c.arc(x,y+dy*sc,.1*sc,0,6.3);c.fill();if(on){const g=c.createRadialGradient(x,y+dy*sc,0,x,y+dy*sc,.6*sc);g.addColorStop(0,cl+'99');g.addColorStop(1,cl+'00');c.fillStyle=g;c.beginPath();c.arc(x,y+dy*sc,.6*sc,0,6.3);c.fill()}})}
+    }
+    const vg=c.createLinearGradient(0,0,0,H);const dark=surf?0:Math.min(1,Math.max(.12,hallAt/30));vg.addColorStop(0,`rgba(2,3,6,${.62*dark})`);vg.addColorStop(.55,`rgba(2,3,6,${.12*dark})`);vg.addColorStop(1,'rgba(2,3,6,0)');c.fillStyle=vg;c.fillRect(0,0,W,H);
+    // свет фар на пути
+    const hg=c.createRadialGradient(W/2,H*1.05,0,W/2,H*1.05,H*.9);hg.addColorStop(0,'rgba(255,240,200,.16)');hg.addColorStop(1,'rgba(255,240,200,0)');c.fillStyle=hg;c.fillRect(0,0,W,H);
+    // 3. кабина: рама лобового стекла с двумя окнами, дворники, блик на стекле, край пульта
+    const fr=new Path2D();fr.rect(0,0,W,H);const rr=(x,y,w,h,r)=>{fr.moveTo(x+r,y);fr.arcTo(x+w,y,x+w,y+h,r);fr.arcTo(x+w,y+h,x,y+h,r);fr.arcTo(x,y+h,x,y,r);fr.arcTo(x,y,x+w,y,r);fr.closePath()};
+    const pad=W*.025,mid=W*.012,top=H*.05,bot=H*.84,rad=H*.06;rr(pad,top,W/2-pad-mid,bot-top,rad);rr(W/2+mid,top,W/2-pad-mid,bot-top,rad);
+    c.fillStyle='#0B0F18';c.fill(fr,'evenodd');
+    const dg=c.createLinearGradient(0,bot,0,H);dg.addColorStop(0,'#1F2633');dg.addColorStop(1,'#0B0F18');c.fillStyle=dg;c.fillRect(0,bot+2,W,H-bot);
+    c.strokeStyle='#05070B';c.lineWidth=H*.012;c.lineCap='round';[[W*.12,W*.3],[W*.62,W*.8]].forEach(([x1,x2])=>{c.beginPath();c.moveTo(x1,bot-H*.02);c.lineTo(x2,bot-H*.08);c.stroke()});
+    const gl=c.createLinearGradient(0,0,W,H);gl.addColorStop(0,'rgba(255,255,255,.07)');gl.addColorStop(.35,'rgba(255,255,255,0)');c.fillStyle=gl;c.fillRect(pad,top,W-pad*2,bot-top);
+    // мигающие лампочки на краю пульта
+    [['#5EE6C1',.42],['#FFC861',.47],['#5EE6C1',.53]].forEach(([cl,x],i)=>{c.fillStyle=(i===1&&Math.sin(t*4)<0)?'#3A2E12':cl;c.beginPath();c.arc(W*x,bot+(H-bot)*.55,H*.012,0,6.3);c.fill()});
+  }
+  addEventListener('resize',()=>{W=0});
+  requestAnimationFrame(frame);
+  return {reset(){odo=0;pos=0;kmh=0;run=true;W=0},target(p,k){pos=p/100*LEN;kmh=k},station(n){STN=String(n).toUpperCase();SC=STATIONS[STN]||{type:'pylon',wall:[214,208,196],ceil:[232,230,224],plinth:[120,116,110],floor:[140,136,130],end:[200,196,188],letters:'#C9A85A',lamp:'chandelier'}}};
+}
+// ---------- красная ветка: машинист сам ведёт поезд по линии скорости (вместо остановки у знака) ----------
+const DRIVE_LINES={red:true};
+// перегон: длина и участки скорости. Строится по настоящей длине перегона, у каждого перегона свой рисунок
+function drvProfile(to){
+  const km=runKm(to),L=Math.round(Math.min(1700,Math.max(1050,750+km*420)));
+  let seed=(to+1)*9301+49297;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
+  const neva=underNeva(to),a=Math.round(L*(.34+rnd()*.06)),Z=[{from:0,to:a,lo:50,hi:60,ars:60,txt:'Держи 50–60 км/ч',start:true}];
+  let x=a;
+  // на длинных перегонах бывает ограничение: кривая или ремонт пути
+  if(L>1250&&rnd()<.75){const why=rnd()<.6?'Кривая!':'Ремонт пути!';Z.push({from:x,to:x+190,lo:30,hi:40,ars:40,txt:`${why} Держи 30–40 км/ч`});x+=190}
+  const fast=km>=1.8&&!neva;
+  Z.push({from:x,to:L-300,lo:fast?65:60,hi:fast?75:70,ars:fast?80:70,txt:neva?'Едем под Невой: держи 60–70 км/ч':fast?'Длинный прямой перегон: держи 65–75 км/ч':'Держи 60–70 км/ч'});
+  Z.push({from:L-300,to:L-120,lo:25,hi:40,ars:40,txt:'Подходим к станции: держи 25–40 км/ч'});
+  Z.push({from:L-120,to:L,lo:10,hi:25,ars:40,txt:'Въезжаем на станцию: держи 10–25 км/ч',last:true});
+  return {L,Z};
+}
+const DRV_PRAISE=['Отлично, {n}! Держишь скорость ровно, как опытный машинист.','Пассажиры даже чай в термосе не расплескали.','Машинист {n}, стрелка будто приклеилась к зелёной полосе.','Вот это класс! Едем точно по графику.','Ровно идём. Диспетчер доволен.','{n}, так водят поезда настоящие профессионалы.','В третьем вагоне бабушка задремала: значит, едем мягко.','Красота! Ни рывка, ни толчка.','{n}, ты чувствуешь поезд. Это главное у машиниста.','Мальчик в первом вагоне прилип к окну: так плавно едем.','Хорошо держишь! Можно в учебник записывать.','{n}, график соблюдаем до секунды.'];
+const DRV_SLOW=['Так пассажиры к первому уроку не успеют! Нажми «Разгон».','Нас обгоняет бабушка с тележкой… Прибавь ходу, {n}!','Эскалатор и то едет быстрее. Разгоняйся!','Пассажиры уже достали бутерброды: думают, мы до вечера ехать будем.','{n}, так мы к станции только к Новому году приедем.','Голубь уже долетел бы до следующей станции. Прибавим?','Кто-то в вагоне начал читать «Войну и мир»: успеет дочитать. Разгоняйся!','Сзади идёт следующий поезд, он нас скоро догонит. Добавь скорости!','Улитка за окном только что помахала нам рожками. Быстрее!','Пассажиры спрашивают, не пешком ли мы идём. Нажми «Разгон».'];
+const DRV_FAST=['Полегче, {n}! Мы не «Сапсан».','Сбавь скорость: у пассажиров шапки слетают!','Тише едешь — дальше будешь.','{n}, диспетчер спрашивает, не ракету ли мы ведём.','Ух! Кто-то в третьем вагоне уронил мороженое.','Пассажиры держатся за поручни двумя руками.','Мы так до Финляндии домчим без остановок!','Стой-стой, у дедушки кепка улетела в соседний вагон!','{n}, это метро, а не «Формула-1».','Пассажир с котом в переноске просит ехать потише: кот волнуется.'];
+const DRV_BACK=['Вот, теперь в норме.','Есть! Поймали нужную скорость.','Так держать, это как раз то, что нужно.','Теперь как надо.','Правильно, теперь ровно.','Вот это уже по графику.','Стрелка в зелёной полосе. Хорошо!','Быстро исправлено!'];
+// «колода»: за один перегон каждая реплика звучит не больше одного раза
+const drvDeck=a=>{let d=null;return {next(){if(!d)d=a.slice().sort(()=>Math.random()-.5);return d.length?d.pop():null}}};
+let DRV=null;
+function drvTone(f,d,type,v){tone(f,0,d,v||.08,type)}
+// нужная скорость меняется плавно: перед ограничением полоса заранее опускается, после — постепенно поднимается; старт с нуля
+const D_RAMP_DOWN=170,D_RAMP_UP=140,D_START=230,dmix=(a,b,t)=>a+(b-a)*Math.min(1,Math.max(0,t));
+function drvZone(x){const Z=DRV.Z;return Z.find(z=>x>=z.from&&x<z.to)||Z[Z.length-1]}
+function drvBand(x){
+  const Z=DRV.Z,z=drvZone(x),i=Z.indexOf(z),prev=Z[i-1],next=Z[i+1];
+  let lo=z.lo,hi=z.hi,txt=z.txt;
+  if(z.start&&x<D_START){const t=x/D_START;lo=dmix(0,z.lo,t);hi=dmix(12,z.hi,t);txt='Плавно разгоняйся вдоль зелёной полосы'}
+  if(prev&&prev.hi<z.hi&&x<z.from+D_RAMP_UP){const t=(x-z.from)/D_RAMP_UP;lo=dmix(prev.lo,z.lo,t);hi=dmix(prev.hi,z.hi,t);txt=`Ограничение снято: плавно разгоняйся до ${z.lo}–${z.hi}`}
+  if(next&&next.hi<z.hi&&x>next.from-D_RAMP_DOWN){const t=(x-(next.from-D_RAMP_DOWN))/D_RAMP_DOWN;lo=dmix(z.lo,next.lo,t);hi=dmix(z.hi,next.hi,t);
+    txt=next.to===DRV.L?'Подходим к станции: плавно снижай скорость':`Впереди ограничение ${next.ars}: плавно снижай скорость`}
+  if(z.last&&x>DRV.L-45){const t=(x-(DRV.L-45))/45;lo=dmix(z.lo,0,t);hi=dmix(z.hi,6,t);txt='Плавно тормози: останавливаемся у края платформы'}
+  return {lo,hi,txt,z};
+}
+function drvName(){return S.name.trim()||'машинист'}
+// подставляем имя машиниста; если имя не введено — убираем обращение, чтобы не было «Машинист машинист»
+function drvText(t){const n=S.name.trim();if(n)return t.replace(/\{n\}/g,n);
+  return t.replace(/^Машинист \{n\}, /,'Машинист, ').replace(/^\{n\}, (.)/,(m,c)=>c.toUpperCase()).replace(/, \{n\}([!.?])/g,'$1').replace(/\{n\}/g,'машинист')}
+function vDrive(){
+  const to=rideTo,name=STOPS[to].name;
+  return `<section class="drv">
+    <div class="drv-win"><canvas id="drvTun" aria-hidden="true"></canvas><div class="drv-board">${transfer?`Пересадка на ${esc(LN().acc)} · `:''}Следующая станция — ${esc(name)}</div><div class="drv-sign hide" id="drvSign" aria-hidden="true">40</div></div>
+    <section class="drv-strip" aria-label="Линия скорости"><h3>Линия скорости <span id="drvNeed">Разгоняйся</span></h3><svg id="drvChart" viewBox="0 0 800 150" role="img" aria-label="Какую скорость держать впереди"></svg></section>
+    <div class="drv-desk">
+      <div class="drv-gauge"><svg id="drvGauge" viewBox="0 0 200 130" aria-hidden="true"></svg></div>
+      <div class="drv-right">
+        <div class="drv-ars" aria-label="Лампы АРС: разрешённая скорость"><b>АРС</b><i data-v="0">0</i><i data-v="40">40</i><i data-v="60">60</i><i data-v="70">70</i><i data-v="80">80</i></div>
+        <div class="drv-ctrl">
+          <button class="drv-btn brake" type="button" data-m="brake">Тормоз<small>↓</small></button>
+          <button class="drv-btn coast" type="button" data-m="coast">Выбег<small>→ свободный ход</small></button>
+          <button class="drv-btn go" type="button" data-m="go">Разгон<small>↑</small></button>
+        </div>
+      </div>
+    </div>
+    <section class="drv-talk" aria-live="polite"><div class="drv-ava">${rpPort('driver')}</div><div class="drv-col"><span class="drv-chip" id="drvChip">Стоим</span><p class="drv-say" id="drvSay"></p></div></section>
+    <div class="drv-result" id="drvResult" hidden></div>
+  </section>`;
+}
+// запуск перегона: двери закрываются, затем машинист ведёт поезд сам
+function drive(to){
+  moving=true;rideTo=to;view='drive';
+  const pr=drvProfile(to);
+  DRV={to,L:pr.L,Z:pr.Z,v:0,s:0,mode:'coast',T:0,started:false,done:false,arsOn:false,overFor:0,warnZ:null,arsHits:0,inBand:0,tracked:0,
+    state:'',stateFor:0,shown:'',lastPraise:-99,lastSlow:-99,lastFast:-99,lastAny:0,pv:0,trace:[],timer:0,tn:null,
+    D:{ok:drvDeck(DRV_PRAISE),slow:drvDeck(DRV_SLOW),fast:drvDeck(DRV_FAST),back:drvDeck(DRV_BACK),stand:drvDeck(['Поезд стоит, а пассажиры ждут. Нажми «Разгон», {n}!','Двери закрыты, можно ехать: жми «Разгон».','Пассажиры смотрят на часы. Трогаемся?','Светофор зелёный — самое время нажать «Разгон».'])}};
+  renderPanel();
+  drvSay('Двери закрываются. Как только закроются — нажимай «Разгон» и веди поезд по зелёной полосе.');
+  Promise.all([say(withXfer(P('doors',{station:STOPS[to].name}),STOPS[to].id)),wait(reduce?200:900)]).then(()=>{
+    if(!DRV||view!=='drive')return;DRV.ready=true;DRV.readyT=DRV.T;drvSay('Двери закрыты, светофор зелёный. Поехали!');
+    const wrap=$('#stripWrap'),tr=$('#train');
+    try{wrap.scrollTo({left:Math.max(0,x(STOPS[to].i)-wrap.clientWidth/2),behavior:reduce?'auto':'smooth'})}catch(e){}
+  });
+}
+// после каждой отрисовки экрана поездки: тоннель, кнопки, клавиатура, таймер
+function driveBind(){
+  if(!DRV)return;
+  const cv=$('#drvTun');DRV.tn=makeTN(cv,{surf:DRV.to===0});DRV.tn.station(STOPS[DRV.to].name);DRV.tn.target(DRV.s/DRV.L*100,DRV.v);
+  document.querySelectorAll('.drv-btn').forEach(b=>b.addEventListener('click',()=>drvMode(b.dataset.m,true)));
+  drvMode(DRV.mode,false);
+  if(!DRV.timer){let last=performance.now();DRV.timer=setInterval(()=>{const now=performance.now(),dt=Math.min(.25,(now-last)/1000);last=now;drvStep(dt)},50)}
+  if(!DRV.keys){DRV.keys=e=>{if(view!=='drive'||e.target.tagName==='INPUT')return;const m={ArrowUp:'go',ArrowRight:'coast',ArrowDown:'brake'}[e.key];if(m){e.preventDefault();drvMode(m,true)}};document.addEventListener('keydown',DRV.keys)}
+  if(DRV.msg)drvSay(DRV.msg.t,DRV.msg.cls,DRV.msg.who);
+}
+function drvSay(t,cls,who){if(!DRV)return;DRV.msg={t,cls,who};const el=$('#drvSay');if(!el)return;el.className='drv-say'+(cls?' '+cls:'');el.innerHTML=`<small>${who||'Наставник'}</small>${esc(drvText(t))}`}
+function drvMode(m,user){
+  if(!DRV)return;
+  if(user&&!DRV.ready){drvSay('Подожди, двери ещё закрываются.');return}
+  if(user&&DRV.arsOn&&m!=='brake'){drvSay('Пока работает АРС, поезд тормозит сам. Дождись, когда скорость станет допустимой.','warn','Автоматика');return}
+  DRV.mode=m;if(user)DRV.started=true;
+  document.querySelectorAll('.drv-btn').forEach(b=>b.classList.toggle('on',DRV.started&&b.dataset.m===m));
+}
+function drvStep(dt){
+  const d=DRV;if(!d||d.done)return;
+  if(view!=='drive'){clearInterval(d.timer);return}
+  const a={go:7,coast:-.7,brake:-11}[d.mode];
+  d.v=d.started?Math.max(0,Math.min(90,d.v+a*dt)):0;
+  d.s+=d.v/3.6*dt*1.8; // ускоренное время: перегон проходится за минуту с небольшим
+  d.T+=dt;d.trace.push([d.s,d.v]);if(d.trace.length>2500)d.trace.shift();
+  // значок поезда на схеме линии едет вместе с нами
+  const tr=$('#train');if(tr){if(d.fx===undefined){d.fx=parseFloat(tr.style.left)||0;d.tx=x(STOPS[d.to].i)}tr.style.transition='none';tr.style.left=(d.fx+(d.tx-d.fx)*Math.min(1,d.s/d.L))+'px'}
+  drvJudge(dt);drvGauge();drvChart();drvLamps();if(d.tn)d.tn.target(Math.min(100,d.s/d.L*100),d.v);
+  if((d.s>=d.L-25&&d.v<3&&d.started)||d.s>=d.L){if(d.s>=d.L&&d.v>=3){d.over=true;d.v=0}if(d.s>d.L)d.s=d.L;drvFinish()}
+}
+function drvJudge(dt){
+  const d=DRV,B=drvBand(d.s),z=B.z,m=d.state==='ok'?3:1.5,dv=d.v-d.pv;d.pv=d.v;let now='free';
+  const standing=d.v<1;
+  if(d.started&&!(standing&&d.s<D_START)){d.tracked+=dt;if(d.v<B.lo-m&&B.lo>2)now='slow';else if(d.v>B.hi+m)now='fast';else{now='ok';d.inBand+=dt}
+    // снижаешь скорость (тормоз или выбег) и не превышаешь разрешённую — это нормально, не ругаем
+    if(now==='fast'&&dv<0&&d.mode!=='go'&&d.v<=z.ars+2){now='easing';d.inBand+=dt}}
+  const need=$('#drvNeed');if(need)need.textContent=B.txt;
+  const nextZ=d.Z.find(q=>q.from>d.s&&q.from-d.s<D_RAMP_DOWN+30&&q.ars<z.ars),sg=$('#drvSign');if(sg){sg.classList.toggle('hide',!nextZ);if(nextZ)sg.textContent=nextZ.ars}
+  const short=standing&&d.ready&&d.s>=D_START&&d.s<d.L-25;if(short)now='slow';
+  const chip=$('#drvChip');if(chip){chip.className='drv-chip '+(now==='easing'?'ok':now==='free'?'':now);chip.textContent={ok:'В норме',slow:'Медленно',fast:'Быстро',easing:'Снижаем',free:d.ready?'Трогаемся':'Стоим'}[now]}
+  // поезд стоит у начала перегона дольше 5 секунд — напоминаем про «Разгон»
+  if(d.ready&&standing&&d.s<D_START&&d.T-d.readyT>5&&d.T-d.lastSlow>7){d.lastSlow=d.lastAny=d.T;d.shown='slow';drvSay(d.D.stand.next()||'Нажми «Разгон».','bad')}
+  if(short&&d.T-d.lastSlow>6){d.lastSlow=d.lastAny=d.T;d.shown='slow';drvSay(`До платформы ещё ${Math.round(d.L-d.s)} м. Подтянись: нажми «Разгон», потом плавно тормози.`,'bad')}
+  // АРС: превысил разрешённую — звонок и предупреждение; не сбросил за 2,5 с — автоматика тормозит сама, потом отпускает
+  if(d.arsOn){if(d.v<=z.ars-3){d.arsOn=false;drvMode('coast');drvSay(d.arsHits===1?'АРС отпустила тормоз. Дальше веди сам, не превышай разрешённую скорость.':'Тормоз отпущен, поезд снова твой.','bad','Автоматика')}return}
+  if(d.v>z.ars+2){d.overFor+=dt;if(Math.floor(d.overFor*2)!==Math.floor((d.overFor-dt)*2))drvTone(1300,.12,'square',.06);
+    if(d.overFor<2.5&&d.warnZ!==z){d.warnZ=z;d.lastAny=d.T;d.shown='fast';const f=d.D.fast.next();drvSay(`${f?f+' ':''}Разрешено только ${z.ars} км/ч, а у нас ${Math.round(d.v)}. Сбрось, иначе затормозит автоматика.`,'warn','Превышение скорости')}}
+  else{d.overFor=0;d.warnZ=null}
+  if(d.overFor>=2.5){d.overFor=0;d.arsOn=true;d.arsHits++;drvMode('brake');drvTone(1500,.25,'square',.08);
+    drvSay(d.arsHits===1?'Сработала АРС: поезд сам включил тормоз, потому что скорость выше разрешённой. Следи за лампами АРС!':d.arsHits===2?'Снова сработала АРС. Горящая лампа показывает, сколько сейчас можно.':`АРС тормозит за тебя уже ${d.arsHits}-й раз. Сбрасывай скорость заранее, как только видишь знак.`,'warn','Автоматика');return}
+  if(now!==d.state){d.state=now;d.stateFor=0}else d.stateFor+=dt;
+  const t=d.T,lo=Math.round(B.lo),hi=Math.round(B.hi);
+  if(now==='ok'&&d.stateFor>.6&&(d.shown==='slow'||d.shown==='fast')){d.shown='back';const b=d.D.back.next();if(b)drvSay(b,'ok')}
+  else if(now==='ok'&&d.stateFor>2.5&&t-d.lastPraise>9&&t-d.lastAny>3){const p=d.D.ok.next();d.lastPraise=t;if(p){d.lastAny=t;d.shown='ok';drvTone(990,.15,'sine',.06);drvSay(p,'ok')}}
+  else if(now==='slow'&&!short&&d.stateFor>2&&t-d.lastSlow>6){d.lastSlow=d.lastAny=t;d.shown='slow';drvSay(d.D.slow.next()||`Нужно ${lo}–${hi} км/ч, а у нас ${Math.round(d.v)}. Нажми «Разгон».`,'bad')}
+  else if(now==='fast'&&d.stateFor>.5&&t-d.lastFast>4){d.lastFast=d.lastAny=t;d.shown='fast';drvTone(440,.2,'square',.05);drvSay(d.D.fast.next()||`Нужно ${lo}–${hi} км/ч, а у нас ${Math.round(d.v)}. Включи выбег или тормоз.`,'warn')}
+}
+// спидометр: зелёная дуга — нужная скорость, красная — выше разрешённой
+function drvGauge(){
+  const d=DRV,el=$('#drvGauge');if(!el)return;const B=drvBand(d.s),z=B.z,ang=x=>-210+Math.min(90,Math.max(0,x))/90*240,pt=(x,r)=>{const a=ang(x)*Math.PI/180;return [100+Math.cos(a)*r,92+Math.sin(a)*r]};
+  const arc=(a,b,r,c,w)=>{const [x1,y1]=pt(a,r),[x2,y2]=pt(b,r);return `<path d="M${x1} ${y1} A${r} ${r} 0 ${(b-a)/90*240>180?1:0} 1 ${x2} ${y2}" stroke="${c}" stroke-width="${w}" fill="none"/>`};
+  let ticks='';for(let k=0;k<=90;k+=10){const [a,b]=pt(k,70),[c,e]=pt(k,k%20?64:60);ticks+=`<path d="M${a} ${b} L${c} ${e}" stroke="#8C9CB6" stroke-width="${k%20?1:2}"/>`;if(k%20===0){const [tx,ty]=pt(k,50);ticks+=`<text x="${tx}" y="${ty+4}" text-anchor="middle" font-size="10" fill="#A3B3CF" font-family="Onest,sans-serif">${k}</text>`}}
+  const [nx,ny]=pt(d.v,62);
+  el.innerHTML=`<circle cx="100" cy="92" r="84" fill="#0B1220" stroke="#55627E" stroke-width="3"/>${arc(0,90,72,'#232C3E',8)}${arc(Math.min(z.ars,90),90,72,'#7A2A2A',8)}${arc(B.lo,Math.max(B.lo+1,B.hi),72,'#5EE6C1',8)}${ticks}
+    <path d="M100 92 L${nx} ${ny}" stroke="#FF8F6B" stroke-width="3.4" stroke-linecap="round"/><circle cx="100" cy="92" r="6" fill="#EEF2F8"/>
+    <text x="100" y="122" text-anchor="middle" font-size="22" fill="#EEF2F8" font-family="Dela Gothic One,sans-serif">${Math.round(d.v)}</text><text x="136" y="122" font-size="10" fill="#A3B3CF" font-family="Onest,sans-serif">км/ч</text>`;
+}
+// линия скорости: впереди полкилометра; зелёная полоса — нужная скорость, пунктир — разрешённая, белая линия — как ехал машинист
+function drvChart(){
+  const d=DRV,el=$('#drvChart');if(!el)return;
+  const narrow=innerWidth<700,W=narrow?420:800,X0=Math.max(0,d.s-(narrow?80:150)),X1=X0+(narrow?380:700),H=150;el.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const sx=x=>(x-X0)/(X1-X0)*W,sy=k=>H-14-k/90*(H-24);
+  let out='',up=[],dn=[];for(let x=X0;x<=X1+5;x+=5){const b=drvBand(Math.min(d.L-.01,x));up.push(`${sx(x).toFixed(1)},${sy(b.hi).toFixed(1)}`);dn.unshift(`${sx(x).toFixed(1)},${sy(b.lo).toFixed(1)}`)}
+  out+=`<polygon points="${up.concat(dn).join(' ')}" fill="#5EE6C1" opacity=".28"/><polyline points="${up.join(' ')}" fill="none" stroke="#5EE6C1" stroke-width="1.5" opacity=".85"/><polyline points="${dn.join(' ')}" fill="none" stroke="#5EE6C1" stroke-width="1.5" opacity=".85"/>`;
+  d.Z.forEach((z,i)=>{if(z.to<X0||z.from>X1)return;const a=Math.max(z.from,X0),b=Math.min(z.to,X1);
+    out+=`<path d="M${sx(a)} ${sy(z.ars)} H${sx(b)}" stroke="#FF8F6B" stroke-width="1.5" stroke-dasharray="6 5" opacity=".9"/>`;
+    const prev=d.Z[i-1];if(z.from>=X0&&prev&&z.ars!==prev.ars)out+=`<g transform="translate(${sx(z.from)+4} 18)"><circle r="12" cx="12" cy="0" fill="#fff" stroke="#D93744" stroke-width="3"/><text x="12" y="4" text-anchor="middle" font-size="10" font-weight="800" font-family="Onest,sans-serif">${z.ars}</text></g>`});
+  let grid='';for(let k=0;k<=80;k+=20)grid+=`<path d="M0 ${sy(k)} H${W}" stroke="#22304F" stroke-width="1"/><text x="4" y="${sy(k)-3}" font-size="10" fill="#5A6B8A" font-family="Onest,sans-serif">${k}</text>`;
+  const st=sx(d.L),pts=d.trace.filter(p=>p[0]>=X0).map(p=>`${sx(p[0]).toFixed(1)},${sy(p[1]).toFixed(1)}`).join(' ');
+  el.innerHTML=`<rect width="${W}" height="${H}" fill="#0C1530" rx="8"/>${grid}${out}${st<W?`<path d="M${st} 6 V${H-6}" stroke="#E8CF95" stroke-width="2"/><text x="${st-6}" y="${H-20}" text-anchor="end" font-size="11" fill="#E8CF95" font-family="Onest,sans-serif">станция</text>`:''}
+    <polyline points="${pts}" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><path d="M${sx(d.s)} 4 V${H-4}" stroke="#FFC861" stroke-width="2"/><circle cx="${sx(d.s)}" cy="${sy(d.v)}" r="5" fill="#FFC861"/>`;
+}
+function drvLamps(){const d=DRV,z=drvZone(d.s);document.querySelectorAll('.drv-ars i').forEach(i=>{const k=+i.dataset.v;i.className=k===z.ars?(d.v>z.ars+2?'over':'on'):''})}
+// приехали: итог перегона, двери открываются, объявление станции — и сразу задание (остановки у знака на красной ветке нет)
+function drvFinish(){
+  const d=DRV;if(d.done)return;d.done=true;clearInterval(d.timer);if(d.keys)document.removeEventListener('keydown',d.keys);
+  const to=d.to,st=STOPS[to],pct=d.tracked?Math.round(d.inBand/d.tracked*100):0,stars=d.over?1:pct>=75&&!d.arsHits?3:pct>=50?2:1;
+  const Ln=S.lines[S.line];Ln.drive=Ln.drive||{};if(!Ln.drive[st.id]||stars>Ln.drive[st.id])Ln.drive[st.id]=stars;save();
+  const res=$('#drvResult');if(res){res.hidden=false;res.innerHTML=`<b>${esc(st.name)}</b><div class="drv-stars" aria-label="Звёзд: ${stars} из 3">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div><small>${S.name.trim()?esc(S.name.trim())+', поезд':'Поезд'} шёл в нужной скорости ${pct}% пути${d.arsHits?`, АРС тормозила за тебя ${d.arsHits} раз`:''}</small>`}
+  drvSay(d.over?'Экстренное торможение! Поезд не успел остановиться у платформы. Перед станцией тормози заранее, вместе с линией скорости.':stars===3?'Блестяще, {n}! Так водят поезда лучшие машинисты Петербурга.':stars===2?'Хорошо, {n}! Ещё немного ровнее, и будет три звезды.':'Доехали! В следующий раз смотри на зелёную полосу и лампы АРС.',d.over?'warn':'ok');
+  doorsSound();
+  Promise.all([wait(300).then(()=>say(withXfer(P('arrive',{station:st.name}),st.id))),wait(2600)]).then(()=>{
+    if(DRV!==d)return;DRV=null;transfer=false;moving=false;S.cur=to;save();view='station';task=newTask();render();autoAsk(true)});
+}
 
 // переход на другую ветку: при пересадке поезд сразу едет на её первую станцию
 function switchLine(k,isTransfer){
