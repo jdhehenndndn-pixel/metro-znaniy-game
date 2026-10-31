@@ -247,6 +247,13 @@ body.no-scroll{overflow:hidden}
 @media (prefers-reduced-motion: reduce){.pt-train .pax-wave,.pt-train .pax-z{animation:none}}
 .pt-floor{position:absolute;left:0;right:0;top:76%;bottom:0;background:linear-gradient(#5A6272,#2B313D 40%,#1F242E);border-top:7px solid #C9CED8}
 .pt-floor::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;background-image:radial-gradient(ellipse at 50% 0,rgba(255,225,160,.16) 0,rgba(255,225,160,0) 60%);background-size:200px 100%}
+/* синяя ветка: своя сцена прибытия у каждой станции */
+.pa-feat{position:absolute;pointer-events:none}
+.pa-feat svg{display:block;width:100%;height:100%}
+.pa-front{position:absolute;pointer-events:none;z-index:1}
+.pa-pyl{position:absolute;top:0;bottom:0;width:5.4%;z-index:1;pointer-events:none}
+.pa-pyl.l{left:0}.pa-pyl.r{right:0}
+.pa-pyl i{position:absolute;left:50%;top:30%;width:min(20px,70%);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:#FFF6DA;box-shadow:0 0 14px 6px rgba(255,240,192,.45)}
 .pt-flash{position:absolute;inset:0;background:#FFF6DE;pointer-events:none;opacity:0}
 /* мини-игра «Останови первый вагон у знака» */
 .sg-mark{position:absolute;top:24%;bottom:23%;width:0;pointer-events:none;z-index:1}
@@ -2580,16 +2587,83 @@ function decorBG(id){
 let arrTo=-1;
 // знак остановки первого вагона: доля ширины сцены; нос поезда в SVG — 1228 из 1240 единиц
 const SG_TARGET=.84, SG_HEAD=1224/1240;
+// ---------- синяя ветка: сцена прибытия своя у каждой станции (лист prototypes/pribytie-sinyaya-18.html) ----------
+// координаты как на листе: сцена 480×240, фриз 30–58, путевая стена 58–170, путь 170–182, платформа ниже
+const pRep=(n,f)=>Array.from({length:n},(_,i)=>f(i)).join('');
+const tileBG=(w,h,body)=>`${svgTile(w,h,body)} 0 0/auto 100% repeat-x`;
+const vstripes=(c,op,step)=>`repeating-linear-gradient(90deg,rgba(${c},${op}) 0 1px,rgba(0,0,0,0) 1px ${step}px)`;
+const hstripes=(c,op,step)=>`repeating-linear-gradient(rgba(${c},${op}) 0 1px,rgba(0,0,0,0) 1px ${step}px)`;
+// деталь на стене: прямоугольник x,y,w,h в координатах листа и рисунок в тех же координатах
+const PF=(x,y,w,h,body,front)=>({x,y,w,h,body,front});
+const ARR={
+  parnas:{ground:1,ceil:`${tileBG(40,30,'<rect width="40" height="30" fill="#C9D2DC"/><rect x="7" y="10" width="26" height="6" rx="2" fill="#FFFBEA"/>')}`,
+    wall:`${tileBG(60,112,'<rect x="14" y="88" width="34" height="16" fill="#5E6670"/>')},linear-gradient(#F1F2F3,#DEE2E7)`,floor:'linear-gradient(#7E848E,#4D535C)',
+    feat:[PF(178,64,124,100,`<g transform="translate(240 66)"><path d="M-62 98 V30 Q-62 -2 0 -2 Q62 -2 62 30 V98Z" fill="#2B4F8E" stroke="#C9A65E" stroke-width="3"/>${pRep(5,i=>`<path d="M${-62+i*31} 98 V20" stroke="#C9A65E" stroke-width="1" opacity=".5"/>`)}<path d="M-28 20 h56 M-28 28 h56" stroke="#7FB3E8" stroke-width="2"/><rect x="-60" y="70" width="120" height="26" fill="#3E7EC2"/><g fill="none" stroke="#FFD27A" stroke-width="3"><path d="M-14 74 Q-26 40 -12 30 M14 74 Q26 40 12 30 M-16 40 H16 M-8 40 V72 M0 40 V72 M8 40 V72"/></g><path d="M-14 74 h28" stroke="#FFD27A" stroke-width="4"/><g fill="#7CC58A">${pRep(5,i=>`<ellipse cx="${-44+i*3}" cy="${60-i*8}" rx="3" ry="6" transform="rotate(${-30+i*6} ${-44+i*3} ${60-i*8})"/><ellipse cx="${44-i*3}" cy="${60-i*8}" rx="3" ry="6" transform="rotate(${30-i*6} ${44-i*3} ${60-i*8})"/>`)}</g></g>`)]},
+  prosvet:{wall:`linear-gradient(rgba(0,0,0,0) 71.4%,#C9A65E 71.4% 73%,#7A2E2A 73%),${tileBG(76,112,'<rect x="50" y="12" width="4" height="66" fill="#CFC5B4"/>')},linear-gradient(#E8E2D8,#D6CDBE)`,floor:'linear-gradient(#8A8F98,#555B66)',
+    pyl:{bg:'linear-gradient(rgba(0,0,0,0) 80.8%,#7A2E2A 80.8%),linear-gradient(rgba(0,0,0,0) 24%,#7A2E2A 24% 26.5%,rgba(0,0,0,0) 26.5%),#ECE7DE',lamp:1}},
+  ozerki:{ceil:tileBG(80,30,'<rect width="80" height="30" fill="#E8DCCB"/><g stroke="#9C8A70" stroke-width="1.6"><path d="M26 12 L40 20 L54 10 M40 20 V26"/></g><circle cx="26" cy="12" r="4.5" fill="#FFF6DC"/><circle cx="40" cy="20" r="5.5" fill="#FFF6DC"/><circle cx="54" cy="10" r="4" fill="#FFF6DC"/><circle cx="40" cy="26" r="3" fill="#FFF6DC"/>'),
+    wall:`${tileBG(80,112,'<rect x="12" y="12" width="64" height="92" fill="#E8D9BE" opacity=".9"/>')},linear-gradient(#D98A4E,#B9693A)`,
+    floor:`${tileBG(48,58,'<circle cx="8" cy="18" r="3" fill="#B49B80" opacity=".5"/><circle cx="24" cy="28" r="3" fill="#B49B80" opacity=".5"/><circle cx="40" cy="38" r="3" fill="#B49B80" opacity=".5"/>')},linear-gradient(#8C7A6A,#4E4339)`,
+    feat:[PF(330,72,132,88,`<g transform="translate(332 74)"><rect width="128" height="84" fill="#8FC4E6" stroke="#5E4A3A" stroke-width="3"/><rect y="52" width="128" height="32" fill="#4C8FC0"/><path d="M0 52 q16-6 32 0 t32 0 t32 0 t32 0" stroke="#D8EEFA" stroke-width="2" fill="none"/><ellipse cx="36" cy="22" rx="16" ry="7" fill="#fff"/><g stroke="#3F7A3A" stroke-width="2.4">${pRep(7,i=>`<path d="M${88+i*5} 84 V${48-i%3*6}"/>`)}</g>${pRep(7,i=>`<rect x="${86.5+i*5}" y="${44-i%3*6}" width="3" height="9" rx="1.5" fill="#7A5232"/>`)}<path d="M30 62 q8-8 18 -2 q6 -6 12 0 l-6 4 h-22Z" fill="#6E4A2A"/></g>`)]},
+  udelnaya:{ceil:tileBG(60,30,`<rect width="60" height="30" fill="#D9D8D0"/><rect x="10" y="6" width="40" height="20" rx="10" fill="#5A5F68"/><rect x="14" y="9" width="32" height="14" rx="7" fill="#FFF2CF"/>${pRep(5,j=>`<path d="M${18+j*6} 9 V23" stroke="#5A5F68" stroke-width="1.6"/>`)}`),
+    wall:'linear-gradient(#E3E2DA,#CBC9BE)',
+    feat:[PF(248,70,204,94,`<g transform="translate(250 72)"><rect width="200" height="90" rx="4" fill="#D2CDBE" stroke="#A9A291" stroke-width="2"/><g fill="#A39B86"><rect x="40" y="34" width="98" height="30" rx="4"/><rect x="118" y="18" width="34" height="46" rx="3"/><rect x="58" y="16" width="12" height="20"/><path d="M52 16 h24 l-4 -8 h-16Z"/><rect x="90" y="24" width="14" height="12" rx="6"/><path d="M30 64 L40 52 V64Z"/><rect x="26" y="62" width="132" height="6"/></g><g fill="#8C8470">${[58,84,110,136].map(x=>`<circle cx="${x}" cy="74" r="10"/>`).join('')}</g><g fill="#D2CDBE">${[58,84,110,136].map(x=>`<circle cx="${x}" cy="74" r="3"/>`).join('')}</g><rect x="124" y="24" width="22" height="14" fill="#C4BCA6"/><text x="135" y="56" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="11" fill="#EDE7D6">293</text><path d="M62 4 q8 -10 20 -6 q10 -8 22 0" stroke="#BDB6A3" stroke-width="5" fill="none" stroke-linecap="round"/></g>`)]},
+  pioner:{wall:`linear-gradient(rgba(0,0,0,0) 5.4%,#E8853A 5.4% 17.9%,rgba(0,0,0,0) 17.9% 78.6%,#E8853A 78.6%),${vstripes('0,0,0',.06,10)},#F4F1EA`,
+    floor:'linear-gradient(rgba(255,255,255,.07) 0 12%,rgba(0,0,0,0) 12%),linear-gradient(#2A2D33,#121418)',
+    feat:[PF(346,68,88,88,`<g transform="translate(390 112)"><circle r="40" fill="#FFD27A" opacity=".25"/>${pRep(16,i=>`<path d="M0 0 L${(Math.cos(i*Math.PI/8)*42).toFixed(1)} ${(Math.sin(i*Math.PI/8)*42).toFixed(1)}" stroke="#F0A040" stroke-width="${i%2?2:4}"/>`)}<circle r="20" fill="#FFC861"/><circle r="12" fill="#FFE7A8"/></g>`)]},
+  rechka:{ceil:tileBG(110,30,'<rect width="110" height="30" fill="#E6E3DC"/><path d="M55 0 V12" stroke="#5A5040" stroke-width="2"/><path d="M29 14 h52 l-8 12 h-36Z" fill="#E9DDBF"/><rect x="31" y="24" width="48" height="4" fill="#FFF6DA"/>'),
+    wall:'linear-gradient(#ECEAE4 0 14.3%,rgba(0,0,0,0) 14.3% 82%,#7D8088 82%),linear-gradient(#3E434C,#2B2F36)',
+    floor:`${svgTile(110,58,'<path d="M37 32 l18 -10 l18 10 l-18 10Z" fill="#1D1F24"/>')} 0 0/auto 100% repeat-x,linear-gradient(#8E9199,#5A5E66)`,
+    feat:[PF(404,64,52,104,`<g transform="translate(430 80)"><rect x="-20" y="64" width="40" height="18" fill="#C9C4B8"/><rect x="-24" y="60" width="48" height="5" fill="#D8D3C8"/><g fill="#8C6A3A"><circle cx="0" cy="6" r="6.5"/><circle cx="-5" cy="2" r="3"/><circle cx="4" cy="0" r="3"/><circle cx="-6" cy="7" r="2.6"/><path d="M-9 14 Q0 11 9 14 L13 46 L15 60 H-15 L-11 30Z"/><path d="M9 14 Q20 20 18 50 L13 46Z" fill="#7A5A30"/><path d="M-9 16 L-14 36 L-11 37 L-6 22Z"/><ellipse cx="-13" cy="40" rx="5" ry="2"/><rect x="-16" y="40" width="6" height="7" rx="1"/></g></g>`)]},
+  petrograd:{doors:{wall:'#E6E8EC',top:`${vstripes('201,206,214',1,8)} 0 5.94%/100% 19.2% no-repeat`,start:20,step:64,w:40},floor:'linear-gradient(#80858E,#1F242E)',
+    feat:[PF(382,90,72,80,`<g transform="translate(418 98)"><rect x="-34" y="-6" width="68" height="76" fill="#2B4F8E"/>${pRep(8,i=>`<path d="M${-34+i*9.7} -6 V70 M-34 ${-6+i*10.8} H34" stroke="#5E86C8" stroke-width="1"/>`)}<g transform="translate(-6 34)"><path d="M-14 -24 q12 -8 20 2 l3 8 l5 7 l-5 2 l2 4 l-3 2 l2 5 q-3 6 -10 6 l0 12 h-18 q-6 -26 4 -48Z" fill="#B88E2E"/><path d="M-16 -22 q10 -14 26 -4 q-12 -2 -20 6Z" fill="#B88E2E"/></g><g transform="translate(6 34)"><path d="M-14 -24 q12 -8 20 2 l3 8 l5 7 l-5 2 l2 4 l-3 2 l2 5 q-3 6 -10 6 l0 12 h-18 q-6 -26 4 -48Z" fill="#F0CC66"/><path d="M-15 -24 q10 -10 22 -2 l-4 4 q-8 -4 -16 2Z" fill="#D9B04A"/></g></g>`,1)]},
+  gorkovskaya:{wall:`${tileBG(110,112,'<g transform="translate(20 24)"><rect width="70" height="62" fill="none" stroke="#6E6A60" stroke-width="2.4"/>'+[0,1,2,3,4,5].map(j=>`<path d="M${j*12+5} 0 V62" stroke="#6E6A60" stroke-width="1" opacity=".6"/>`).join('')+'<path d="M8 40 q10-6 20 0 t20 0 t20 0" stroke="#3E4A5E" stroke-width="2.4" fill="none"/><path d="M14 26 q12 -14 22 -2 q10 -12 22 2 q-10 -4 -22 4 q-12 -8 -22 -4Z" fill="#3E4A5E"/></g>')},linear-gradient(#E9E8E3,#D8D6CE)`,
+    pyl:{bg:`linear-gradient(rgba(0,0,0,0) 22.5%,#B5AB90 22.5% 25.8%,rgba(0,0,0,0) 25.8%),${hstripes('169,159,134',.6,17)},#CFC6AE`,lamp:1}},
+  nevsky:{wall:`linear-gradient(rgba(255,255,255,.06) 0 27%,rgba(0,0,0,0) 27%),${vstripes('255,255,255',.1,10)},${hstripes('255,255,255',.1,10)},linear-gradient(#9A2E2C,#7A2220)`,floor:'linear-gradient(#3E434C,#1C1F25)',
+    pyl:{bg:'linear-gradient(rgba(0,0,0,0) 74%,#9AA6B8 74% 75.2%,rgba(0,0,0,0) 75.2%),linear-gradient(rgba(0,0,0,0) 75%,rgba(0,0,0,0) 75%),repeating-linear-gradient(90deg,#C8D0DC 0 2.4px,#EDEAE3 2.4px 5px) 0 100%/100% 25% no-repeat,#EDEAE3'}},
+  sennaya:{wall:`linear-gradient(#C9A65E 0 9%,#FFF3D0 9% 11.6%,rgba(0,0,0,0) 11.6%),${vstripes('255,255,255',.22,10)},${hstripes('255,255,255',.22,10)},linear-gradient(#7FB0DE,#5C92C6)`,
+    pyl:{bg:'linear-gradient(90deg,rgba(0,0,0,0) 15%,#DCDAD4 15% 32%,rgba(0,0,0,0) 32% 70%,#DCDAD4 70% 87%,rgba(0,0,0,0) 87%) 0 100%/100% 70% no-repeat,#F2F1EE'}},
+  tehnolog:{wall:'linear-gradient(rgba(0,0,0,0) 80.4%,#26282C 80.4% 85.7%,#9A9EA6 85.7%),linear-gradient(#F1EFEA,#DCD9D2)',
+    feat:[PF(50,70,380,74,[['1954','Первая в мире атомная электростанция'],['1957','Первый искусственный спутник Земли'],['1961','Первый полёт человека в космос']].map(([y,t],k)=>`<g transform="translate(${54+k*130} 74)"><rect width="112" height="66" fill="#E6E2D8" stroke="#C9A65E" stroke-width="1.4"/><text x="56" y="26" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="20" fill="#9A6A12">${y}</text>${t.split(' ').reduce((a,w)=>{const l=a[a.length-1];if((l+' '+w).trim().length>17)a.push(w);else a[a.length-1]=(l+' '+w).trim();return a},['']).map((l,i)=>`<text x="56" y="${42+i*10}" text-anchor="middle" font-family="Onest,sans-serif" font-weight="700" font-size="8" fill="#5A4A2A">${l}</text>`).join('')}</g>`).join(''))]},
+  frunz:{wall:'linear-gradient(#EEEDEA,#D9D7D2)',pyl:{bg:'#F4F3F0'},
+    feat:[PF(284,68,164,96,`<g transform="translate(286 70)"><rect width="160" height="92" fill="#B3262A"/>${pRep(40,i=>`<rect x="${(i*37)%160}" y="${(i*23)%92}" width="5" height="5" fill="#D23A3A" opacity=".7"/>`)}<g fill="#D7DDE6"><path d="M20 10 l28 10 l-28 10Z M120 6 l30 12 l-30 12Z"/><rect x="18" y="8" width="3" height="80"/><rect x="118" y="4" width="3" height="84"/><ellipse cx="80" cy="58" rx="24" ry="10"/><path d="M98 52 L108 32 L116 34 L106 58Z"/><ellipse cx="116" cy="32" rx="9" ry="5" transform="rotate(25 116 32)"/><path d="M108 28 l3 -6 l2 6Z"/><rect x="62" y="62" width="4" height="24"/><rect x="70" y="64" width="4" height="22"/><rect x="90" y="62" width="4" height="24" transform="rotate(-15 92 62)"/><rect x="97" y="62" width="4" height="22"/><path d="M57 54 q-10 4 -8 22 l4 0 q0 -12 6 -18Z"/><rect x="74" y="30" width="11" height="20" rx="2"/><circle cx="79" cy="24" r="5"/><path d="M73 21 h12 l-2 -6 h-8Z"/><path d="M84 32 L98 14" stroke="#D7DDE6" stroke-width="3"/><path d="M98 14 L104 2" stroke="#F4F6FA" stroke-width="2"/><circle cx="40" cy="52" r="5"/><path d="M34 58 h12 l2 28 h-16Z"/><circle cx="134" cy="52" r="5"/><path d="M128 58 h12 l2 28 h-16Z"/></g></g>`)]},
+  vorota:{ceil:'#EEEDEA',wall:`${vstripes('0,0,0',.06,10)},${hstripes('0,0,0',.06,10)},linear-gradient(#F3F3F1,#E1E1DD)`,floor:'linear-gradient(#8E8A86,#1F242E)',
+    pyl:{bg:'linear-gradient(90deg,rgba(0,0,0,0) 23%,rgba(200,208,220,.8) 23% 31%,rgba(0,0,0,0) 31% 54%,rgba(200,208,220,.8) 54% 62%,rgba(0,0,0,0) 62% 85%,rgba(200,208,220,.8) 85% 92%,rgba(0,0,0,0) 92%) 0 100%/100% 76% no-repeat,#7E3A2C'},
+    feat:[PF(328,68,124,96,`<g transform="translate(330 70)" fill="#A88A4E"><rect width="120" height="92" fill="#C8C2B4"/><path d="M60 12 q-22 0 -22 24 v8 h44 v-8 q0 -24 -22 -24Z"/><rect x="40" y="44" width="40" height="8"/><path d="M52 4 h16 l-8 10Z"/><path d="M14 20 L44 86 M106 20 L76 86" stroke="#A88A4E" stroke-width="4"/><path d="M10 14 l8 2 l-2 8Z M110 14 l-8 2 l2 8Z"/><ellipse cx="22" cy="66" rx="14" ry="18"/><ellipse cx="98" cy="66" rx="14" ry="18"/><path d="M44 58 h32 l-4 30 h-24Z"/></g>`)]},
+  elektrosila:{wall:`${svgTile(48,112,'<rect x="14" y="4" width="30" height="12" fill="#FFF7DA" stroke="#9AA6B8" stroke-width="1.5"/><rect x="18" y="7" width="22" height="6" fill="#FFE7A0"/>')} 0 0/auto 100% repeat-x,linear-gradient(#E4E7EC,#CDD2DA)`,
+    feat:[PF(38,78,404,80,`<g transform="translate(40 80)"><rect width="400" height="76" rx="3" fill="#2E4A7A"/>${pRep(4,i=>`<g transform="translate(${50+i*100} 8)" stroke="#D7DEE8" stroke-width="2.2" fill="none"><path d="M0 64 L14 0 L28 64 M5 42 H23 M9 22 H19 M4 46 L24 26 M24 46 L4 26 M-6 6 H34"/></g>`)}<path d="M0 22 Q50 34 100 22 T200 22 T300 22 T400 22" stroke="#D7DEE8" stroke-width="1.4" fill="none"/><path d="M196 6 l-14 30 h12 l-8 28 l24 -36 h-12 l10 -22Z" fill="#FFC861"/></g>`)]},
+  pobeda:{doors:{wall:'#F1F0EC',top:`linear-gradient(rgba(0,0,0,0) 20%,#EAF2F6 20% 57%,#FFF3C8 57% 63%,rgba(0,0,0,0) 63%)`,start:22,step:66,w:38,frame:'#AEB6C2'},floor:'linear-gradient(#9C3A30,#5A1E18)',edge:'#E6D8C8'},
+  moskovskaya:{doors:{wall:'#E6E8EC',top:`linear-gradient(rgba(0,0,0,0) 20%,#D4D9E0 20% 73%,rgba(0,0,0,0) 73%)`,start:10,step:44,w:32},floor:'linear-gradient(#7E848E,#1F242E)'},
+  zvezdnaya:{doors:{wall:'#ECEDEF',top:`linear-gradient(rgba(0,0,0,0) 20%,#C9D0DA 20% 33%,rgba(0,0,0,0) 33% 42%,#AEB6C2 42% 47%,rgba(0,0,0,0) 47% 68%,#AEB6C2 68% 73%,rgba(0,0,0,0) 73%)`,start:22,step:66,w:38},floor:'linear-gradient(#7E848E,#1F242E)',
+    feat:[PF(402,88,66,92,`<g transform="translate(404 90)"><rect width="62" height="88" fill="#C2CAD4"/>${pRep(5,i=>`<path d="M${i*15.5} 0 V88" stroke="#8E98A6" stroke-width="1.4"/>`)}${pRep(6,i=>`<path d="M0 ${i*17.6} H62" stroke="#8E98A6" stroke-width="1.4"/>`)}${[[14,16,7],[44,30,9],[22,56,6],[48,72,6],[30,38,4]].map(s=>`<path d="${star5(...s)}" fill="#F4F6FA" stroke="#7A8494" stroke-width="1"/>`).join('')}</g>`,1)]},
+  kupchino:{ground:1,frz:['#2C3E5E','#8EA0BC'],ceil:tileBG(40,30,'<rect width="40" height="30" fill="#B7C2CF"/><path d="M0 0 L20 30 L40 0" stroke="#8796A8" stroke-width="2" fill="none"/>'),
+    wall:`linear-gradient(rgba(0,0,0,0) 48.2%,#5A6678 48.2% 50.9%,rgba(0,0,0,0) 50.9%),${tileBG(60,112,'<rect width="5" height="112" fill="#5A6678"/>')},linear-gradient(rgba(0,0,0,0) 62.5%,#7E95AE 62.5%),${tileBG(110,112,'<rect x="10" y="46" width="34" height="66" fill="#A7B6C8"/><rect x="65" y="33" width="34" height="79" fill="#A7B6C8"/><rect x="16" y="54" width="5" height="6" fill="#E9F0F7"/><rect x="25" y="54" width="5" height="6" fill="#E9F0F7"/><rect x="71" y="41" width="5" height="6" fill="#E9F0F7"/><rect x="80" y="41" width="5" height="6" fill="#E9F0F7"/>')},linear-gradient(#9CC9EE,#DCEEFA)`,
+    floor:'linear-gradient(#8A9098,#1F242E)'}
+};
+// слои сцены прибытия для станции синей ветки; пусто — сцена как раньше
+function arrLayers(id){
+  const a=S.line==='blue'&&ARR[id];if(!a)return null;
+  const box=f=>`left:${(f.x/4.8).toFixed(2)}%;top:${(25+(f.y-58)/112*46).toFixed(2)}%;width:${(f.w/4.8).toFixed(2)}%;height:${(f.h/112*46).toFixed(2)}%`;
+  const feat=f=>`<div class="pa-feat${f.front?' pa-front':''}" style="${box(f)}"><svg viewBox="${f.x} ${f.y} ${f.w} ${f.h}" preserveAspectRatio="xMidYMid meet">${f.body}</svg></div>`;
+  let front='';
+  if(a.doors){const d=a.doors,tw=d.step/4.8,o1=(d.start%d.step)/d.step*100,o2=o1+d.w/d.step*100;
+    // стена у края платформы с проёмами дверей: поезд виден в открытых проёмах
+    const fr=d.frame?`linear-gradient(90deg,rgba(0,0,0,0) ${(o1-9).toFixed(1)}%,${d.frame} ${(o1-9).toFixed(1)}% ${o1.toFixed(1)}%,rgba(0,0,0,0) ${o1.toFixed(1)}% ${o2.toFixed(1)}%,${d.frame} ${o2.toFixed(1)}% ${(o2+9).toFixed(1)}%,rgba(0,0,0,0) ${(o2+9).toFixed(1)}%) 0 100%/${tw.toFixed(2)}% 82% repeat-x,linear-gradient(90deg,rgba(0,0,0,0) ${(o1-9).toFixed(1)}%,${d.frame} ${(o1-9).toFixed(1)}% ${(o2+9).toFixed(1)}%,rgba(0,0,0,0) ${(o2+9).toFixed(1)}%) 0 ${(24/(100-6)*100).toFixed(1)}%/${tw.toFixed(2)}% 6% repeat-x,`:'';
+    front+=`<div class="pa-front" style="left:0;right:0;top:25%;bottom:24%;background:${/\/\d/.test(d.top)?d.top:d.top+' 0 0/100% 24% no-repeat'},linear-gradient(${d.wall},${d.wall}) 0 0/100% 24% no-repeat,${fr}linear-gradient(90deg,${d.wall} ${o1.toFixed(1)}%,rgba(0,0,0,0) ${o1.toFixed(1)}%,rgba(0,0,0,0) ${o2.toFixed(1)}%,${d.wall} ${o2.toFixed(1)}%) 0 100%/${tw.toFixed(2)}% 76% repeat-x"></div>`}
+  if(a.pyl)front+=['l','r'].map(s=>`<div class="pa-pyl ${s}" style="background:${a.pyl.bg}">${a.pyl.lamp?'<i></i>':''}</div>`).join('');
+  return {a,back:(a.feat||[]).filter(f=>!f.front).map(feat).join(''),front:front+(a.feat||[]).filter(f=>f.front).map(feat).join('')};
+}
 function vArrival(){
   const s=STOPS[arrTo],fs=`clamp(16px,${(110/Math.max(8,s.name.length)).toFixed(2)}vw,46px)`,dc=decorBG(s.id);
+  const L=arrLayers(s.id),A=L&&L.a;
   return `<div class="platform" aria-hidden="true">
-    <div class="pt-ceil"></div>
-    <div class="pt-frieze" style="font-size:${fs};border-color:${dc.acc}"><span class="badge">${LN().num}</span>${esc(s.name)}</div>
-    <div class="pf-wall" style="background-image:${esc(dc.img)};background-size:${dc.size}"></div><div class="pt-portal"></div>
-    <div class="pt-track"></div>
+    <div class="pt-ceil"${A&&A.ceil?` style="background:${esc(A.ceil)}"`:''}></div>
+    <div class="pt-frieze" style="font-size:${fs};border-color:${A&&A.frz?A.frz[1]:dc.acc}${A&&A.frz?';background:'+A.frz[0]:''}"><span class="badge">${LN().num}</span>${esc(s.name)}</div>
+    ${A?`<div class="pf-wall" style="background:${esc(A.wall||(A.doors?'#141A26':'#DDE2E8'))}"></div>${L.back}`:`<div class="pf-wall" style="background-image:${esc(dc.img)};background-size:${dc.size}"></div>`}${A&&(A.ground||A.doors)?'':'<div class="pt-portal"></div>'}
+    <div class="pt-track"></div>${L?L.front:''}
     <div class="sg-mark" id="sgMark" style="left:${SG_TARGET*100}%"><b>СТОП<small>1-й вагон</small></b><i></i></div>
     <div class="pt-train" id="ptTrain">${trainSideSVG()}</div>
-    <div class="pt-floor"></div>
+    <div class="pt-floor"${A&&A.floor?` style="background:${esc(A.floor)}${A.edge?';border-top-color:'+A.edge:''}"`:''}></div>
     <div class="grain"></div><div class="vignette" style="--cx:50%;--cy:45%"></div>
     <div class="pt-flash" id="ptFlash"></div></div>
   <div class="sg-hud" id="sgHud" hidden><span class="sg-goal">Останови первый вагон у знака</span><span>До знака: <b id="sgDist">—</b></span><span>Скорость: <b id="sgSpeed">—</b></span>${recOf(s.id)!==undefined?`<span>Рекорд: <b>${fmtKm(recOf(s.id))} м</b></span>`:''}<button class="sg-skip" id="sgSkip" type="button">Пусть тормозит сам</button></div>
