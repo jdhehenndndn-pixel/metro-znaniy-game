@@ -139,11 +139,13 @@ body.no-scroll{overflow:hidden}
 .rails{position:absolute;left:0;top:0}
 .rails svg{position:absolute;left:-1000px;top:0;width:2000px;height:1150px;overflow:visible}
 .rings{position:absolute;left:0;top:0;width:0;height:0}
-.ring{position:absolute;width:900px;height:900px;left:-450px;top:-450px;border-radius:50%;border:22px solid var(--t-ring);border-bottom-color:transparent;box-shadow:inset 0 0 50px rgba(0,0,0,.7);animation:fly var(--dur) linear infinite;animation-play-state:paused}
-.ring::before,.ring::after{content:"";position:absolute;inset:-22px;border-radius:50%;-webkit-mask:radial-gradient(closest-side,transparent 95%,#000 95.4%);mask:radial-gradient(closest-side,transparent 95%,#000 95.4%)}
-.ring::before{background:repeating-conic-gradient(from 4deg,rgba(0,0,0,.6) 0 .9deg,rgba(0,0,0,0) .9deg 22.5deg)}
-.ring::after{background:conic-gradient(rgba(0,0,0,0) 0 22deg,rgba(255,205,120,.22) 45deg,rgba(0,0,0,0) 70deg 290deg,rgba(255,205,120,.22) 315deg,rgba(0,0,0,0) 338deg)}
-.tunnel.ride .ring{animation-play-state:running}
+.ring{position:absolute;width:900px;height:900px;left:-450px;top:-450px;opacity:0;transform:scale(.05);will-change:transform,opacity}
+.ring .tube,.ring .dim{position:absolute;inset:0;border-radius:50%;border:22px solid var(--t-lit);border-bottom-color:transparent}
+.ring .tube{box-shadow:inset 0 0 50px rgba(0,0,0,.7)}
+.ring .dim{border-color:#1B2F60;border-bottom-color:transparent;will-change:opacity}
+.ring .tube::before,.ring .tube::after{content:"";position:absolute;inset:-22px;border-radius:50%;-webkit-mask:radial-gradient(closest-side,transparent 95%,#000 95.4%);mask:radial-gradient(closest-side,transparent 95%,#000 95.4%)}
+.ring .tube::before{background:repeating-conic-gradient(from 4deg,rgba(0,0,0,.6) 0 .9deg,rgba(0,0,0,0) .9deg 22.5deg)}
+.ring .tube::after{background:conic-gradient(rgba(0,0,0,0) 0 22deg,rgba(255,205,120,.22) 45deg,rgba(0,0,0,0) 70deg 290deg,rgba(255,205,120,.22) 315deg,rgba(0,0,0,0) 338deg)}
 .lamp{position:absolute;top:16%;width:18px;height:9px;border-radius:3px 3px 6px 6px;background:#FFE2A0;box-shadow:0 0 18px 7px rgba(255,200,97,.3),0 10px 40px 14px rgba(255,190,90,.12)}
 .lamp.l{left:13%;transform:rotate(-42deg)}.lamp.r{right:13%;transform:rotate(42deg)}
 .sleeper{position:absolute;left:50%;top:88.5%;width:300px;height:15px;margin-left:-150px;border-radius:3px;background:linear-gradient(#3A404B,#22272F);box-shadow:0 4px 6px rgba(0,0,0,.55)}
@@ -547,7 +549,6 @@ body.is-intro .panel.scene .scene-content{min-height:calc(100svh - 32px)}
 .pop{animation:pop .55s cubic-bezier(.3,1.6,.5,1)}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 @keyframes pop{0%{transform:scale(.3) rotate(-30deg)}100%{transform:scale(1) rotate(0)}}
-@keyframes fly{0%{transform:scale(.05);opacity:0;border-top-color:var(--t-far);border-left-color:var(--t-far);border-right-color:var(--t-far)}12%{opacity:1}45%{border-top-color:var(--t-lit);border-left-color:var(--t-lit);border-right-color:var(--t-lit)}100%{transform:scale(1.6);opacity:1;border-top-color:var(--t-near);border-left-color:var(--t-near);border-right-color:var(--t-near)}}
 @keyframes sway{0%,100%{transform:translate(0,0) rotate(0)}30%{transform:translate(1.5px,-1px) rotate(.18deg)}70%{transform:translate(-1.5px,.6px) rotate(-.18deg)}}
 @keyframes headGlow{0%,100%{box-shadow:0 0 26px 8px rgba(255,200,97,.45),0 0 70px 26px rgba(255,190,80,.18)}50%{box-shadow:0 0 32px 11px rgba(255,200,97,.6),0 0 90px 34px rgba(255,190,80,.24)}}
 @keyframes beam{0%,100%{opacity:.75}50%{opacity:1}}
@@ -555,7 +556,7 @@ body.is-intro .panel.scene .scene-content{min-height:calc(100svh - 32px)}
   .tunnel{--cx:80%;--cy:30%}
   .scene-content{max-width:none;background:linear-gradient(0deg,rgba(var(--scrim),.95) 0%,rgba(var(--scrim),.75) 55%,rgba(var(--scrim),.2) 100%)}
 }
-@media (prefers-reduced-motion: reduce){.shake,.pop,.tf .hl,.tf .beam{animation:none}.tunnel.ride .ring{animation-play-state:paused}.tunnel.ride .world{animation:none}.bar span{transition:none}}
+@media (prefers-reduced-motion: reduce){.shake,.pop,.tf .hl,.tf .beam{animation:none}.tunnel.ride .world{animation:none}.bar span{transition:none}}
 /* депо: осмотр поезда перед выходом на линию (пока только у красной ветки) */
 .dp{display:flex;flex-direction:column;gap:14px}
 .dp-h{font-size:clamp(26px,4vw,38px)}
@@ -1942,9 +1943,29 @@ const RAILS_SVG=(()=>{
     <polygon points="0,0 ${g3+w3},${Y} ${g3+w3*1.4},${Y}" fill="#2A2A2A" fill-opacity=".6"/>
     ${rail(-1)}${rail(1)}</svg>`;
 })();
+// положение кольца на пути u (0 — далеко, 1 — пролетает мимо кабины), как было в CSS-анимации fly
+const ringPose=u=>`transform:scale(${(.05+1.55*u).toFixed(4)});opacity:${u<.12?(u/.12).toFixed(3):1}`;
+// дальние и ближние кольца темнее, ярче всего — в свете фар (45% пути)
+const ringDim=u=>u<.45?1-u/.45:Math.min(1,(u-.45)/.55*.95);
+// движение тоннеля в поездке: один цикл на все кольца; скорость задаёт TUN.rate (0 — стоим, 1 — полный ход)
+const TUN={rate:0,ph:0,raf:0,last:0,els:null};
+function tunnelGo(){
+  cancelAnimationFrame(TUN.raf);TUN.ph=0;TUN.last=0;
+  TUN.els=[...document.querySelectorAll('.tunnel.ride .ring')].map(el=>({el,dim:el.querySelector('.dim')}));
+  if(!TUN.els.length||reduce)return;
+  const DUR=1500;
+  const frame=t=>{
+    if(!TUN.els[0].el.isConnected)return;
+    const dt=TUN.last?Math.min(50,t-TUN.last):0;TUN.last=t;
+    TUN.ph=(TUN.ph+dt*TUN.rate/DUR)%1;
+    TUN.els.forEach((o,i)=>{const u=(TUN.ph+i/RINGS)%1,s=.05+1.55*u;
+      o.el.style.transform=`scale(${s.toFixed(4)})`;o.el.style.opacity=u<.12?(u/.12).toFixed(3):'1';o.dim.style.opacity=ringDim(u).toFixed(3)});
+    TUN.raf=requestAnimationFrame(frame)};
+  TUN.raf=requestAnimationFrame(frame);
+}
 function tunnel(mode){
   let rings='';
-  for(let i=0;i<RINGS;i++)rings+=`<div class="ring" style="animation-delay:calc(var(--dur) * -${(i/RINGS).toFixed(3)})"><i class="lamp l"></i><i class="lamp r"></i><i class="sleeper"></i>${i===3?'<i class="sig"></i>':''}</div>`;
+  for(let i=0;i<RINGS;i++)rings+=`<div class="ring" style="${ringPose(i/RINGS)}"><b class="tube"></b><b class="dim" style="opacity:${ringDim(i/RINGS).toFixed(3)}"></b><i class="lamp l"></i><i class="lamp r"></i><i class="sleeper"></i>${i===3?'<i class="sig"></i>':''}</div>`;
   const ride=mode==='ride';
   const cables=CABLES.map(([a,c])=>`<i class="${c}" style="transform:rotate(${a}deg)"></i>`).join('');
   // рельсы поверх колец со шпалами: шпалы лежат под рельсами
@@ -2291,7 +2312,7 @@ function render(){renderTop();renderStrip();renderPanel()}
 const runKm=to=>to>0?((LN().runs||[])[to-1]||1.2):1.0;
 const underNeva=to=>to>0&&(LN().underNeva||[]).indexOf(to-1)>=0;
 // скорость тоннеля: CSS-анимации колец ускоряем и замедляем через playbackRate
-function tunnelRate(r){document.querySelectorAll('.tunnel.ride .ring').forEach(el=>el.getAnimations().forEach(a=>{a.playbackRate=r}))}
+function tunnelRate(r){TUN.rate=r}
 // звук поездки: гул мотора растёт при разгоне и падает при торможении, стук колёс чаще на скорости
 function rideSound(total,acc,dec){
   const a=ac();if(!a||!S.sound)return ()=>{};
@@ -2313,7 +2334,7 @@ function ride(to){
   const fromI=curLineI(),toI=STOPS[to].i,name=STOPS[to].name;
   moving=true;rideTo=to;view='ride';renderPanel();cabBind();
   // поезд стоит, пока звучит «Осторожно, двери закрываются»
-  tunnelRate(0);
+  tunnelRate(0);tunnelGo();
   const km=runKm(to),dur=reduce?0:Math.min(6200,1700+km*1500),ACC=Math.min(1400,dur*.3),DEC=Math.min(1300,dur*.3);
   // максимальная скорость на перегоне: на длинных разгоняемся сильнее; к платформе подходим на 45 км/ч, как в мини-игре
   const vmax=Math.round(60+Math.min(20,km*8)),VARR=45;
