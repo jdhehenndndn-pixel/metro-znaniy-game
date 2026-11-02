@@ -198,7 +198,8 @@ body.no-scroll{overflow:hidden}
 .cab-lever .cl-slot{position:absolute;left:52px;top:4px;width:12px;height:96px;border-radius:6px;background:#05080F;box-shadow:inset 0 2px 5px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06)}
 .cab-lever .cl-lab{position:absolute;left:0;width:34px;text-align:right;font-size:10px;font-weight:800;letter-spacing:.04em;color:#7F91B3;transform:translateY(-50%)}
 .cab-lever .cl-lab.l-run{top:15px}.cab-lever .cl-lab.l-0{top:52px}.cab-lever .cl-lab.l-brake{top:89px}
-.cab-lever .cl-knob{position:absolute;left:40px;top:52px;width:36px;height:24px;margin-top:-12px;border-radius:9px;background:linear-gradient(#F2F4F8,#A3AEC0);box-shadow:0 4px 8px rgba(0,0,0,.6),inset 0 -3px 0 rgba(0,0,0,.2);transition:top .55s cubic-bezier(.4,1.5,.5,1)}
+.cab-lever .cl-knob{position:absolute;left:40px;top:52px;width:36px;height:24px;margin-top:-12px;border-radius:9px;background:linear-gradient(#F2F4F8,#A3AEC0);box-shadow:0 4px 8px rgba(0,0,0,.6),inset 0 -3px 0 rgba(0,0,0,.2);transition:top .7s ease-in-out}
+.cab-lever::after{content:attr(data-step);position:absolute;left:0;right:0;bottom:-16px;text-align:center;font-size:10px;font-weight:800;color:#AFC0DA;white-space:nowrap}
 .cab-lever[data-pos="run"] .cl-knob{top:15px}.cab-lever[data-pos="brake"] .cl-knob{top:89px}
 .cab-lever[data-pos="run"] .l-run{color:var(--ok)}.cab-lever[data-pos="0"] .l-0{color:var(--ink)}.cab-lever[data-pos="brake"] .l-brake{color:var(--amber)}
 /* спидометр */
@@ -2402,10 +2403,15 @@ const GAUGE=(()=>{
 const fmtKm=v=>v.toFixed(1).replace('.',',');
 // показания пульта; меняем только то, что изменилось
 let CAB=null;
-function cabBind(){CAB={needle:$('#cabNeedle'),speed:$('#cabSpeed'),lever:$('#cabLever'),top:$('#cbTop'),rem:$('#cbRem'),doors:$('#lampDoors'),run:$('#lampRun'),brk:$('#lampBrake'),pos:null,sp:-1,rm:''}}
+function cabBind(){CAB={lev:null,needle:$('#cabNeedle'),speed:$('#cabSpeed'),lever:$('#cabLever'),top:$('#cbTop'),rem:$('#cbRem'),doors:$('#lampDoors'),run:$('#lampRun'),brk:$('#lampBrake'),pos:null,sp:-1,rm:''}}
 function cabSet(o){
   if(!CAB||!CAB.lever||!document.body.contains(CAB.lever))return;
   if(o.speed!==undefined){const s=Math.round(o.speed);if(s!==CAB.sp){CAB.sp=s;CAB.speed.textContent=s;CAB.needle.setAttribute('transform',`rotate(${G_ANG(o.speed).toFixed(1)} 60 60)`)}}
+  if(o.lev!==undefined&&o.lev!==CAB.lev){CAB.lev=o.lev;o.pos=o.lev>.05?'run':o.lev<-.05?'brake':'0';
+    // ручка встаёт на ступень между метками ХОД — 0 — ТОРМ
+    const lab=c=>parseFloat(getComputedStyle(CAB.lever.querySelector(c)).top),z=lab('.l-0'),y=o.lev>=0?z-o.lev*(z-lab('.l-run')):z-o.lev*(lab('.l-brake')-z);
+    const kn=CAB.lever.querySelector('.cl-knob');if(kn)kn.style.top=y.toFixed(1)+'px';
+    CAB.lever.dataset.step=o.lev>.05?'Ход '+Math.round(o.lev*3):o.lev<-.05?'Тормоз '+Math.round(-o.lev*2):'Выбег'}
   if(o.pos&&o.pos!==CAB.pos){CAB.pos=o.pos;CAB.lever.dataset.pos=o.pos;
     CAB.run.classList.toggle('on',o.pos==='run');CAB.brk.classList.toggle('on',o.pos==='brake');
     if(o.pos==='brake')CAB.top.textContent='Тормозим: впереди станция';}
@@ -2701,7 +2707,7 @@ function ride(to,opt){
       // время кадра rAF может быть чуть раньше t0 — не даём ему уйти в минус
       const step=t=>{const e=Math.min(dur,Math.max(0,t-t0));const r=e<ACC?.05+.95*(e/ACC)**1.6:e>dur-DEC?Math.max(.2,(dur-e)/DEC):1;tunnelRate(r);
         done+=spd((e+lastE)/2)*(e-lastE);lastE=e;
-        cabSet({speed:spd(e),pos:e<ACC?'run':e>dur-DEC?'brake':'0',rem:Math.max(0,km*(1-done/total))});
+        cabSet({speed:spd(e),lev:e<ACC?(e<ACC*.3?1/3:e<ACC*.62?2/3:1):e>dur-DEC?(e<dur-DEC*.45?-.5:-1):0,rem:Math.max(0,km*(1-done/total))});
         if(e<dur&&view==='ride')requestAnimationFrame(step)};
       requestAnimationFrame(step);
       setTimeout(()=>{brake()},Math.max(0,dur-DEC));
@@ -2990,14 +2996,14 @@ Object.assign(ARR,{
   g_begovaya:{ceil:tileBG(60,30,'<rect width="60" height="30" fill="#E4E8EE"/><circle cx="30" cy="17" r="9" fill="#FFF7DA"/><path d="M30 17 L41 17 M30 17 L24.5 26.5 M30 17 L24.5 7.5" stroke="#8E98A6" stroke-width="3"/><circle cx="30" cy="17" r="2.6" fill="#5A6678"/>'),
     wall:'linear-gradient(rgba(0,0,0,0) 82.1%,#1E2128 82.1%),linear-gradient(#DADFE6,#C6CDD7)',floor:'linear-gradient(#7E848E,#1F242E)',
     pyl:{bg:'linear-gradient(90deg,#AEB6C2,#E3E8EE 45%,#AEB6C2)'},
-    feat:[PF(28,70,440,68,pRep(4,i=>{const x=30+i*115;return `<rect x="${x}" y="72" width="90" height="64" rx="3" fill="#BFE0F5" stroke="#8EA6BE" stroke-width="2"/><g transform="translate(${x+45} 104) rotate(-12)" fill="#3E5C8A"><path d="M-30 0 L22 -3 L30 0 L22 3 Z"/><path d="M-4 -2 L-14 -18 L-8 -18 L6 -2 Z M-4 2 L-14 18 L-8 18 L6 2 Z"/><path d="M-26 -1 L-30 -10 L-26 -10 L-20 -1 Z"/></g>`})),
+    feat:[PF(28,62,440,46,pRep(4,i=>{const x=30+i*115;return `<rect x="${x}" y="64" width="90" height="42" rx="3" fill="#BFE0F5" stroke="#8EA6BE" stroke-width="2"/><g transform="translate(${x+45} 85) rotate(-12) scale(.7)" fill="#3E5C8A"><path d="M-30 0 L22 -3 L30 0 L22 3 Z"/><path d="M-4 -2 L-14 -18 L-8 -18 L6 -2 Z M-4 2 L-14 18 L-8 18 L6 2 Z"/><path d="M-26 -1 L-30 -10 L-26 -10 L-20 -1 Z"/></g>`})),
       PF(26,64,428,118,`<rect x="26" y="66" width="428" height="116" fill="#CFEAF8" opacity=".16"/>`+pRep(8,i=>`<rect x="${30+i*60}" y="66" width="3" height="116" fill="#AEB6C2" opacity=".8"/>`),1)]},
   g_zenit:{ceil:tileBG(48,30,'<rect width="48" height="30" fill="#C9D2DC"/><path d="M10 8 l10 8 l-6 2 l10 8" stroke="#FFFBEA" stroke-width="3" fill="none"/>'),
     wall:`linear-gradient(rgba(0,0,0,0) 73.2%,#2E6FB8 73.2% 80.4%,#FFFFFF 80.4% 87.5%,#8EC8FF 87.5% 94.6%,rgba(0,0,0,0) 94.6%),${tileBG(24,112,'<rect width="24" height="26" fill="#2E6FB8"/><path d="M0 20 q6 -10 12 0 t12 0" stroke="#FFFFFF" stroke-width="2.4" fill="none"/><path d="M6 12 q6 -8 12 0" stroke="#8EC8FF" stroke-width="2" fill="none"/>')},linear-gradient(#EEF1F5,#D9DFE7)`,
     floor:'linear-gradient(#8A8F98,#1F242E)',pyl:{bg:'linear-gradient(90deg,#B9C3D0,#F2F5F9 45%,#B9C3D0)'}},
   g_primorsk:{wall:'linear-gradient(#C9CCD0,#B3B7BD)',floor:'linear-gradient(#7C8088,#1F242E)',pyl:{bg:'linear-gradient(90deg,#9EA3AA,#C9CCD0 45%,#9EA3AA)'},
-    feat:[PF(46,74,268,68,pRep(3,i=>{const x=80+i*120;return `<circle cx="${x}" cy="108" r="30" fill="#B08A4E" stroke="#8C6A2E" stroke-width="3"/><g transform="translate(${x} 110)" fill="#6E5224"><path d="M-18 6 H18 L12 14 H-12 Z"/><path d="M-2 6 V-20 M2 6 V-20" stroke="#6E5224" stroke-width="2"/><path d="M1 -18 L14 2 H1 Z M-1 -16 L-12 2 H-1 Z"/></g>`})),
-      PF(392,78,56,72,`<g transform="translate(420 112)" fill="none" stroke="#4E555F" stroke-width="5" stroke-linecap="round"><circle cx="0" cy="-26" r="5"/><path d="M0 -21 V22 M-12 -12 H12"/><path d="M-22 8 q4 16 22 16 q18 0 22 -16"/></g>`)]},
+    feat:[PF(60,62,280,46,pRep(3,i=>{const x=90+i*110;return `<circle cx="${x}" cy="85" r="20" fill="#B08A4E" stroke="#8C6A2E" stroke-width="2.4"/><g transform="translate(${x} 86) scale(.66)" fill="#6E5224"><path d="M-18 6 H18 L12 14 H-12 Z"/><path d="M-2 6 V-20 M2 6 V-20" stroke="#6E5224" stroke-width="2"/><path d="M1 -18 L14 2 H1 Z M-1 -16 L-12 2 H-1 Z"/></g>`})),
+      PF(396,60,48,50,`<g transform="translate(420 87) scale(.72)" fill="none" stroke="#4E555F" stroke-width="5" stroke-linecap="round"><circle cx="0" cy="-26" r="5"/><path d="M0 -21 V22 M-12 -12 H12"/><path d="M-22 8 q4 16 22 16 q18 0 22 -16"/></g>`)]},
   g_prolet:{frz:['#7A2226','#E8DCD6'],wall:'linear-gradient(#F1E6E2,#E2D2CC)',floor:'repeating-linear-gradient(90deg,#8A2A2A 0 22px,#6E7078 22px 44px,#1E1C1E 44px 66px)',
     pyl:{bg:'linear-gradient(rgba(0,0,0,0) 22%,#B3262A 22% 29%,rgba(0,0,0,0) 29%),#F4F1EE'}},
   g_obukhovo:{frz:['#2B2F36','#B87333'],wall:'linear-gradient(#EFEEEA,#DCDAD4)',floor:'linear-gradient(#5E626A,#2B2F36)',
