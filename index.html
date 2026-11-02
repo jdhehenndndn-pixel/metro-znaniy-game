@@ -254,6 +254,46 @@ body.no-scroll{overflow:hidden}
 .pa-pyl{position:absolute;top:0;bottom:0;width:5.4%;z-index:1;pointer-events:none}
 .pa-pyl.l{left:0}.pa-pyl.r{right:0}
 .pa-pyl i{position:absolute;left:50%;top:30%;width:min(20px,70%);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:#FFF6DA;box-shadow:0 0 14px 6px rgba(255,240,192,.45)}
+/* зелёная ветка: «Штурман» и «двери в двери» */
+.sh{display:flex;flex-direction:column;gap:14px}
+.sh-board{display:flex;align-items:center;gap:12px;background:#05080F;border:1px solid #3a2a10;border-radius:14px;padding:10px 14px}
+.sh-board div{flex:1;display:flex;flex-direction:column}
+.sh-board b{color:var(--amber);font-size:17px}.sh-board small{color:var(--soft);font-size:14px}
+.sh-light{width:22px;height:22px;border-radius:50%;background:#D93744;box-shadow:0 0 14px 4px rgba(217,55,68,.5);flex:none}
+.sh-light.go{background:#5EE6C1;box-shadow:0 0 14px 4px rgba(94,230,193,.55)}
+.sh-main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px}
+.sh-box{background:var(--card-2);border:1px solid var(--edge);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.sh-box h3{margin:0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.sh-c{align-items:center}
+.sh-map{display:block;width:100%;height:auto}
+.sh-cmp{width:min(250px,100%);height:auto;display:block}
+.sh-radio{margin:0;align-self:stretch;background:#24407E;border-radius:4px 16px 16px 16px;padding:10px 14px;font-size:16px}
+.sh-radio small{display:block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sh-radio.ok{background:#1A4C66}.sh-radio.bad{background:#4A2F55}
+.sh-dir{cursor:pointer}.sh-dir:focus{outline:none}
+.sh-dir circle{fill:#141A26;stroke:#4A566E;stroke-width:2;transition:fill .15s}
+.sh-dir:hover circle,.sh-dir:focus-visible circle{fill:#2A2412;stroke:var(--amber)}
+.sh-dir.right circle{fill:#10302A;stroke:#5EE6C1}.sh-dir.wrong circle{fill:#3A1A1A;stroke:#FF8F6B}
+.sh-dir text{fill:#EEF2F8;font:800 13px var(--f-body);pointer-events:none}
+#shNeedle{transition:transform .4s ease}
+.sh-picks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.sh-pk{font:800 17px var(--f-body);padding:14px 22px;border-radius:14px;border:2px solid #4A566E;background:#141A26;color:var(--ink);cursor:pointer}
+.sh-pk:hover,.sh-pk:focus-visible{border-color:var(--amber);outline:none}.sh-pk.right{border-color:#5EE6C1;background:#10302A}.sh-pk.wrong{border-color:#FF8F6B;background:#3A1A1A}
+.dd{display:flex;flex-direction:column;gap:12px}
+.dd-scene{border-radius:18px;overflow:hidden;border:1px solid var(--edge);background:#070C18}
+.dd-scene svg{display:block;width:100%;height:auto}
+.dd-hud{display:flex;gap:8px;flex-wrap:wrap}
+.dd-hud span{background:#141A26;border:1px solid #3B475E;border-radius:999px;padding:4px 12px;font-size:14px;color:var(--soft)}.dd-hud b{color:var(--ink)}
+.dd-desk{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;background:linear-gradient(#2B3448,#1D2433);border:1px solid #3B475E;border-radius:18px;padding:18px 14px}
+.dd-lever{position:relative;width:74px;height:190px;border-radius:14px;background:#141A26;border:2px solid #4A566E;touch-action:none;cursor:grab}
+.dd-lever:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.dd-fill{position:absolute;left:0;top:0;right:0;height:0;background:linear-gradient(#5A2A22,#FF8F6B);border-radius:12px;opacity:.6}
+.dd-knob{position:absolute;left:6px;right:6px;height:34px;border-radius:10px;background:linear-gradient(#F4F6FA,#AEB6C2);border:2px solid #2B3448;top:4px;box-shadow:0 4px 10px rgba(0,0,0,.4)}
+.dd-lever small{position:absolute;left:-4px;right:-4px;text-align:center;font-size:11px;font-weight:800;color:var(--soft)}.dd-lever .t{top:-18px}.dd-lever .b{bottom:-18px}
+.dd-side{display:flex;flex-direction:column;gap:10px;min-width:0}
+.dd-say{margin:0;background:#24407E;border-radius:4px 16px 16px 16px;padding:10px 14px}.dd-say.ok{background:#1A4C66}.dd-say.bad{background:#4A2F55}
+.dd-stars{font-size:28px;letter-spacing:4px;color:#3B475E}.dd-stars i{font-style:normal}.dd-stars .on{color:var(--amber)}
+@media (max-width:700px){.sh-main{grid-template-columns:1fr}.dd-desk{grid-template-columns:1fr;justify-items:center}.dd-lever{width:min(260px,80vw);height:64px}.dd-lever .t{top:auto;bottom:-18px;left:0;right:auto}.dd-lever .b{bottom:-18px;right:0;left:auto}.dd-side{width:100%}}
 .pt-flash{position:absolute;inset:0;background:#FFF6DE;pointer-events:none;opacity:0}
 /* мини-игра «Останови первый вагон у знака» */
 .sg-mark{position:absolute;top:24%;bottom:23%;width:0;pointer-events:none;z-index:1}
@@ -717,7 +757,7 @@ body.is-intro .panel.scene .scene-content{min-height:calc(100svh - 32px)}
       "stations":[["Девяткино","r_devyatkino"],["Гражданский проспект","r_grazhd"],["Академическая","r_akadem"],["Политехническая","r_polytech"],["Площадь Мужества","r_muzh"],["Лесная","r_lesnaya"],["Выборгская","r_vyborg"],["Площадь Ленина","r_lenina"],["Чернышевская","r_chern"],["Площадь Восстания","r_vosst"],["Владимирская","r_vlad"],["Пушкинская","r_pushk"],["Технологический институт","r_tehn"],["Балтийская","r_balt"],["Нарвская","r_narv"],["Кировский завод","r_kirov"],["Автово","r_avtovo"],["Ленинский проспект","r_leninsky"],["Проспект Ветеранов","r_veteranov"]]},
     "green": {"num":"3","name":"Зелёная ветка","short":"Зелёная","topic":"Путешествия","nameLow":"зелёная ветка","gen":"зелёной ветки","acc":"зелёную ветку","span":"от Беговой до Рыбацкого",
       "color":"#2E9E4F","rgb":"46,158,79","ink":"#CFF2DC",
-      "runs":[2.6,3.1,2.0,3.2,1.1,1.5,4.0,1.8,2.5,2.0,3.6],"underNeva":[3,6],
+      "runs":[2.6,3.1,2.0,3.2,1.1,1.5,4.0,1.8,2.5,2.0,3.6],"underNeva":[3],
       "transfers":{"g_gostiny":[["2","Невский проспект"]],"g_mayak":[["1","Площадь Восстания"]],"g_nevsky":[["4",""]]},
       "stations":[["Беговая","g_begovaya"],["Зенит","g_zenit"],["Приморская","g_primorsk"],["Василеостровская","g_vasil"],["Гостиный двор","g_gostiny"],["Маяковская","g_mayak"],["Площадь Александра Невского","g_nevsky"],["Елизаровская","g_elizar"],["Ломоносовская","g_lomonos"],["Пролетарская","g_prolet"],["Обухово","g_obukhovo"],["Рыбацкое","g_rybatsk"]]}
   },
@@ -1590,7 +1630,138 @@ const body=(hl)=>{
     <path d="M28.5 41 L27.5 57 M35.5 41 L36.5 57" stroke="#3E5C99" stroke-width="5"/>
     ${s?`<circle cx="${s[0]}" cy="${s[1]}" r="${s[2]}" fill="${K.amber}" stroke="${K.white}" stroke-width="1.8"/>`:''}`;
 };
+// помощники к картинкам красной и зелёной веток (лист prototypes/kartinki-krasnaya-zelenaya.html)
+// подсветка нужного места
+const kpSpot=(x,y,r)=>`<circle cx="${x}" cy="${y}" r="${r+2.2}" fill="${K.white}" stroke="none"/><circle cx="${x}" cy="${y}" r="${r}" fill="${K.red}" stroke="${K.dark}" stroke-width="1.4"/>`;
+// фигурка: спереди или со спины (со спины — без лица, видна линия позвоночника)
+const kpFig=(back,s)=>`<circle cx="32" cy="10" r="7" fill="${back?K.dbrown:K.tan}"/>${back?'':`<circle cx="29.5" cy="9.5" r=".9" fill="${K.dark}" stroke="none"/><circle cx="34.5" cy="9.5" r=".9" fill="${K.dark}" stroke="none"/>`}
+  <path d="M24 19 Q32 17 40 19 L38.5 39 Q32 41 25.5 39 Z" fill="${K.blue}"/>${back?`<path d="M32 20 V39" stroke="#2E5EA8" stroke-width="1.6" stroke-dasharray="2 2"/>`:''}
+  <path d="M24.5 20.5 L17 31 L14 41 M39.5 20.5 L47 31 L50 41" stroke="${K.tan}" stroke-width="4.4"/>
+  <path d="M28.5 40 L27.5 57 M35.5 40 L36.5 57" stroke="#3E5C99" stroke-width="5"/>${kpSpot(...s)}`;
+// голова в профиль (смотрит вправо) или анфас
+const kpHeadSide=s=>`<path d="M20 30 C18 14 30 6 40 10 C48 13 50 22 48 28 L52 34 L48 36 L49 40 C49 44 45 46 41 45 L40 52 H26 C24 46 21 40 20 30 Z" fill="${K.tan}"/>
+  <path d="M20 30 C17 14 30 4 42 9 C36 10 30 12 26 18 C24 22 23 28 24 34 C22 34 21 32 20 30 Z" fill="${K.dbrown}"/><circle cx="43" cy="24" r="1.6" fill="${K.dark}" stroke="none"/>
+  <path d="M30 28 q-3 3 0 7" stroke="${K.lbrown}" stroke-width="1.6"/>${kpSpot(...s)}`;
+const kpHeadFront=s=>`<path d="M16 26 C16 10 48 10 48 26 C48 40 42 50 32 50 C22 50 16 40 16 26 Z" fill="${K.tan}"/>
+  <path d="M16 24 C14 8 50 6 48 24 C44 16 36 14 32 14 C28 14 20 16 16 24 Z" fill="${K.dbrown}"/>
+  <ellipse cx="25" cy="29" rx="2.2" ry="2.6" fill="${K.dark}" stroke="none"/><ellipse cx="39" cy="29" rx="2.2" ry="2.6" fill="${K.dark}" stroke="none"/>
+  <path d="M32 30 V38 h-3" stroke="${K.lbrown}" stroke-width="1.8"/><path d="M27 43 q5 3 10 0" stroke-width="1.8"/>${kpSpot(...s)}`;
+// микроволновка
+const kpMicro=inner=>`<rect x="6" y="14" width="52" height="36" rx="4" fill="${K.silver}"/><rect x="10" y="18" width="34" height="28" rx="2" fill="${K.dark}"/><rect x="47" y="20" width="7" height="24" rx="2" fill="${K.gray}"/>
+  <circle cx="50.5" cy="25" r="1.6" fill="${K.dark}" stroke="none"/><circle cx="50.5" cy="31" r="1.6" fill="${K.dark}" stroke="none"/>${inner}<path d="M10 52 h44" stroke-width="2"/>`;
+const kpWaves=(x,y)=>`<path d="M${x} ${y-6} q4 6 0 12 M${x+5} ${y-10} q6 10 0 20" stroke="${K.orange}" stroke-width="2.4"/>`;
 const PIC={
+  // картинки к карточкам красной и зелёной веток
+ // ===== Зелёная, «Зенит»: транспорт =====
+ 'Электричка':`<path d="M28 10 L32 4 L36 10" stroke-width="2"/><path d="M4 8 H60" stroke-width="1.4"/><rect x="4" y="12" width="54" height="30" rx="6" fill="${K.green}"/><rect x="4" y="34" width="54" height="5" fill="${K.red}"/>
+   ${rep(4,i=>`<rect x="${8+i*12}" y="17" width="8" height="10" rx="1.5" fill="${K.water}" stroke="none"/>`)}<rect x="52" y="14" width="6" height="18" rx="2" fill="${K.yellow}"/>
+   <circle cx="16" cy="45" r="4" fill="${K.dark}"/><circle cx="46" cy="45" r="4" fill="${K.dark}"/><path d="M2 51 H62" stroke="${K.gray}" stroke-width="2.4"/>`,
+ 'Самолёт':`<path d="M4 34 C4 28 10 26 18 26 H48 C56 26 60 30 60 33 C60 36 56 38 48 38 H14 C8 38 4 36 4 34 Z" fill="${K.white}"/>
+   <path d="M28 27 L36 10 H42 L38 27 Z M28 37 L36 52 H42 L38 37 Z" fill="${K.blue}"/><path d="M8 27 L4 16 H10 L16 26 Z" fill="${K.blue}"/>
+   ${rep(5,i=>`<circle cx="${22+i*5}" cy="31" r="1.5" fill="${K.water}" stroke="none"/>`)}<path d="M52 29 q4 2 4 4" stroke="${K.water}" stroke-width="2.4"/>`,
+ 'Вертолёт':`<path d="M8 12 H56" stroke-width="3"/><path d="M32 12 V18" stroke-width="3"/>
+   <path d="M14 30 C14 22 22 18 32 18 C42 18 48 24 48 32 C48 38 42 40 34 40 H20 C16 40 14 36 14 30 Z" fill="${K.orange}"/><path d="M36 20 C44 20 46 28 46 32 H36 Z" fill="${K.water}"/>
+   <path d="M14 30 L2 26 V32 L14 34" fill="${K.orange}"/><path d="M2 22 V36" stroke-width="2.4"/><path d="M18 46 H44 M24 40 V46 M38 40 V46" stroke-width="2.4"/>`,
+ '«Метеор»':`<path d="M4 34 H56 L52 42 H12 Z" fill="${K.white}"/><path d="M14 34 C16 26 22 24 30 24 H44 C50 24 54 28 56 34 Z" fill="${K.white}"/>
+   ${rep(5,i=>`<rect x="${20+i*6}" y="27" width="4" height="4" rx="1" fill="${K.blue}" stroke="none"/>`)}<path d="M4 38 H56" stroke="${K.blue}" stroke-width="2.4"/>
+   <path d="M16 42 L14 50 H24 M44 42 L46 50 H36" stroke-width="2.4"/><path d="M4 54 q6 -4 12 0 t12 0 t12 0 t12 0 t12 0" stroke="${K.water}" stroke-width="2.4"/>`,
+ 'Паром':`<path d="M4 36 H60 L54 48 H10 Z" fill="${K.red}"/><rect x="12" y="24" width="40" height="12" fill="${K.white}"/><rect x="20" y="14" width="24" height="10" fill="${K.white}"/>
+   ${rep(5,i=>`<rect x="${15+i*7}" y="27" width="4" height="4" fill="${K.blue}" stroke="none"/>`)}<rect x="36" y="6" width="6" height="8" fill="${K.yellow}"/>
+   <path d="M2 54 q6 -4 12 0 t12 0 t12 0 t12 0 t12 0" stroke="${K.water}" stroke-width="2.4"/>`,
+ 'Яхта':`<path d="M32 6 V44" stroke-width="2.4"/><path d="M34 8 L54 40 H34 Z" fill="${K.white}"/><path d="M30 14 L12 40 H30 Z" fill="${K.water}"/>
+   <path d="M8 44 H56 L50 52 H14 Z" fill="${K.blue}"/><path d="M2 58 q6 -4 12 0 t12 0 t12 0 t12 0 t12 0" stroke="${K.water}" stroke-width="2.4"/>`,
+ // ===== Зелёная, «Рыбацкое»: поход =====
+ 'Компас':`<circle cx="32" cy="32" r="24" fill="${K.silver}"/><circle cx="32" cy="32" r="19" fill="${K.white}"/><path d="M32 14 L37 32 H27 Z" fill="#3E7EE0"/><path d="M32 50 L37 32 H27 Z" fill="${K.red}"/>
+   <circle cx="32" cy="32" r="2.6" fill="${K.dark}"/><path d="M32 6 V9 M58 32 H55 M32 58 V55 M6 32 H9" stroke-width="2"/>`,
+ 'Карта':`<path d="M6 14 L22 8 L42 14 L58 8 V50 L42 56 L22 50 L6 56 Z" fill="${K.tan}"/><path d="M22 8 V50 M42 14 V56" stroke="${K.lbrown}" stroke-width="1.6"/>
+   <path d="M12 44 C18 36 24 40 30 32 S42 24 48 20" stroke="${K.red}" stroke-width="2.4" stroke-dasharray="3 3"/><path d="M48 12 C44 12 42 15 42 18 C42 22 48 27 48 27 C48 27 54 22 54 18 C54 15 52 12 48 12 Z" fill="${K.red}"/>
+   <circle cx="48" cy="18" r="2" fill="${K.white}" stroke="none"/><path d="M10 24 q4 -3 8 0" stroke="${K.dgreen}" stroke-width="2.4"/>`,
+ 'Ноутбук':`<rect x="12" y="10" width="40" height="28" rx="2" fill="${K.dgray}"/><rect x="15" y="13" width="34" height="22" fill="${K.water}"/><path d="M4 42 H60 L56 50 H8 Z" fill="${K.silver}"/><path d="M26 46 H38" stroke-width="2"/>`,
+ 'Бутылка воды':`<rect x="27" y="4" width="10" height="6" rx="1.5" fill="${K.blue}"/><path d="M26 10 H38 L42 18 V56 Q42 60 38 60 H26 Q22 60 22 56 V18 Z" fill="${K.water}"/>
+   <rect x="22" y="28" width="20" height="12" fill="${K.blue}"/><path d="M28 18 V52" stroke="${K.white}" stroke-width="2.4"/>`,
+ 'Аптечка':`<rect x="8" y="18" width="48" height="34" rx="4" fill="${K.white}"/><path d="M24 18 V12 H40 V18" stroke-width="2.6"/><rect x="27" y="24" width="10" height="22" rx="1.5" fill="${K.red}" stroke="none"/><rect x="21" y="30" width="22" height="10" rx="1.5" fill="${K.red}" stroke="none"/>`,
+ 'Новые неразношенные кроссовки':`<path d="M6 42 C6 32 10 28 18 28 L26 22 C30 24 34 28 38 30 C46 32 56 34 58 40 V46 H6 Z" fill="${K.white}"/><path d="M6 46 H58 V50 H6 Z" fill="${K.gray}"/>
+   <path d="M24 30 l6 4 M28 27 l6 4 M32 30 l4 3" stroke="${K.blue}" stroke-width="2"/><path d="M40 36 H54" stroke="${K.blue}" stroke-width="2.4"/>
+   <path d="M44 22 L56 10" stroke-width="1.4"/><path d="M54 6 L62 8 L60 16 L54 14 Z" fill="${K.amber}"/>`,
+ 'Дождевик':`<path d="M32 6 C24 6 20 12 20 18 L12 54 H52 L44 18 C44 12 40 6 32 6 Z" fill="${K.yellow}"/><path d="M24 18 C24 12 40 12 40 18 C40 24 24 24 24 18 Z" fill="${K.tan}"/>
+   <path d="M32 24 V54" stroke-width="1.8"/><circle cx="30" cy="32" r="1.4" fill="${K.dark}" stroke="none"/><circle cx="30" cy="40" r="1.4" fill="${K.dark}" stroke="none"/>
+   ${[[8,10],[56,14],[6,30],[58,34]].map(([x,y])=>`<path d="M${x} ${y} l-2 5" stroke="${K.blue}" stroke-width="2"/>`).join('')}`,
+ 'Стеклянная банка варенья':`<path d="M14 14 Q32 8 50 14 L46 20 H18 Z" fill="${K.red}"/><path d="M18 20 H46 V54 Q46 58 42 58 H22 Q18 58 18 54 Z" fill="${K.water}" fill-opacity=".55"/>
+   <path d="M20 28 H44 V54 Q44 56 42 56 H22 Q20 56 20 54 Z" fill="#B3263A"/><path d="M24 24 V50" stroke="${K.white}" stroke-width="2.4"/><path d="M16 20 H48" stroke-width="2"/>`,
+ 'Заряженный телефон':`<rect x="18" y="4" width="28" height="56" rx="5" fill="${K.dark}"/><rect x="21" y="10" width="22" height="42" rx="2" fill="${K.water}"/>
+   <rect x="26" y="22" width="12" height="20" rx="2" fill="${K.white}"/><rect x="29" y="19" width="6" height="3" fill="${K.white}" stroke="none"/><rect x="28" y="25" width="8" height="15" fill="${K.green}" stroke="none"/>`,
+ 'Пуховое одеяло':`<path d="M6 22 C6 16 12 14 18 16 C24 12 30 12 32 16 C36 12 44 12 46 16 C52 14 58 16 58 22 V44 C58 50 52 52 46 50 C40 54 34 54 32 50 C28 54 22 54 18 50 C12 52 6 50 6 44 Z" fill="${K.purple}"/>
+   <path d="M6 32 H58 M24 16 V52 M40 16 V52" stroke="#7F5AB0" stroke-width="1.6"/>`,
+ 'Средство от комаров':`<rect x="20" y="16" width="20" height="42" rx="4" fill="${K.green}"/><rect x="24" y="8" width="12" height="8" fill="${K.gray}"/><rect x="28" y="4" width="6" height="4" fill="${K.dark}"/>
+   <path d="M20 30 H40 V44 H20 Z" fill="${K.white}"/><path d="M26 37 L34 37 M28 33 l4 8 M32 33 l-4 8" stroke="${K.dark}" stroke-width="1.6"/><path d="M38 6 l8 -2 M38 8 l9 2 M38 10 l7 5" stroke="${K.water}" stroke-width="1.8"/>`,
+ 'Сладкая газировка вместо воды':`<path d="M20 12 H44 L42 56 Q42 60 38 60 H26 Q22 60 22 56 Z" fill="${K.red}"/><ellipse cx="32" cy="12" rx="12" ry="3" fill="${K.silver}"/>
+   <rect x="22" y="26" width="20" height="14" fill="${K.white}"/><path d="M26 33 q6 -6 12 0" stroke="${K.red}" stroke-width="2.2"/>
+   ${[[50,40,2],[54,30,2.6],[50,20,2],[12,30,2],[10,44,2.4]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${K.water}"/>`).join('')}`,
+ 'Сухие носки на смену':`<path d="M14 8 H28 V34 L36 44 C40 50 34 56 28 52 L16 42 C14 40 14 38 14 36 Z" fill="${K.blue}"/><path d="M14 8 H28 V14 H14 Z" fill="${K.white}"/>
+   <path d="M34 12 H48 V38 L56 48 C60 54 54 60 48 56 L36 46 C34 44 34 42 34 40 Z" fill="${K.orange}"/><path d="M34 12 H48 V18 H34 Z" fill="${K.white}"/>`,
+ // ===== Красная, «Девяткино»: части тела =====
+ 'Висок':kpHeadSide([37,21,3.6]),
+ 'Затылок':kpHeadSide([21,25,4]),
+ 'Переносица':kpHeadFront([32,29,3.6]),
+ 'Поясница':kpFig(true,[32,35,3.6]),
+ 'Лопатка':kpFig(true,[28,24,3.6]),
+ 'Ключица':kpFig(false,[28.5,21,3]),
+ 'Запястье':`<path d="M2 30 H30" stroke="${K.blue}" stroke-width="16" stroke-linecap="butt"/><path d="M28 30 H40" stroke="${K.tan}" stroke-width="12"/>
+   ${[[23,13],[27.5,15],[32,14],[36.5,11]].map(([y,w])=>`<rect x="46" y="${y-2}" width="${w+2}" height="4.4" rx="2.2" fill="${K.tan}"/>`).join('')}
+   <path d="M38 22 C38 20 40 19 44 19 H50 V39 H44 C40 39 38 38 38 36 Z" fill="${K.tan}"/>
+   <path d="M42 20 C42 14 44 10 47 9 C49 9 50 11 49 13 L47 20" fill="${K.tan}"/>${kpSpot(38,30,4)}`,
+ 'Голень':kpFig(false,[27.7,51,3.4]),
+ 'Бедро':kpFig(false,[28.2,45,3.4]),
+ // ===== Красная, «Академическая»: органы чувств и опасность =====
+ 'Дым над крышей':`<path d="M8 36 L32 16 L56 36 Z" fill="${K.red}"/><rect x="14" y="36" width="36" height="22" fill="${K.tan}"/><rect x="40" y="16" width="7" height="12" fill="${K.dbrown}"/>
+   <path d="M42 14 C38 10 44 6 42 2 M46 14 C50 8 46 6 50 2" stroke="${K.dgray}" stroke-width="3"/><rect x="28" y="44" width="8" height="14" fill="${K.brown}"/><rect x="18" y="42" width="7" height="7" fill="${K.water}"/>`,
+ 'Сирена пожарной машины':`<rect x="4" y="24" width="46" height="22" rx="3" fill="${K.red}"/><path d="M50 30 H56 L60 38 V46 H50 Z" fill="${K.red}"/><rect x="51" y="31" width="5" height="6" fill="${K.water}"/>
+   <rect x="8" y="20" width="36" height="4" fill="${K.silver}"/><rect x="26" y="14" width="8" height="6" rx="2" fill="${K.blue}"/>${kpWaves(36,12)}
+   <circle cx="14" cy="48" r="5" fill="${K.dark}"/><circle cx="46" cy="48" r="5" fill="${K.dark}"/>`,
+ 'Запах газа':`<rect x="6" y="40" width="52" height="16" rx="2" fill="${K.silver}"/><ellipse cx="32" cy="40" rx="14" ry="4" fill="${K.dgray}"/><path d="M24 40 q-2 -8 4 -12 q-2 6 4 6 q0 -8 6 -10 q-2 8 2 16" fill="${K.blue}"/>
+   <path d="M14 26 q-4 -6 0 -12 t0 -12 M50 26 q4 -6 0 -12 t0 -12" stroke="${K.green}" stroke-width="2.4"/>`,
+ 'Горький вкус испорченной еды':`<ellipse cx="32" cy="50" rx="26" ry="7" fill="${K.white}"/><path d="M14 48 V30 C14 22 18 18 24 18 C28 14 36 14 40 18 C46 18 50 22 50 30 V48 Z" fill="${K.tan}"/>
+   <path d="M18 46 V30 C18 26 20 22 24 22 C28 18 36 18 40 22 C44 22 46 26 46 30 V46 Z" fill="#F8EBCB"/>
+   ${[[24,30,3.4],[36,28,2.6],[40,38,3.6],[28,40,2.4],[33,35,1.8]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${K.green}" stroke="none"/>`).join('')}
+   <path d="M22 12 q-3 -4 0 -8 M32 10 q-3 -4 0 -8 M42 12 q-3 -4 0 -8" stroke="${K.dgreen}" stroke-width="2"/>`,
+ 'Красный сигнал светофора':`<rect x="20" y="4" width="24" height="46" rx="6" fill="${K.dark}"/><circle cx="32" cy="15" r="6.5" fill="${K.red}"/><circle cx="32" cy="15" r="9.5" fill="${K.red}" opacity=".25" stroke="none"/>
+   <circle cx="32" cy="27" r="6" fill="#4A3A20"/><circle cx="32" cy="39" r="6" fill="#1F3A2A"/><path d="M32 50 V60" stroke-width="3"/>`,
+ 'Гудок поезда':`<path d="M6 58 V26 C6 18 11 14 18 14 H34 C41 14 46 18 46 26 V58 Z" fill="${K.blue}"/><rect x="11" y="20" width="30" height="14" rx="3" fill="${K.water}"/>
+   <circle cx="14" cy="46" r="3.2" fill="${K.yellow}"/><circle cx="38" cy="46" r="3.2" fill="${K.yellow}"/><rect x="21" y="42" width="10" height="8" fill="${K.red}"/>${kpWaves(52,26)}`,
+ 'Запах гари':`<path d="M10 40 H46 C46 50 40 54 28 54 C16 54 10 50 10 40 Z" fill="${K.dgray}"/><path d="M46 44 H60" stroke-width="3.4"/>
+   <path d="M18 40 q2 -4 6 -2 q4 -4 8 0 q4 -2 6 2" fill="${K.black}"/><path d="M20 30 C16 24 24 20 20 12 M30 30 C26 22 34 18 30 8 M40 30 C36 24 44 20 40 12" stroke="${K.dgray}" stroke-width="3.4"/>`,
+ 'Острая игла':`<path d="M10 54 L50 14" stroke="${K.silver}" stroke-width="4"/><path d="M10 54 L50 14" stroke-width="1.2"/><ellipse cx="47" cy="17" rx="1.8" ry="4" transform="rotate(45 47 17)" fill="${K.white}"/>
+   <path d="M47 17 C54 10 60 18 54 26 C48 34 56 42 60 40" stroke="${K.red}" stroke-width="2.2"/><path d="M8 56 l-2 2" stroke="${K.amber}" stroke-width="3"/>`,
+ // ===== Красная, «Лесная»: грибы и ягоды =====
+ 'Лисичка':`<path d="M10 22 C10 16 54 16 54 22 C54 26 40 28 36 34 L34 54 H30 L28 34 C24 28 10 26 10 22 Z" fill="${K.orange}"/><path d="M22 26 L30 36 M42 26 L34 36 M32 26 V36" stroke="${K.amber}" stroke-width="1.6"/>${'<path d="M8 56 H56" stroke-width="2"/>'}`,
+ 'Ложный опёнок':`${[[18,34,16],[32,28,22],[46,36,14]].map(([x,y,h])=>`<path d="M${x} ${y} V${y+h}" stroke="${K.yellow}" stroke-width="3.4"/><path d="M${x-9} ${y} C${x-9} ${y-8} ${x+9} ${y-8} ${x+9} ${y} Z" fill="#C24A2A"/>`).join('')}<path d="M8 56 H56" stroke-width="2"/>`,
+ 'Сыроежка':`<path d="M8 28 C8 14 56 14 56 28 Z" fill="${K.red}"/><path d="M8 28 H56" stroke-width="2"/><path d="M26 28 L24 54 H40 L38 28 Z" fill="${K.white}"/><path d="M8 56 H56" stroke-width="2"/>`,
+ 'Брусника':`<path d="M32 58 V30 M32 40 L20 30 M32 36 L44 26" stroke="${K.brown}" stroke-width="2.4"/>
+   ${[[16,26],[22,22],[46,22],[42,30]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="5" ry="3" fill="${K.dgreen}"/>`).join('')}
+   ${[[26,44],[32,48],[38,44],[30,40],[36,52],[28,52]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" fill="${K.red}"/>`).join('')}`,
+ 'Ягоды ландыша':`<path d="M12 58 C10 40 14 20 20 8 C22 24 22 44 20 58 Z" fill="${K.dgreen}"/><path d="M52 58 C54 40 50 22 44 10 C42 26 42 44 44 58 Z" fill="${K.dgreen}"/>
+   <path d="M32 58 V24" stroke="${K.green}" stroke-width="2.4"/>${[[32,22],[27,30],[37,32],[28,40],[36,44]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" fill="${K.red}"/>`).join('')}`,
+ // ===== Красная, «Владимирская»: дома один =====
+ 'Включить электрочайник':`<path d="M14 26 C14 18 20 14 30 14 C40 14 46 18 46 26 V50 H14 Z" fill="${K.silver}"/><path d="M46 24 C56 24 56 42 46 42" stroke-width="3"/><path d="M14 26 L6 20" stroke-width="3.4"/>
+   <rect x="10" y="50" width="40" height="6" rx="2" fill="${K.dgray}"/><circle cx="40" cy="53" r="1.8" fill="${K.red}" stroke="none"/><rect x="20" y="10" width="20" height="4" rx="2" fill="${K.dgray}"/>`,
+ 'Пожарить яичницу на газовой плите':`<rect x="4" y="40" width="56" height="18" rx="2" fill="${K.white}"/><circle cx="14" cy="49" r="2.4" fill="${K.dark}"/><circle cx="24" cy="49" r="2.4" fill="${K.dark}"/>
+   <path d="M20 40 q-1 -4 2 -6 q0 4 3 2 q0 -4 3 -4 q0 4 3 2 q1 3 0 6" fill="${K.blue}"/><path d="M10 32 H50 C50 38 42 40 30 40 C18 40 10 38 10 32 Z" fill="${K.dgray}"/><path d="M50 34 H60" stroke-width="3.4"/>
+   <ellipse cx="30" cy="31" rx="9" ry="3" fill="${K.white}"/><circle cx="30" cy="31" r="2.6" fill="${K.amber}" stroke="none"/>`,
+ 'Разогреть суп в микроволновке в тарелке':kpMicro(`<path d="M14 36 H40 C40 42 34 44 27 44 C20 44 14 42 14 36 Z" fill="${K.white}"/><ellipse cx="27" cy="36" rx="10" ry="2.4" fill="${K.orange}" stroke="none"/><path d="M22 30 q-2 -4 0 -6 M30 30 q-2 -4 0 -6" stroke="${K.white}" stroke-width="1.6"/>`),
+ 'Разогреть еду в металлической миске в микроволновке':kpMicro(`<path d="M14 36 H40 C40 42 34 44 27 44 C20 44 14 42 14 36 Z" fill="${K.gray}"/><path d="M14 36 H40" stroke="${K.white}" stroke-width="1.6"/>
+   <path d="M18 28 l3 -6 l1 5 l3 -6 M34 30 l3 -5 l1 4 l3 -6" stroke="${K.yellow}" stroke-width="2.2"/>`),
+ 'Включить настольную лампу':`<path d="M18 56 H46" stroke-width="3"/><rect x="18" y="52" width="28" height="5" rx="2" fill="${K.dgray}"/><path d="M32 52 L22 34 L34 18" stroke="${K.dgray}" stroke-width="3"/>
+   <path d="M28 14 L44 8 L52 22 L38 28 Z" fill="${K.green}"/><path d="M45 25 L52 34 M48 22 L58 26" stroke="${K.amber}" stroke-width="2.4"/>`,
+ 'Выпить таблетку от головной боли':`<rect x="6" y="14" width="40" height="30" rx="4" fill="${K.silver}"/>${[[14,22],[26,22],[38,22],[14,34],[26,34]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="4.5" ry="3.6" fill="${K.white}"/>`).join('')}
+   <rect x="36" y="38" width="22" height="11" rx="5.5" fill="${K.red}" transform="rotate(-25 47 43)"/><path d="M47 38 V48" stroke-width="1.6" transform="rotate(-25 47 43)"/>`,
+ 'Позвонить маме':`<rect x="20" y="6" width="24" height="50" rx="4" fill="${K.dark}"/><rect x="23" y="12" width="18" height="36" rx="2" fill="${K.water}"/>
+   <path d="M32 26 C30 22 24 22 24 27 C24 31 32 36 32 36 C32 36 40 31 40 27 C40 22 34 22 32 26 Z" fill="${K.red}"/>${kpWaves(48,20)}`,
+ 'Сесть на подоконник открытого окна':`<rect x="10" y="4" width="44" height="42" fill="#BFE0F7"/>
+   <path d="M10 40 H54" stroke="none"/>${[[14,34,8],[24,38,6],[44,32,9]].map(([x,y,w])=>`<rect x="${x}" y="${y}" width="${w}" height="${46-y}" fill="${K.gray}" stroke="none"/>`).join('')}
+   <ellipse cx="22" cy="12" rx="7" ry="3" fill="${K.white}" stroke="none"/>
+   <path d="M10 4 H54 V46 H10 Z" fill="none" stroke-width="3"/><path d="M54 4 L62 10 V44 L54 46 Z" fill="${K.silver}"/><path d="M58 22 v6" stroke-width="2"/>
+   <rect x="4" y="46" width="56" height="7" rx="1.5" fill="${K.white}"/><rect x="4" y="53" width="56" height="7" fill="${K.lbrown}"/>
+   <circle cx="30" cy="27" r="5" fill="${K.tan}"/><path d="M25 33 H35 L36 46 H24 Z" fill="${K.red}"/><path d="M26 46 V54 M34 46 V54" stroke="#3E5C99" stroke-width="3.4"/>`,
   // картинки к новым карточкам синей ветки (лист prototypes/kartinki-sinyaya.html)
   // Проспект Просвещения
   'Завод':`<path d="M6 56 V30 L18 22 V30 L30 22 V30 L42 22 V56 Z" fill="${K.gray}"/><rect x="44" y="12" width="8" height="44" fill="${K.red}"/><path d="M44 18 H52 M44 24 H52" stroke="${K.white}" stroke-width="2"/>
@@ -1997,11 +2168,14 @@ function load(){
   try{const o=JSON.parse(localStorage.getItem('sinyaya-vetka-v2')||'null');if(o&&Array.isArray(o.done))return {name:o.name||'',sound:o.sound!==false,line:'blue',lines:{blue:{cur:o.cur,done:o.done}}}}catch(e){}
   return null;
 }
-// ссылка с ?red открывает начало красной ветки для просмотра: синяя считается пройденной, ничего не сохраняется
-const DEMO_RED=/[?&#]red(?![\w-])/.test(location.search+location.hash);
-function save(){if(DEMO_RED)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+// ссылки с ?red и ?green открывают начало красной или зелёной ветки для просмотра:
+// предыдущие ветки считаются пройденными, ничего не сохраняется
+const DEMO_RED=/[?&#]red(?![\w-])/.test(location.search+location.hash),DEMO_GREEN=/[?&#]green(?![\w-])/.test(location.search+location.hash);
+const allDone=k=>({cur:LINES[k].stations.length-1,done:LINES[k].stations.map(s=>s[1])});
+function save(){if(DEMO_RED||DEMO_GREEN)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
-let S=DEMO_RED?{name:'',sound:true,line:'red',lines:{blue:{cur:LINES.blue.stations.length-1,done:LINES.blue.stations.map(s=>s[1])},red:{cur:-1,done:[]}}}
+let S=DEMO_GREEN?{name:'',sound:true,line:'green',lines:{blue:allDone('blue'),red:allDone('red'),green:{cur:-1,done:[]}}}
+  :DEMO_RED?{name:'',sound:true,line:'red',lines:{blue:allDone('blue'),red:{cur:-1,done:[]}}}
   :(load()||{name:'',sound:true,line:'blue',lines:{}});
 if(typeof S.sound!=='boolean')S.sound=true;
 if(!LINES[S.line])S.line='blue';
@@ -2472,7 +2646,7 @@ function renderPanel(){
   if(task&&view==='station'&&!task.finished){const it=ST[STOPS[S.cur].id].task.items[task.step];if(it&&it.kind==='tf'&&!task.answered&&task.tfStep!==task.step){task.tfStep=task.step;task.tfStart=performance.now()}}
   p.classList.toggle('scene',view==='intro'||view==='ride'||view==='arrival');
   document.body.classList.toggle('is-intro',view==='intro');
-  p.innerHTML=view==='intro'?vIntro():view==='depot'?vDepot():view==='drive'?vDrive():view==='ride'?vRide():view==='arrival'?vArrival():view==='final'?vFinal():vStation();
+  p.innerHTML=view==='intro'?vIntro():view==='depot'?vDepot():view==='drive'?vDrive():view==='sht'?vSht():view==='doors'?vDoors():view==='ride'?vRide():view==='arrival'?vArrival():view==='final'?vFinal():vStation();
   if(view==='depot')depotBind();
   if(view==='drive')driveBind();
   if(document.getElementById('ped')&&!task.answered)pedStart();else pedStop();
@@ -2502,8 +2676,9 @@ function rideSound(total,acc,dec){
   for(let t=A*.4;t<T-.15;){const v=sp(t);clack(t0+t,v);clack(t0+t+.11,v*.8);t+=Math.max(.42,.9/v)}
   const srcs=[o];return ()=>{try{g.gain.cancelScheduledValues(a.currentTime);g.gain.setTargetAtTime(0,a.currentTime,.05);o.stop(a.currentTime+.2)}catch(e){}};
 }
-function ride(to){
+function ride(to,opt){
   if(DRIVE_LINES[S.line]){drive(to);return}
+  if(GREEN_LINES[S.line]&&SHT[STOPS[to].id]&&!(opt&&opt.sh)){moving=true;rideTo=to;shturman(to,()=>ride(to,{sh:1}));return}
   const fromI=curLineI(),toI=STOPS[to].i,name=STOPS[to].name;
   moving=true;rideTo=to;view='ride';renderPanel();cabBind();
   // поезд стоит, пока звучит «Осторожно, двери закрываются»
@@ -2535,7 +2710,7 @@ function ride(to){
     // в конце перегона впереди загорается свет станции и заливает экран
     const pg=document.getElementById('portalGlow');
     if(pg&&dur)setTimeout(()=>pg.animate([{opacity:0,transform:'scale(.4)'},{opacity:1,transform:'scale(4)',offset:.6},{opacity:1,transform:'scale(26)'}],{duration:950,easing:'cubic-bezier(.5,0,.8,.6)',fill:'forwards'}),Math.max(0,dur-900));
-    setTimeout(()=>{transfer=false;arrive(to)},dur+60);
+    setTimeout(()=>{transfer=false;afterRide(to)},dur+60);
   });
 }
 
@@ -2819,6 +2994,143 @@ function arrLayers(id){
   if(a.pyl)front+=['l','r'].map(s=>`<div class="pa-pyl ${s}" style="background:${a.pyl.bg}">${a.pyl.lamp?'<i></i>':''}</div>`).join('');
   return {a,back:(a.feat||[]).filter(f=>!f.front).map(feat).join(''),front:front+(a.feat||[]).filter(f=>f.front).map(feat).join('')};
 }
+// ---------- зелёная ветка: «Штурман» перед отправлением и «двери в двери» на станциях закрытого типа ----------
+// лист прототипов: prototypes/shturman-prototip.html и prototypes/dveri-prototip.html
+const GDOORS={g_vasil:1,g_gostiny:1,g_mayak:1,g_nevsky:1,g_elizar:1,g_lomonos:1};
+// координаты станций — из статей Википедии; направление считаем по прямой между станциями
+const GCOORD={g_begovaya:[59.987306,30.202472],g_zenit:[59.97222,30.21167],g_primorsk:[59.9485,30.234],g_vasil:[59.942583,30.278222],g_gostiny:[59.93389,30.33417],g_mayak:[59.931611,30.355028],
+  g_nevsky:[59.9243694,30.3849889],g_elizar:[59.8967,30.4235],g_lomonos:[59.8773167,30.4416861],g_prolet:[59.8651944,30.4702722],g_obukhovo:[59.8487111,30.4577417],g_rybatsk:[59.8308778,30.5001167]};
+const SH_DIRS=['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'],SH_W=['север','северо-восток','восток','юго-восток','юг','юго-запад','запад','северо-запад'];
+// вопрос задаётся перед перегоном к этой станции; где направление близко к границе — засчитываем обе стороны
+const SHT={
+  g_begovaya:{type:'dir',q:'Скоро первая станция — Беговая. Рядом Финский залив. В какой стороне от Беговой залив?',a:['З','СЗ'],why:'Финский залив — на западе. Петербург стоит на его восточном берегу.',hint:'Посмотри на карту: где синее море — справа или слева? Север на карте сверху.'},
+  g_zenit:{type:'dir',q:'Едем от Беговой к Зениту. В какой стороне от Беговой находится Зенит?',a:['Ю','ЮВ'],why:'Зенит южнее Беговой: на карте он ниже. Совсем чуть-чуть правее, поэтому юго-восток тоже верно.',hint:'На карте север сверху. Зенит выше или ниже Беговой?'},
+  g_primorsk:{type:'pick',q:'Едем к Приморской. Приморская от Зенита — севернее или южнее?',opts:['Южнее','Севернее'],a:['Южнее'],why:'Приморская ниже Зенита на карте, значит, южнее.',hint:'Север на карте сверху. Где Приморская — выше или ниже Зенита?'},
+  g_gostiny:{type:'pick',q:'Едем к Гостиному двору, в самый центр города. Гостиный двор от Василеостровской — восточнее или западнее?',opts:['Восточнее','Западнее'],a:['Восточнее'],why:'Гостиный двор правее Василеостровской на карте, значит, восточнее. От Васильевского острова едем к Невскому проспекту.',hint:'Восток на карте справа, запад — слева.'},
+  g_elizar:{type:'dir',q:'Впереди один из самых длинных перегонов в метро — 4 километра! В какой стороне от Площади Александра Невского находится Елизаровская?',a:['ЮВ'],why:'Елизаровская ниже и правее — это юго-восток. Дальше ветка идёт на юго-восток до самого Рыбацкого.',hint:'Вниз и вправо на карте — между югом и востоком.'},
+  g_prolet:{type:'dir',q:'Едем к Пролетарской. В какой стороне от Ломоносовской находится Пролетарская?',a:['ЮВ'],why:'Пролетарская ниже и правее Ломоносовской — это юго-восток.',hint:'Вниз и вправо на карте — между югом и востоком.'},
+  g_obukhovo:{type:'pick',q:'Едем к Обухово. Хитрый вопрос: Обухово от Пролетарской — восточнее или западнее?',opts:['Западнее','Восточнее'],a:['Западнее'],why:'Обухово чуть левее Пролетарской на карте, значит, западнее. Ветка здесь поворачивает, а дальше снова уходит на восток.',hint:'Восток на карте справа, запад — слева. Сравни, где точки.'},
+  g_rybatsk:{type:'dir',q:'Последний перегон, к Рыбацкому. Перед станцией поезд выйдет из тоннеля на улицу! В какой стороне от Обухово находится Рыбацкое?',a:['ЮВ'],why:'Рыбацкое ниже и правее Обухово — юго-восток. За Рыбацким уже только депо «Невское».',hint:'Вниз и вправо на карте.'}
+};
+let SH=null;
+const shP=(lat,lon)=>[20+(lon-30.17)*800,20+(60.005-lat)*1600];
+function shMap(fromId,toId){
+  const pts=LINE.filter(s=>s[1]&&GCOORD[s[1]]).map(s=>[s[0],s[1],shP(...GCOORD[s[1]])]);
+  const ab={g_nevsky:'Пл. А. Невского'},L={g_primorsk:[-6,14,'end'],g_vasil:[0,-10,'middle'],g_gostiny:[0,18,'middle'],g_mayak:[4,-10,'start'],g_nevsky:[8,6,'start'],g_obukhovo:[-8,4,'end']};
+  const a=fromId?shP(...GCOORD[fromId]):null,b=shP(...GCOORD[toId]);
+  return `<svg class="sh-map" viewBox="0 0 360 340" role="img" aria-label="Карта штурмана"><rect width="360" height="340" rx="12" fill="#1B2A3E"/>
+    <path d="M0 0 H40 C55 80 60 120 52 170 C46 220 30 260 0 300 Z" fill="#2C5E8E"/><text x="10" y="200" fill="#9CC4EE" font-size="11" font-weight="700" transform="rotate(-80 10 200)">Финский залив</text>
+    <path d="M${pts.map(p=>p[2].join(' ')).join(' L')}" fill="none" stroke="${LN().color}" stroke-width="5" stroke-linejoin="round"/>
+    ${a?`<path d="M${a.join(' ')} L${b.join(' ')}" stroke="#FFC861" stroke-width="3" stroke-dasharray="5 5" fill="none"/>`:''}
+    ${pts.map(([n,id,[x,y]])=>{const l=L[id]||[8,4,'start'];return `<circle cx="${x}" cy="${y}" r="4.5" fill="#fff" stroke="${LN().color}" stroke-width="2.5"/><text x="${x+l[0]}" y="${y+l[1]}" text-anchor="${l[2]}" fill="#DCE6F4" font-size="10">${esc(ab[id]||n)}</text>`}).join('')}
+    <circle cx="${(a||b)[0]}" cy="${(a||b)[1]}" r="8" fill="#FFC861" stroke="#1A1206" stroke-width="2"/>
+    <path d="M335 14 l7 18 l-7 -5 l-7 5Z" fill="#3E7EE0"/><text x="335" y="46" text-anchor="middle" fill="#fff" font-size="12" font-weight="800">С</text></svg>`;
+}
+function shCompass(){
+  return `<svg class="sh-cmp" viewBox="0 0 240 240" role="group" aria-label="Компас: выбери сторону света"><circle cx="120" cy="120" r="70" fill="#0F1A33" stroke="#3B475E" stroke-width="3"/>
+    <g id="shNeedle" style="transform-origin:120px 120px;transform:rotate(${SH.needle||0}deg)"><path d="M120 60 L128 120 L112 120Z" fill="#3E7EE0"/><path d="M120 180 L128 120 L112 120Z" fill="#D93744"/><circle cx="120" cy="120" r="6" fill="#EEF2F8"/></g>
+    ${SH_DIRS.map((d,i)=>{const r=(i*45-90)*Math.PI/180,x=(120+98*Math.cos(r)).toFixed(1),y=(120+98*Math.sin(r)).toFixed(1);
+      return `<g class="sh-dir${SH.right.includes(d)?' right':''}${SH.wrong===d?' wrong':''}" tabindex="0" role="button" aria-label="${SH_W[i]}" data-sh="${d}" data-i="${i}"><circle cx="${x}" cy="${y}" r="19"/><text x="${x}" y="${(+y+4.5).toFixed(1)}" text-anchor="middle">${d}</text></g>`}).join('')}</svg>`;
+}
+function vSht(){
+  const q=SH.q,to=STOPS[SH.to];
+  return `<section class="sh"><div class="sh-board"><span class="badge">${LN().num}</span><div><b>${SH.go?'Зелёный! Отправляемся':'Ждём сигнала на отправление'}</b><small>Следующая станция — ${esc(to.name)}</small></div><i class="sh-light${SH.go?' go':''}" aria-hidden="true"></i></div>
+    <div class="sh-main"><div class="sh-box"><h3>Карта штурмана</h3>${shMap(SH.from,to.id)}</div>
+    <div class="sh-box sh-c"><h3>${q.type==='dir'?'Компас':'Ответ штурмана'}</h3><p class="sh-radio${SH.cls?' '+SH.cls:''}" aria-live="polite"><small>Диспетчер${SH.cls==='ok'?': верно!':''}</small>${esc(SH.msg)}</p>
+      ${q.type==='dir'?shCompass():`<div class="sh-picks">${q.opts.map(o=>`<button class="sh-pk${SH.right.includes(o)?' right':''}${SH.wrong===o?' wrong':''}" type="button" data-sh="${esc(o)}"${SH.done?' disabled':''}>${esc(o)}</button>`).join('')}</div>`}</div></div></section>`;
+}
+// перед перегоном к станции с вопросом: поезд стоит, диспетчер спрашивает, после ответа — зелёный сигнал и поездка
+function shturman(to,then){
+  const id=STOPS[to].id,q=SHT[id];
+  SH={to,q,from:to>0?STOPS[to-1].id:null,msg:q.q,cls:'',right:[],wrong:null,tries:0,done:false,go:false,then};
+  view='sht';renderPanel();say(q.q);
+}
+function shAnswer(d){
+  if(!SH||SH.done)return;const q=SH.q;
+  if(q.type==='dir')SH.needle=SH_DIRS.indexOf(d)*45;
+  if(q.a.includes(d)){SH.done=true;SH.right=[d];SH.cls='ok';SH.msg=q.why+(SH.tries?'':' Отличная навигация!');}
+  else{SH.tries++;SH.wrong=d;
+    if(SH.tries<2){SH.cls='bad';SH.msg='Не совсем. '+q.hint}
+    else{SH.done=true;SH.right=q.a.slice();SH.cls='bad';SH.msg=`Правильно — ${q.type==='dir'?q.a.map(x=>SH_W[SH_DIRS.indexOf(x)]).join(' или '):q.a[0].toLowerCase()}. ${q.why}`}}
+  renderPanel();say(SH.msg);
+  if(SH.done){const s=SH;setTimeout(()=>{if(SH!==s||view!=='sht')return;s.go=true;renderPanel();setTimeout(()=>{if(SH===s){SH=null;s.then()}},1400)},2600)}
+}
+$('#panel').addEventListener('click',e=>{const b=e.target.closest('[data-sh]');if(b&&view==='sht')shAnswer(b.dataset.sh)});
+$('#panel').addEventListener('keydown',e=>{const b=e.target.closest&&e.target.closest('.sh-dir');if(b&&(e.key==='Enter'||e.key===' ')){e.preventDefault();shAnswer(b.dataset.sh)}});
+
+// «двери в двери»: остановить поезд так, чтобы двери вагона встали напротив дверей станции
+let DD=null;
+function vDoors(){
+  const s=STOPS[DD.to];
+  return `<section class="dd"><div class="dd-scene"><svg id="ddSv" viewBox="0 0 ${DD.view*20} 400" role="img" aria-label="Станция ${esc(s.name)}: стена с дверями, подходит поезд"></svg></div>
+    <div class="dd-hud"><span>Скорость: <b id="ddSp">—</b></span><span>До совмещения дверей: <b id="ddD">—</b></span></div>
+    <div class="dd-desk"><div class="dd-lever" id="ddLever" tabindex="0" role="slider" aria-label="Тормоз" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="dd-fill" id="ddFill"></div><small class="t">0</small><small class="b">ТОРМ</small><div class="dd-knob" id="ddKnob"></div></div>
+      <div class="dd-side"><p class="dd-say" id="ddSay" aria-live="polite"></p><div class="dd-stars" id="ddStars" hidden></div></div></div></section>`;
+}
+function doorsArrive(to){
+  const st=STOPS[to],wide=($('#panel').clientWidth||900)>620,VIEW=wide?48:26,PX=20,TARGET=VIEW-2,CAR=19.6,DOORS=[2.8,7.4,12,16.6],DW=1.3,OPEN=1.7;
+  DD={to,view:VIEW};view='doors';renderPanel();
+  const sv=document.getElementById('ddSv'),W=VIEW*PX;
+  const el=(n,a,p)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);(p||sv).appendChild(e);return e};
+  const OPENINGS=[];for(let c=0;c<3;c++)DOORS.forEach(o=>{const x=TARGET-c*CAR-o;if(x>0.8&&x<VIEW-.5)OPENINGS.push(x)});
+  el('rect',{x:0,y:0,width:W,height:400,fill:'#0B1120'});
+  const train=el('g',{}),doorEls=[];
+  for(let c=0;c<3;c++){const x0=-c*CAR*PX-CAR*PX+6,g=el('g',{transform:`translate(${x0} 0)`},train);
+    el('rect',{x:0,y:150,width:CAR*PX-12,height:175,rx:12,fill:'#2E5EA8'},g);el('rect',{x:0,y:296,width:CAR*PX-12,height:9,fill:'#C2342E'},g);el('rect',{x:0,y:150,width:CAR*PX-12,height:14,rx:6,fill:'#25498A'},g);
+    [[0,DOORS[0]],[DOORS[0],DOORS[1]],[DOORS[1],DOORS[2]],[DOORS[2],DOORS[3]],[DOORS[3],CAR]].forEach(([p,q])=>{const w=Math.min(2.4,(q-p)-1.8);if(w<.6)return;const cx=(CAR-(p+q)/2)*PX-6;el('rect',{x:cx-w*PX/2,y:178,width:w*PX,height:46,rx:5,fill:'#9FC0E8',opacity:.85},g)});
+    DOORS.forEach(o=>{const dx=(CAR-o)*PX-6-DW*PX/2;
+      const l=el('rect',{x:dx,y:168,width:DW*PX/2,height:150,fill:'#B9C7DB',stroke:'#1C3A6E','stroke-width':2},g),r=el('rect',{x:dx+DW*PX/2,y:168,width:DW*PX/2,height:150,fill:'#B9C7DB',stroke:'#1C3A6E','stroke-width':2},g);
+      doorEls.push([l,r,dx])})}
+  let d=`M0 100 H${W} V330 H0 Z`;OPENINGS.forEach(x=>{const a=(x-OPEN/2)*PX,b=(x+OPEN/2)*PX;d+=` M${a} 168 V330 H${b} V168 Z`});
+  el('path',{d,fill:'#ECEEF1','fill-rule':'evenodd'});el('rect',{x:0,y:100,width:W,height:30,fill:LN().color});el('rect',{x:0,y:130,width:W,height:4,fill:'#FFF3C8'});
+  const stDoors=OPENINGS.map(x=>{const a=(x-OPEN/2)*PX,w=OPEN*PX/2;el('rect',{x:a-4,y:164,width:OPEN*PX+8,height:4,fill:'#8E98A6'});
+    return {l:el('rect',{x:a,y:168,width:w,height:162,fill:'#1B2A44','fill-opacity':.22,stroke:'#8E98A6','stroke-width':2}),r:el('rect',{x:a+w,y:168,width:w,height:162,fill:'#1B2A44','fill-opacity':.22,stroke:'#8E98A6','stroke-width':2}),a,w,lamp:el('circle',{cx:x*PX,cy:154,r:5,fill:'#3A4252'})}});
+  el('rect',{x:0,y:0,width:W,height:50,fill:'#E9ECF0'});for(let i=0;i<W/80;i++)el('rect',{x:20+i*80,y:18,width:50,height:10,rx:4,fill:'#FFF7DA'});
+  el('rect',{x:0,y:50,width:W,height:50,fill:'#1A2744'});el('rect',{x:0,y:50,width:W,height:3,fill:'#B89A5E'});el('rect',{x:0,y:97,width:W,height:3,fill:'#B89A5E'});
+  const nm=el('text',{x:W/2,y:84,'text-anchor':'middle','font-family':'Dela Gothic One,sans-serif','font-size':Math.min(26,W*1.5/Math.max(10,st.name.length)),fill:'#F4F8FF','letter-spacing':1});nm.textContent=st.name.toUpperCase();
+  el('rect',{x:0,y:330,width:W,height:70,fill:'#6E7480'});el('rect',{x:0,y:330,width:W,height:5,fill:'#D5DAE2'});
+  // ручка тормоза: вниз — сильнее, вверх — слабее; клавиатура ↓/↑
+  const lv=$('#ddLever'),knob=$('#ddKnob'),fill=$('#ddFill');let brake=0;const vert=()=>lv.clientHeight>lv.clientWidth;
+  const setB=b=>{brake=Math.max(0,Math.min(1,b));lv.setAttribute('aria-valuenow',Math.round(brake*100));
+    if(vert()){knob.style.top=(4+brake*(lv.clientHeight-knob.offsetHeight-8))+'px';knob.style.left='6px';knob.style.width='';fill.style.height=(brake*100)+'%';fill.style.width=''}
+    else{knob.style.left=(4+brake*(lv.clientWidth-60))+'px';knob.style.top='13px';knob.style.width='52px';fill.style.height='100%';fill.style.width=(brake*100)+'%'}};
+  const fromP=e=>{const r=lv.getBoundingClientRect();setB(vert()?(e.clientY-r.top-17)/(r.height-34):(e.clientX-r.left-26)/(r.width-52))};
+  let drag=false;lv.addEventListener('pointerdown',e=>{drag=true;try{lv.setPointerCapture(e.pointerId)}catch(_){}fromP(e)});lv.addEventListener('pointermove',e=>{if(drag)fromP(e)});
+  ['pointerup','pointercancel'].forEach(t=>lv.addEventListener(t,()=>drag=false));
+  const kd=e=>{if(view!=='doors')return;if(e.key==='ArrowDown'){e.preventDefault();setB(brake+.1)}if(e.key==='ArrowUp'){e.preventDefault();setB(brake-.1)}};document.addEventListener('keydown',kd);
+  const sayEl=(t,c)=>{const s=$('#ddSay');if(s){s.textContent=t;s.className='dd-say'+(c?' '+c:'')}};
+  const first=!S.ddSeen;sayEl(first?'Это станция закрытого типа: вдоль пути стена с дверями. Тормози ручкой так, чтобы двери вагона встали точно напротив дверей станции.':'Двери в двери! Тормози плавно и смотри на проёмы.');
+  if(first){S.ddSeen=true;save()}
+  let x=TARGET-62,v=12.5,state='run',fix=0,last=0;setB(0);
+  const draw=()=>{train.setAttribute('transform',`translate(${(x*PX).toFixed(1)} 0)`);const err=TARGET-x;
+    const sp=$('#ddSp'),dd=$('#ddD');if(sp)sp.textContent=Math.round(v*3.6)+' км/ч';if(dd)dd.textContent=(err<=-.05?'−':'')+Math.abs(err).toFixed(1).replace('.',',')+' м';
+    const near=Math.abs(err)<1.2;stDoors.forEach(s=>s.lamp.setAttribute('fill',state==='done'?'#5EE6C1':near?'#FFC861':'#3A4252'))};
+  const open=(stars,text)=>{state='done';v=0;if(Math.abs(TARGET-x)>.5)x=TARGET;draw();document.removeEventListener('keydown',kd);
+    sayEl(text,'ok');if(stars===3)chime();doorsSound();
+    const t0=performance.now(),anim=t=>{const k=Math.min(1,(t-t0)/700);stDoors.forEach(s=>{s.l.setAttribute('x',s.a-k*s.w*.92);s.r.setAttribute('x',s.a+s.w+k*s.w*.92)});
+      doorEls.forEach(([l,r,dx])=>{l.setAttribute('x',dx-k*DW*PX*.45);r.setAttribute('x',dx+DW*PX/2+k*DW*PX*.45)});if(k<1)requestAnimationFrame(anim)};requestAnimationFrame(anim);
+    const se=$('#ddStars');if(se){se.innerHTML=[1,2,3].map(i=>`<i class="${i<=stars?'on':''}">★</i>`).join('');se.hidden=false}
+    const Ln=S.lines[S.line];Ln.doors=Ln.doors||{};if(!Ln.doors[st.id]||stars>Ln.doors[st.id])Ln.doors[st.id]=stars;save();
+    Promise.all([say(text).then(()=>say(withXfer(P('arrive',{station:st.name}),st.id))),wait(2600)]).then(()=>{if(DD&&DD.to===to){DD=null;moving=false;S.cur=to;save();view='station';task=newTask();render();autoAsk(true)}})};
+  const finish=()=>{const err=TARGET-x,ae=Math.abs(err),f=n=>n.toFixed(1).replace('.',',');
+    if(ae<=.25)open(3,'Двери в двери! Точно как у настоящего машиниста.');
+    else if(ae<=.5)open(2,'Двери совпали! Чуть-чуть неточно, но пассажиры пройдут.');
+    else{state='fix';fix=TARGET;sayEl(err>0?`Не доехал ${f(ae)} м: двери не совпали. Подтягиваемся тихонько…`:`Проехал на ${f(ae)} м: двери не совпали. Сдаём назад…`,'bad');if(err<0)for(let t=0;t<2.5;t+=.9)tone(980,t+.3,.22,.07,'square')}};
+  const step=t=>{if(view!=='doors'||!DD||DD.to!==to)return;const dt=last?Math.min(.05,(t-last)/1000):0;last=t;
+    if(state==='run'){v=Math.max(0,v-(.08+brake*1.9)*dt);if(x>TARGET+6)v=Math.max(0,v-4*dt);x+=v*dt;if(v===0)finish()}
+    else if(state==='fix'){const dir=Math.sign(fix-x);x+=dir*1.2*dt;v=1.2;if(Math.sign(fix-x)!==dir){x=fix;v=0;open(1,'Теперь двери совпали. В следующий раз тормози раньше и плавнее.')}}
+    draw();if(state!=='done')requestAnimationFrame(step)};
+  if(reduce){x=TARGET;open(3,'Двери в двери!');return}
+  draw();setTimeout(()=>requestAnimationFrame(step),first?2600:900);
+}
+// что дальше после перегона: «двери в двери», автоматическая остановка (у «Штурмана») или обычная остановка у знака
+function afterRide(to){
+  const id=STOPS[to].id;
+  if(GREEN_LINES[S.line]&&GDOORS[id]){doorsArrive(to);return}
+  if(GREEN_LINES[S.line]){arrive(to,{quiet:true});return}
+  arrive(to);
+}
+const GREEN_LINES={green:true};
 function vArrival(){
   const s=STOPS[arrTo],fs=`clamp(16px,${(110/Math.max(8,s.name.length)).toFixed(2)}vw,46px)`,dc=decorBG(s.id);
   const L=arrLayers(s.id),A=L&&L.a;
@@ -2874,8 +3186,8 @@ const SG_RANK={perfect:3,good:2,short:1,over:1};
 const sgStars=abs=>abs<=.5?3:abs<=2?2:abs<=5?1:0;
 const recOf=(id,k)=>((S.lines[k||S.line]||{}).rec||{})[id];
 // прибытие: поезд выезжает из тоннеля слева, машинист тормозит кнопкой, оценка остановки, двери разъезжаются
-function arrive(to){
-  const st=STOPS[to],name=st.name;
+function arrive(to,opt){
+  const st=STOPS[to],name=st.name,quiet=!!(opt&&opt.quiet);
   arrTo=to;view='arrival';renderPanel();
   const host=document.querySelector('.platform'),tr=document.getElementById('ptTrain'),fl=document.getElementById('ptFlash');
   const W=host.clientWidth,TW=tr.getBoundingClientRect().width,headOff=TW*SG_HEAD;
@@ -2924,10 +3236,11 @@ function arrive(to){
   const ku=e=>{if(auto)return;if((e.code==='Space'||e.code==='KeyB')&&spaceK!==null){e.preventDefault();setK(spaceK);spaceK=null}};
   document.getElementById('sgSkip').addEventListener('click',()=>{auto=true;drag=false;document.getElementById('sgSkip').hidden=true;lever.classList.add('auto');lever.setAttribute('aria-disabled','true')});
   document.addEventListener('keydown',kd);document.addEventListener('keyup',ku);
-  hud.hidden=false;ctrl.hidden=false;
-  const first=!S.sgSeen;
+  if(quiet){auto=true;mark.hidden=true}
+  else{hud.hidden=false;ctrl.hidden=false;}
+  const first=!S.sgSeen&&!quiet;
   tip.innerHTML=first?'<b>Ты машинист!</b>Тяни ручку тормоза вниз: чем ниже, тем сильнее тормоз. Останови первый вагон точно у знака СТОП.':'<b>Тормози у знака!</b>';
-  tip.hidden=false;
+  tip.hidden=quiet;
   if(first){S.sgSeen=true;save()}
   const frame=t=>{
     if(!last)last=t;
@@ -2947,6 +3260,7 @@ function arrive(to){
   const stop=()=>{
     ended=true;drag=false;cancelAnimationFrame(raf);hiss.stop();
     document.removeEventListener('keydown',kd);document.removeEventListener('keyup',ku);
+    if(quiet){place(target);finish();return}
     const err=(head-target)/meter,abs=Math.abs(err);
     const grade=abs<=.5?'perfect':abs<=2?'good':err<0?'short':'over';
     const titles={perfect:'Точно у знака!',good:'Хорошая остановка!',short:abs>6?'Рановато затормозил':'Чуть-чуть не доехал',over:'Проехал знак'};
@@ -2982,7 +3296,8 @@ function arrive(to){
     }
     Promise.all([spoken,adjust,wait(1400)]).then(()=>{res.animate([{opacity:1},{opacity:0}],{duration:300,fill:'forwards'});finish()});
   };
-  setTimeout(()=>{tip.hidden=true;raf=requestAnimationFrame(frame)},first?3400:1000);
+  if(!quiet)setTimeout(()=>{tip.hidden=true;raf=requestAnimationFrame(frame)},first?3400:1000);
+  else raf=requestAnimationFrame(frame);
 }
 
 function complete(){
