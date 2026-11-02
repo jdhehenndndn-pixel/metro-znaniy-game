@@ -2420,7 +2420,7 @@ function vRide(){
     <div class="cab-board">
       <p class="cb-top" id="cbTop">${transfer?`Пересадка на ${esc(LN().acc)} · `:''}Осторожно, двери закрываются!</p>
       <h2><span class="badge" aria-hidden="true">${LN().num}</span>Следующая станция&nbsp;— ${esc(STOPS[rideTo].name)}</h2>
-      <p class="ride-info">${rideTo===0?'Выезжаем из депо':'Перегон '+fmtKm(km)+' км'} · осталось <span id="cbRem">${fmtKm(km)}</span> км${underNeva(rideTo)?' · <b>Едем под Невой! Над нами река</b>':''}</p>
+      <p class="ride-info">${rideTo===0?(S.line==='green'?'Начинаем рейс':'Выезжаем из депо'):'Перегон '+fmtKm(km)+' км'} · осталось <span id="cbRem">${fmtKm(km)}</span> км${underNeva(rideTo)?' · <b>Едем под Невой! Над нами река</b>':''}</p>
     </div>
     <div class="cab-desk" aria-hidden="true">
       <div class="cab-unit"><div class="cab-lever" id="cabLever" data-pos="0"><span class="cl-lab l-run">ХОД</span><span class="cl-lab l-0">0</span><span class="cl-lab l-brake">ТОРМ</span><i class="cl-slot"></i><i class="cl-knob"></i></div><span class="cab-cap">Контроллер</span></div>
@@ -2860,7 +2860,11 @@ const DECOR={
   r_vosst:['#EAE1D0','medal','#C9A65E'],r_vlad:['#E8DDD6','pilasters','#B5524A'],r_pushk:['#EFECE6','arches','#8E8670'],
   r_tehn:['#DDD7CB','reliefs','#9A6A12'],r_balt:['#D7DCE3','aurora','#3E6EA8'],r_narv:['#E6DCCB','sculpt','#A8741C'],
   r_kirov:['#D0D3D8','industry','#5A6272'],r_avtovo:['#E4DCCF','glass','#C9A65E'],r_leninsky:['#DEE1E6','marble','#C24A3A'],
-  r_veteranov:['#E3E0D8','pilasters','#D93744']
+  r_veteranov:['#E3E0D8','pilasters','#D93744'],
+  g_begovaya:['#DADFE6','tiles','#3E5C8A'],g_zenit:['#EEF1F5','tiles','#2E6FB8'],g_primorsk:['#C9CCD0','marble','#8C6A2E'],
+  g_vasil:['#EEEEEB','marble','#2E8A8A'],g_gostiny:['#F1F0EC','pilasters','#5A6678'],g_mayak:['#C8473F','tiles','#B3262A'],
+  g_nevsky:['#F3F3F0','arches','#C9A65E'],g_elizar:['#E9E6DE','marble','#B87333'],g_lomonos:['#F1F0EB','reliefs','#A07A3A'],
+  g_prolet:['#F1E6E2','pilasters','#B3262A'],g_obukhovo:['#EFEEEA','arches','#B87333'],g_rybatsk:['#D9DEE6','daylight','#5E9AC8']
 };
 // фирменные стены узнаваемых станций: SVG-плитка во всю высоту стены (в духе станции, не точная копия)
 const svgTile=(w,h,body)=>`url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${body}</svg>`)}")`;
@@ -2981,9 +2985,30 @@ const ARR={
     wall:`linear-gradient(rgba(0,0,0,0) 48.2%,#5A6678 48.2% 50.9%,rgba(0,0,0,0) 50.9%),${tileBG(60,112,'<rect width="5" height="112" fill="#5A6678"/>')},linear-gradient(rgba(0,0,0,0) 62.5%,#7E95AE 62.5%),${tileBG(110,112,'<rect x="10" y="46" width="34" height="66" fill="#A7B6C8"/><rect x="65" y="33" width="34" height="79" fill="#A7B6C8"/><rect x="16" y="54" width="5" height="6" fill="#E9F0F7"/><rect x="25" y="54" width="5" height="6" fill="#E9F0F7"/><rect x="71" y="41" width="5" height="6" fill="#E9F0F7"/><rect x="80" y="41" width="5" height="6" fill="#E9F0F7"/>')},linear-gradient(#9CC9EE,#DCEEFA)`,
     floor:'linear-gradient(#8A9098,#1F242E)'}
 };
-// слои сцены прибытия для станции синей ветки; пусто — сцена как раньше
+// зелёная ветка: сцены прибытия станций с обычной остановкой (лист prototypes/pribytie-zelenaya-12.html)
+Object.assign(ARR,{
+  g_begovaya:{ceil:tileBG(60,30,'<rect width="60" height="30" fill="#E4E8EE"/><circle cx="30" cy="17" r="9" fill="#FFF7DA"/><path d="M30 17 L41 17 M30 17 L24.5 26.5 M30 17 L24.5 7.5" stroke="#8E98A6" stroke-width="3"/><circle cx="30" cy="17" r="2.6" fill="#5A6678"/>'),
+    wall:'linear-gradient(rgba(0,0,0,0) 82.1%,#1E2128 82.1%),linear-gradient(#DADFE6,#C6CDD7)',floor:'linear-gradient(#7E848E,#1F242E)',
+    pyl:{bg:'linear-gradient(90deg,#AEB6C2,#E3E8EE 45%,#AEB6C2)'},
+    feat:[PF(28,70,440,68,pRep(4,i=>{const x=30+i*115;return `<rect x="${x}" y="72" width="90" height="64" rx="3" fill="#BFE0F5" stroke="#8EA6BE" stroke-width="2"/><g transform="translate(${x+45} 104) rotate(-12)" fill="#3E5C8A"><path d="M-30 0 L22 -3 L30 0 L22 3 Z"/><path d="M-4 -2 L-14 -18 L-8 -18 L6 -2 Z M-4 2 L-14 18 L-8 18 L6 2 Z"/><path d="M-26 -1 L-30 -10 L-26 -10 L-20 -1 Z"/></g>`})),
+      PF(26,64,428,118,`<rect x="26" y="66" width="428" height="116" fill="#CFEAF8" opacity=".16"/>`+pRep(8,i=>`<rect x="${30+i*60}" y="66" width="3" height="116" fill="#AEB6C2" opacity=".8"/>`),1)]},
+  g_zenit:{ceil:tileBG(48,30,'<rect width="48" height="30" fill="#C9D2DC"/><path d="M10 8 l10 8 l-6 2 l10 8" stroke="#FFFBEA" stroke-width="3" fill="none"/>'),
+    wall:`linear-gradient(rgba(0,0,0,0) 73.2%,#2E6FB8 73.2% 80.4%,#FFFFFF 80.4% 87.5%,#8EC8FF 87.5% 94.6%,rgba(0,0,0,0) 94.6%),${tileBG(24,112,'<rect width="24" height="26" fill="#2E6FB8"/><path d="M0 20 q6 -10 12 0 t12 0" stroke="#FFFFFF" stroke-width="2.4" fill="none"/><path d="M6 12 q6 -8 12 0" stroke="#8EC8FF" stroke-width="2" fill="none"/>')},linear-gradient(#EEF1F5,#D9DFE7)`,
+    floor:'linear-gradient(#8A8F98,#1F242E)',pyl:{bg:'linear-gradient(90deg,#B9C3D0,#F2F5F9 45%,#B9C3D0)'}},
+  g_primorsk:{wall:'linear-gradient(#C9CCD0,#B3B7BD)',floor:'linear-gradient(#7C8088,#1F242E)',pyl:{bg:'linear-gradient(90deg,#9EA3AA,#C9CCD0 45%,#9EA3AA)'},
+    feat:[PF(46,74,268,68,pRep(3,i=>{const x=80+i*120;return `<circle cx="${x}" cy="108" r="30" fill="#B08A4E" stroke="#8C6A2E" stroke-width="3"/><g transform="translate(${x} 110)" fill="#6E5224"><path d="M-18 6 H18 L12 14 H-12 Z"/><path d="M-2 6 V-20 M2 6 V-20" stroke="#6E5224" stroke-width="2"/><path d="M1 -18 L14 2 H1 Z M-1 -16 L-12 2 H-1 Z"/></g>`})),
+      PF(392,78,56,72,`<g transform="translate(420 112)" fill="none" stroke="#4E555F" stroke-width="5" stroke-linecap="round"><circle cx="0" cy="-26" r="5"/><path d="M0 -21 V22 M-12 -12 H12"/><path d="M-22 8 q4 16 22 16 q18 0 22 -16"/></g>`)]},
+  g_prolet:{frz:['#7A2226','#E8DCD6'],wall:'linear-gradient(#F1E6E2,#E2D2CC)',floor:'repeating-linear-gradient(90deg,#8A2A2A 0 22px,#6E7078 22px 44px,#1E1C1E 44px 66px)',
+    pyl:{bg:'linear-gradient(rgba(0,0,0,0) 22%,#B3262A 22% 29%,rgba(0,0,0,0) 29%),#F4F1EE'}},
+  g_obukhovo:{frz:['#2B2F36','#B87333'],wall:'linear-gradient(#EFEEEA,#DCDAD4)',floor:'linear-gradient(#5E626A,#2B2F36)',
+    feat:[PF(64,118,352,112,pRep(3,i=>{const x=90+i*150;return `<rect x="${x-2}" y="150" width="4" height="72" fill="#8C5A2A"/><path d="M${x-16} 150 h32 l-6 -22 h-20 Z" fill="#B87333"/><path d="M${x-10} 128 h20" stroke="#FFE7A0" stroke-width="3"/><ellipse cx="${x}" cy="222" rx="12" ry="3" fill="#8C5A2A"/>`}),1)]},
+  g_rybatsk:{ground:1,frz:['#2C3E5E','#8EA0BC'],ceil:tileBG(20,30,'<rect width="20" height="30" fill="#B7C2CF"/><rect width="10" height="30" fill="#A3AEBB"/>'),
+    wall:`linear-gradient(#9AA3B2 0 7.1%,rgba(0,0,0,0) 7.1%),${tileBG(60,112,'<rect width="6" height="112" fill="#9AA3B2"/>')},linear-gradient(rgba(0,0,0,0) 66%,#7E95AE 66%),${tileBG(136,112,'<rect x="20" y="46" width="40" height="66" fill="#B7C3D2"/><rect x="88" y="58" width="40" height="54" fill="#B7C3D2"/>')},linear-gradient(#A9D2F0,#E2F1FB)`,
+    floor:'linear-gradient(#8A9098,#1F242E)'}
+});
+// слои сцены прибытия; пусто — сцена как раньше
 function arrLayers(id){
-  const a=S.line==='blue'&&ARR[id];if(!a)return null;
+  const a=ARR[id];if(!a)return null;
   const box=f=>`left:${(f.x/4.8).toFixed(2)}%;top:${(25+(f.y-58)/112*46).toFixed(2)}%;width:${(f.w/4.8).toFixed(2)}%;height:${(f.h/112*46).toFixed(2)}%`;
   const feat=f=>`<div class="pa-feat${f.front?' pa-front':''}" style="${box(f)}"><svg viewBox="${f.x} ${f.y} ${f.w} ${f.h}" preserveAspectRatio="xMidYMid meet">${f.body}</svg></div>`;
   let front='';
@@ -2997,6 +3022,10 @@ function arrLayers(id){
 // ---------- зелёная ветка: «Штурман» перед отправлением и «двери в двери» на станциях закрытого типа ----------
 // лист прототипов: prototypes/shturman-prototip.html и prototypes/dveri-prototip.html
 const GDOORS={g_vasil:1,g_gostiny:1,g_mayak:1,g_nevsky:1,g_elizar:1,g_lomonos:1};
+// отделка станций закрытого типа (лист prototypes/pribytie-zelenaya-12.html)
+const GDSTYLE={g_vasil:{wall:'#EEEEEB',door:'#2A2E36',band:'#2E8A8A',dots:'#4FB0A8'},g_gostiny:{wall:'#F1F0EC',door:'#111317',band:'#C2CAD4'},
+  g_mayak:{wall:'#B3262A',door:'#2A2E36',band:'#8E1E22',dots:'#D23A3A',banners:1},g_nevsky:{wall:'#F3F3F0',door:'#2A2E36',band:'#D5D9DE',panels:1},
+  g_elizar:{wall:'#E9E6DE',door:'#16191F',band:'#B87333',name:1,ribs:1},g_lomonos:{wall:'#F1F0EB',door:'#2A2E36',band:'#C9CED6',brass:1}};
 // координаты станций — из статей Википедии; направление считаем по прямой между станциями
 const GCOORD={g_begovaya:[59.987306,30.202472],g_zenit:[59.97222,30.21167],g_primorsk:[59.9485,30.234],g_vasil:[59.942583,30.278222],g_gostiny:[59.93389,30.33417],g_mayak:[59.931611,30.355028],
   g_nevsky:[59.9243694,30.3849889],g_elizar:[59.8967,30.4235],g_lomonos:[59.8773167,30.4416861],g_prolet:[59.8651944,30.4702722],g_obukhovo:[59.8487111,30.4577417],g_rybatsk:[59.8308778,30.5001167]};
@@ -3082,9 +3111,19 @@ function doorsArrive(to){
       const l=el('rect',{x:dx,y:168,width:DW*PX/2,height:150,fill:'#B9C7DB',stroke:'#1C3A6E','stroke-width':2},g),r=el('rect',{x:dx+DW*PX/2,y:168,width:DW*PX/2,height:150,fill:'#B9C7DB',stroke:'#1C3A6E','stroke-width':2},g);
       doorEls.push([l,r,dx])})}
   let d=`M0 100 H${W} V330 H0 Z`;OPENINGS.forEach(x=>{const a=(x-OPEN/2)*PX,b=(x+OPEN/2)*PX;d+=` M${a} 168 V330 H${b} V168 Z`});
-  el('path',{d,fill:'#ECEEF1','fill-rule':'evenodd'});el('rect',{x:0,y:100,width:W,height:30,fill:LN().color});el('rect',{x:0,y:130,width:W,height:4,fill:'#FFF3C8'});
+  const SY=GDSTYLE[st.id]||{wall:'#ECEEF1',door:'#1B2A44',band:LN().color};
+  el('path',{d,fill:SY.wall,'fill-rule':'evenodd'});el('rect',{x:0,y:100,width:W,height:30,fill:SY.band});el('rect',{x:0,y:130,width:W,height:4,fill:'#FFF3C8'});
+  if(SY.dots)for(let i=0;i<W/8;i++)el('rect',{x:i*8,y:104,width:5,height:5,fill:SY.dots,opacity:.8});
+  if(SY.name)for(let i=0;i<W/120;i++){const t=el('text',{x:60+i*120,y:120,'text-anchor':'middle','font-family':'Onest,sans-serif','font-weight':800,'font-size':10,fill:'#3E2410'});t.textContent=st.name.toUpperCase()}
+  OPENINGS.forEach(x=>{const a=(x-OPEN/2)*PX,b=(x+OPEN/2)*PX;
+    if(SY.banners){el('path',{d:`M${a-24} 168 h12 v90 l-6 -8 l-6 8 Z`,fill:'#E0414B'});el('path',{d:`M${b+12} 168 h12 v90 l-6 -8 l-6 8 Z`,fill:'#E0414B'})}
+    if(SY.panels)el('rect',{x:a-6,y:140,width:b-a+12,height:12,rx:2,fill:'#FFF7DA',stroke:'#C9CED6','stroke-width':1.5});
+    if(SY.brass)el('rect',{x:a+4,y:146,width:b-a-8,height:6,rx:1,fill:'#C9A24E'})});
   const stDoors=OPENINGS.map(x=>{const a=(x-OPEN/2)*PX,w=OPEN*PX/2;el('rect',{x:a-4,y:164,width:OPEN*PX+8,height:4,fill:'#8E98A6'});
-    return {l:el('rect',{x:a,y:168,width:w,height:162,fill:'#1B2A44','fill-opacity':.22,stroke:'#8E98A6','stroke-width':2}),r:el('rect',{x:a+w,y:168,width:w,height:162,fill:'#1B2A44','fill-opacity':.22,stroke:'#8E98A6','stroke-width':2}),a,w,lamp:el('circle',{cx:x*PX,cy:154,r:5,fill:'#3A4252'})}});
+    const op={x:a,y:168,width:w,height:162,fill:SY.door,'fill-opacity':.3,stroke:'#8E98A6','stroke-width':2};
+    const l=el('rect',op),rr=el('rect',Object.assign({},op,{x:a+w}));
+    if(SY.ribs)[0,1,2,3].forEach(j=>{el('rect',{x:a,y:228+j*7,width:2*w,height:2.4,fill:'#4A4E56',opacity:.7})});
+    return {l,r:rr,a,w,lamp:el('circle',{cx:x*PX,cy:SY.panels||SY.brass?162:154,r:5,fill:'#3A4252'})}});
   el('rect',{x:0,y:0,width:W,height:50,fill:'#E9ECF0'});for(let i=0;i<W/80;i++)el('rect',{x:20+i*80,y:18,width:50,height:10,rx:4,fill:'#FFF7DA'});
   el('rect',{x:0,y:50,width:W,height:50,fill:'#1A2744'});el('rect',{x:0,y:50,width:W,height:3,fill:'#B89A5E'});el('rect',{x:0,y:97,width:W,height:3,fill:'#B89A5E'});
   const nm=el('text',{x:W/2,y:84,'text-anchor':'middle','font-family':'Dela Gothic One,sans-serif','font-size':Math.min(26,W*1.5/Math.max(10,st.name.length)),fill:'#F4F8FF','letter-spacing':1});nm.textContent=st.name.toUpperCase();
