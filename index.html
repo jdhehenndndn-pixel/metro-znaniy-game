@@ -281,8 +281,9 @@ body.no-scroll{overflow:hidden}
 .sh-pk{font:800 17px var(--f-body);padding:14px 22px;border-radius:14px;border:2px solid #4A566E;background:#141A26;color:var(--ink);cursor:pointer}
 .sh-pk:hover,.sh-pk:focus-visible{border-color:var(--amber);outline:none}.sh-pk.right{border-color:#5EE6C1;background:#10302A}.sh-pk.wrong{border-color:#FF8F6B;background:#3A1A1A}
 .dd{display:flex;flex-direction:column;gap:12px}
-.dd-scene{border-radius:18px;overflow:hidden;border:1px solid var(--edge);background:#070C18}
-.dd-scene svg{display:block;width:100%;height:auto}
+.dd-scene{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--edge);background:#0B1120}
+.dd-scene svg{position:relative;display:block;width:100%;height:auto}
+.dd-scene .dd-train{position:absolute;left:0;top:0;height:100%;overflow:visible;will-change:transform}
 .dd-hud{display:flex;gap:8px;flex-wrap:wrap}
 .dd-hud span{background:#141A26;border:1px solid #3B475E;border-radius:999px;padding:4px 12px;font-size:14px;color:var(--soft)}.dd-hud b{color:var(--ink)}
 .dd-desk{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;background:linear-gradient(#2B3448,#1D2433);border:1px solid #3B475E;border-radius:18px;padding:18px 14px}
@@ -3105,7 +3106,7 @@ $('#panel').addEventListener('keydown',e=>{const b=e.target.closest&&e.target.cl
 let DD=null;
 function vDoors(){
   const s=STOPS[DD.to];
-  return `<section class="dd"><div class="dd-scene"><svg id="ddSv" viewBox="0 0 ${DD.view*20} 400" role="img" aria-label="Станция ${esc(s.name)}: стена с дверями, подходит поезд"></svg></div>
+  return `<section class="dd"><div class="dd-scene"><svg class="dd-train" id="ddTrain" viewBox="0 0 ${DD.view*20} 400" aria-hidden="true"></svg><svg id="ddSv" viewBox="0 0 ${DD.view*20} 400" role="img" aria-label="Станция ${esc(s.name)}: стена с дверями, подходит поезд"></svg></div>
     <div class="dd-hud"><span>Скорость: <b id="ddSp">—</b></span><span>До совмещения дверей: <b id="ddD">—</b></span></div>
     <div class="dd-desk"><div class="dd-lever" id="ddLever" tabindex="0" role="slider" aria-label="Тормоз" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="dd-fill" id="ddFill"></div><small class="t">0</small><small class="b">ТОРМ</small><div class="dd-knob" id="ddKnob"></div></div>
       <div class="dd-side"><p class="dd-say" id="ddSay" aria-live="polite"></p><div class="dd-stars" id="ddStars" hidden></div></div></div></section>`;
@@ -3114,11 +3115,10 @@ function doorsArrive(to){
   const st=STOPS[to],wide=($('#panel').clientWidth||900)>620,VIEW=wide?48:26,PX=20,TARGET=VIEW-2,CAR=19.6,DOORS=[2.8,7.4,12,16.6],DW=1.3,OPEN=1.7;
   DD={to,view:VIEW};view='doors';renderPanel();
   const ddBox=$('.dd');if(ddBox){const b=ddBox.getBoundingClientRect();if(b.bottom>innerHeight||b.top<0)ddBox.scrollIntoView({block:b.height<innerHeight?'end':'start',behavior:reduce?'auto':'smooth'})}
-  const sv=document.getElementById('ddSv'),W=VIEW*PX;
+  const sv=document.getElementById('ddSv'),tsv=document.getElementById('ddTrain'),W=VIEW*PX;
   const el=(n,a,p)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);(p||sv).appendChild(e);return e};
   const OPENINGS=[];for(let c=0;c<3;c++)DOORS.forEach(o=>{const x=TARGET-c*CAR-o;if(x>0.8&&x<VIEW-.5)OPENINGS.push(x)});
-  el('rect',{x:0,y:0,width:W,height:400,fill:'#0B1120'});
-  const train=el('g',{}),doorEls=[];
+  const train=el('g',{},tsv),doorEls=[];
   for(let c=0;c<3;c++){const x0=-c*CAR*PX-CAR*PX+6,g=el('g',{transform:`translate(${x0} 0)`},train);
     el('rect',{x:0,y:150,width:CAR*PX-12,height:175,rx:12,fill:'#2E5EA8'},g);el('rect',{x:0,y:296,width:CAR*PX-12,height:9,fill:'#C2342E'},g);el('rect',{x:0,y:150,width:CAR*PX-12,height:14,rx:6,fill:'#25498A'},g);
     [[0,DOORS[0]],[DOORS[0],DOORS[1]],[DOORS[1],DOORS[2]],[DOORS[2],DOORS[3]],[DOORS[3],CAR]].forEach(([p,q])=>{const w=Math.min(2.4,(q-p)-1.8);if(w<.6)return;const cx=(CAR-(p+q)/2)*PX-6;el('rect',{x:cx-w*PX/2,y:178,width:w*PX,height:46,rx:5,fill:'#9FC0E8',opacity:.85},g)});
@@ -3159,27 +3159,34 @@ function doorsArrive(to){
   const sayEl=(t,c)=>{const s=$('#ddSay');if(s){s.textContent=t;s.className='dd-say'+(c?' '+c:'')}};
   const first=!S.ddSeen;sayEl(first?'Это станция закрытого типа: вдоль пути стена с дверями. Тормози ручкой так, чтобы двери вагона встали точно напротив дверей станции.':'Двери в двери! Тормози плавно и смотри на проёмы.');
   if(first){S.ddSeen=true;save()}
-  let x=TARGET-62,v=12.5,state='run',fix=0,last=0;setB(0);
-  const draw=()=>{train.setAttribute('transform',`translate(${(x*PX).toFixed(1)} 0)`);const err=TARGET-x;
-    const sp=$('#ddSp'),dd=$('#ddD');if(sp)sp.textContent=Math.round(v*3.6)+' км/ч';if(dd)dd.textContent=(err<=-.05?'−':'')+Math.abs(err).toFixed(1).replace('.',',')+' м';
-    const near=Math.abs(err)<1.2;stDoors.forEach(s=>s.lamp.setAttribute('fill',state==='done'?'#5EE6C1':near?'#FFC861':'#3A4252'))};
+  let x=TARGET-62,v=12.5,state='run',fix=0,fixFrom=0,fixT=0,fixDur=1,ars=0,last=0;setB(0);
+  const spEl=$('#ddSp'),dEl=$('#ddD');let spTxt='',dTxt='',lampC='';
+  const draw=()=>{tsv.style.transform=`translate3d(${(x*PX/W*100).toFixed(3)}%,0,0)`;const err=TARGET-x;
+    const s1=Math.round(v*3.6)+' км/ч',s2=(err<=-.05?'−':'')+Math.abs(err).toFixed(1).replace('.',',')+' м';
+    if(spEl&&s1!==spTxt)spEl.textContent=spTxt=s1;if(dEl&&s2!==dTxt)dEl.textContent=dTxt=s2;
+    const c=state==='done'?'#5EE6C1':Math.abs(err)<1.2?'#FFC861':'#3A4252';if(c!==lampC){lampC=c;stDoors.forEach(s=>s.lamp.setAttribute('fill',c))}};
   const open=(stars,text)=>{state='done';v=0;if(Math.abs(TARGET-x)>.5)x=TARGET;draw();document.removeEventListener('keydown',kd);
     sayEl(text,'ok');if(stars===3)chime();doorsSound();
     const t0=performance.now(),anim=t=>{const k=Math.min(1,(t-t0)/700);stDoors.forEach(s=>{s.l.setAttribute('x',s.a-k*s.w*.92);s.r.setAttribute('x',s.a+s.w+k*s.w*.92)});
       doorEls.forEach(([l,r,dx])=>{l.setAttribute('x',dx-k*DW*PX*.45);r.setAttribute('x',dx+DW*PX/2+k*DW*PX*.45)});if(k<1)requestAnimationFrame(anim)};requestAnimationFrame(anim);
     const se=$('#ddStars');if(se){se.innerHTML=[1,2,3].map(i=>`<i class="${i<=stars?'on':''}">★</i>`).join('');se.hidden=false}
     const Ln=S.lines[S.line];Ln.doors=Ln.doors||{};if(!Ln.doors[st.id]||stars>Ln.doors[st.id])Ln.doors[st.id]=stars;save();
-    Promise.all([say(text).then(()=>say(withXfer(P('arrive',{station:st.name}),st.id))),wait(2600)]).then(()=>{if(DD&&DD.to===to){DD=null;moving=false;S.cur=to;save();view='station';task=newTask();render();autoAsk(true)}})};
+    Promise.all([wait(300).then(()=>say(withXfer(P('arrive',{station:st.name}),st.id))),wait(1800)]).then(()=>{if(DD&&DD.to===to){DD=null;moving=false;S.cur=to;save();view='station';task=newTask();render();autoAsk(true)}})};
   const finish=()=>{const err=TARGET-x,ae=Math.abs(err),f=n=>n.toFixed(1).replace('.',',');
     if(ae<=.25)open(3,'Двери в двери! Точно как у настоящего машиниста.');
     else if(ae<=.5)open(2,'Двери совпали! Чуть-чуть неточно, но пассажиры пройдут.');
-    else{state='fix';fix=TARGET;sayEl(err>0?`Не доехал ${f(ae)} м: двери не совпали. Подтягиваемся тихонько…`:`Проехал на ${f(ae)} м: двери не совпали. Сдаём назад…`,'bad');if(err<0)for(let t=0;t<2.5;t+=.9)tone(980,t+.3,.22,.07,'square')}};
-  const step=t=>{if(view!=='doors'||!DD||DD.to!==to)return;const dt=last?Math.min(.05,(t-last)/1000):0;last=t;
-    if(state==='run'){v=Math.max(0,v-(.08+brake*1.9)*dt);if(x>TARGET+6)v=Math.max(0,v-4*dt);x+=v*dt;if(v===0)finish()}
-    else if(state==='fix'){const dir=Math.sign(fix-x);x+=dir*1.2*dt;v=1.2;if(Math.sign(fix-x)!==dir){x=fix;v=0;open(1,'Теперь двери совпали. В следующий раз тормози раньше и плавнее.')}}
-    draw();if(state!=='done')requestAnimationFrame(step)};
+    else{state='fix';fix=TARGET;fixFrom=x;fixT=0;fixDur=Math.min(3,1.5+ae*.07);
+      sayEl(err>0?`Не доехал ${f(ae)} м: двери не совпали. Подтягиваемся…`:`Проехал на ${f(ae)} м: двери не совпали. Сдаём назад…`,'bad');if(err<0)for(let t=0;t<fixDur-.4;t+=.9)tone(980,t+.3,.22,.07,'square')}};
+  const sim=h=>{
+    if(state==='run'){const over=x-TARGET;let a=.08+brake*1.9;if(over>1&&!ars)ars=Math.max(3,v*v/(2*(5.5-over)));if(ars)a=Math.max(a,ars);
+      v=Math.max(0,v-a*h);x+=v*h;if(v===0)finish()}
+    else if(state==='fix'){fixT+=h;const k=Math.min(1,fixT/fixDur);x=fixFrom+(fix-fixFrom)*k*k*(3-2*k);v=Math.abs(fix-fixFrom)*6*k*(1-k)/fixDur;
+      if(k>=1){x=fix;v=0;open(1,'Теперь двери совпали. В следующий раз тормози раньше и плавнее.')}}};
+  const step=t=>{if(view!=='doors'||!DD||DD.to!==to)return;let dt=last?Math.min(.25,(t-last)/1000):0;last=t;
+    while(dt>0&&state!=='done'){const h=Math.min(.02,dt);dt-=h;sim(h)}
+    if(state!=='done'){draw();requestAnimationFrame(step)}};
   if(reduce){x=TARGET;open(3,'Двери в двери!');return}
-  draw();setTimeout(()=>requestAnimationFrame(step),first?2600:900);
+  draw();setTimeout(()=>requestAnimationFrame(step),first?1600:500);
 }
 // что дальше после перегона: «двери в двери» (станции закрытого типа обеих веток), автоматическая остановка (зелёная) или обычная остановка у знака
 function afterRide(to){
