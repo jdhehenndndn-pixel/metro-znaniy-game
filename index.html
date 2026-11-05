@@ -677,7 +677,7 @@ body.is-intro .panel.scene .scene-content{min-height:calc(100svh - 32px)}
 .drv{display:flex;flex-direction:column;gap:12px}
 .drv-win{position:relative;border-radius:18px;overflow:hidden;border:3px solid #0B1220;background:#060C1E;aspect-ratio:8/3}
 #drvTun{position:absolute;inset:0;width:100%;height:100%;display:block}
-.drv-board{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:#05080F;border:1px solid #3a2a10;border-radius:6px;padding:4px 12px;font:800 13px var(--f-body);color:var(--amber);white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;z-index:2}
+.drv-board{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:#05080F;border:1px solid #3a2a10;border-radius:6px;padding:4px 12px;font:800 13px var(--f-body);color:var(--amber);width:max-content;max-width:92%;text-align:center;line-height:1.25;z-index:2}
 .drv-sign{position:absolute;right:8%;top:22%;width:58px;height:58px;border-radius:50%;background:#fff;border:7px solid #D93744;display:grid;place-items:center;font:400 22px var(--f-display);color:#111;z-index:2;box-shadow:0 4px 14px rgba(0,0,0,.5);transition:transform .3s ease,opacity .3s ease}
 .drv-sign.hide{opacity:0;transform:scale(.6)}
 .drv-strip{background:#101A33;border:1px solid var(--edge);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
@@ -4493,6 +4493,7 @@ function drvLamps(){const d=DRV,z=drvZone(d.s),key=z.ars+(d.v>z.ars+2?'o':'n'),b
 // приехали: итог перегона, двери открываются, объявление станции — и сразу задание (остановки у знака на красной ветке нет)
 function drvFinish(){
   const d=DRV;if(d.done)return;d.done=true;clearInterval(d.timer);if(d.keys)document.removeEventListener('keydown',d.keys);
+  d.v=0;drvGauge();drvChartPos(d);if(d.tn)d.tn.target(Math.min(100,d.s/d.L*100),0);
   const to=d.to,st=STOPS[to],okPct=d.s>0?Math.round(Math.min(1,d.okM/d.s)*100):0,stars=d.over?1:okPct>=75&&!d.arsHits?3:okPct>=50?2:1;
   const Ln=S.lines[S.line];Ln.drive=Ln.drive||{};if(!Ln.drive[st.id]||stars>Ln.drive[st.id])Ln.drive[st.id]=stars;save();
   // итог ждёт кнопку: читать можно сколько нужно
