@@ -3901,11 +3901,11 @@ const DP_WHEEL_STEPS=[
 // кабели на кронштейнах слева, светильники, пикеты каждые 100 м, светофоры. Путь плавно поворачивает и чуть идёт вверх-вниз.
 // красная ветка: 5 разных поездок чередуются по перегонам (лист prototypes/fon-devyatkino-3.html)
 const RIDE_WX={
-  cloud:{sky:['#A9B6C5','#E0E5E9'],ground:'#5F6263',wall:['#7F8285','#898C8F'],bed:[92,92,92],sleep:[62,60,58],st:'#A7ADB4',glass:'#CFE0EE',cl:'rgba(255,255,255,.3)',ink:'#1A2744'},
-  rain:{sky:['#5F6A78','#A3ACB6'],ground:'#45494E',wall:['#5F6369','#676B71'],bed:[66,68,72],sleep:[44,44,46],st:'#7E858E',glass:'#9FB0C0',cl:'rgba(60,68,80,.4)',ink:'#10182C'},
-  sunset:{sky:['#4C5A8E','#F2A765'],ground:'#6B5A52',wall:['#8E7C70','#9A8778'],bed:[104,90,82],sleep:[70,58,52],st:'#B59A88',glass:'#FFD79A',cl:'rgba(255,200,160,.35)',ink:'#2A1A18'},
-  snow:{sky:['#BFC8D2','#E8ECF0'],ground:'#E4EAF1',wall:['#8E9298','#979BA1'],bed:[176,184,194],sleep:[92,96,102],st:'#AEB4BB',glass:'#D6E4EF',cl:'rgba(255,255,255,.35)',ink:'#1A2744'},
-  dusk:{sky:['#18233F','#6C7694'],ground:'#2C303A',wall:['#454A57','#4C5260'],bed:[58,60,68],sleep:[36,38,44],st:'#4E566A',glass:'#F4C777',cl:'rgba(60,70,100,.3)',ink:'#F2F5FA'}
+  cloud:{sky:['#A9B6C5','#E0E5E9'],ground:'#5F6263',wall:['#7F8285','#898C8F'],bed:[84,83,80],sleep:[128,126,120],st:'#A7ADB4',glass:'#CFE0EE',cl:'rgba(255,255,255,.3)',ink:'#1A2744'},
+  rain:{sky:['#5F6A78','#A3ACB6'],ground:'#45494E',wall:['#5F6369','#676B71'],bed:[58,60,64],sleep:[92,94,98],st:'#7E858E',glass:'#9FB0C0',cl:'rgba(60,68,80,.4)',ink:'#10182C'},
+  sunset:{sky:['#4C5A8E','#F2A765'],ground:'#6B5A52',wall:['#8E7C70','#9A8778'],bed:[96,82,74],sleep:[142,124,112],st:'#B59A88',glass:'#FFD79A',cl:'rgba(255,200,160,.35)',ink:'#2A1A18'},
+  snow:{sky:['#BFC8D2','#E8ECF0'],ground:'#E4EAF1',wall:['#8E9298','#979BA1'],bed:[186,194,204],sleep:[128,134,142],st:'#AEB4BB',glass:'#D6E4EF',cl:'rgba(255,255,255,.35)',ink:'#1A2744'},
+  dusk:{sky:['#18233F','#6C7694'],ground:'#2C303A',wall:['#454A57','#4C5260'],bed:[50,52,60],sleep:[82,84,92],st:'#4E566A',glass:'#F4C777',cl:'rgba(60,70,100,.3)',ink:'#F2F5FA'}
 };
 const RIDE_TRAIN={
   blue:{body:'#2E5EA8',roof:'#25498A',band:'#C2342E',door:'#8FA3C2',win:'#25364E',end:'#2E5EA8'},
@@ -3919,10 +3919,10 @@ const RIDES=[
   {c:.0024,train:'light',wx:'dusk',tun:'round',repair:true}
 ];
 function makeTN(cv,opt={}){
-  const cx2=cv.getContext('2d'),RD=opt.ride||null,WX=RD&&RIDE_WX[RD.wx],TR=RD&&RIDE_TRAIN[RD.train],SQ=!!(RD&&RD.tun==='square');
+  const cx2=cv.getContext('2d',{alpha:false})||cv.getContext('2d'),RD=opt.ride||null,WX=RD&&RIDE_WX[RD.wx],TR=RD&&RIDE_TRAIN[RD.train],SQ=!!(RD&&RD.tun==='square');
   const R=2.75,FLOOR=-1.72,EYE=-0.2,GAUGE=0.76,LEN=700,STEP=1;
-  let W=0,H=0,F=0,odo=0,pos=0,vis=0,last=performance.now(),t=0,kmh=0,run=true;
-  function size(){const r=cv.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1);W=Math.round(r.width*d);H=Math.round(r.height*d);cv.width=W;cv.height=H;F=H*1.15}
+  let W=0,H=0,F=0,odo=0,pos=0,vis=0,last=performance.now(),t=0,kmh=0,run=true,quality=1,gaps=[];
+  function size(){const r=cv.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1)*quality;W=Math.round(r.width*d);H=Math.round(r.height*d);cv.width=W;cv.height=H;F=H*1.15}
   // кривизна и уклон пути в точке s (метры от начала перегона)
   const curv=s=>.0042*Math.sin(s/140+.6)+.0022*Math.sin(s/57+2.1);
   const grade=s=>.0008*Math.sin(s/210+1);
@@ -3936,6 +3936,8 @@ function makeTN(cv,opt={}){
   function light(z){const s=odo+z,d=lampAt(s),toSt=LEN-110-s;if(RD&&s>=PORTAL)return 1;return Math.min(1,.03+.62*Math.exp(-z/9)+(toSt>40?.5*Math.exp(-d*d/6):0)+(toSt>0?.55*Math.exp(-toSt/9):0)+(RD?.7*Math.exp(-(PORTAL-s)/10):0))}
   const col=(r,g,b,l)=>`rgb(${Math.round(r*l)},${Math.round(g*l)},${Math.round(b*l)})`;
   function frame(now){
+    // кадры идут реже 40 в секунду — рисуем чуть мельче, картинка становится легче
+    gaps.push(now-last);if(gaps.length>=45){const m=gaps.slice().sort((a,b)=>a-b)[22];gaps=[];if(m>25&&quality>.7){quality*=.8;W=0}}
     const dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
     if(run){odo+=(pos-odo)*Math.min(1,dt*2.2)}
     const v=kmh/60;shakeX=Math.sin(t*9.3)*.012*v+Math.sin(t*2.1)*.02*v;shakeY=Math.sin(t*13.7)*.008*v;
@@ -3996,7 +3998,7 @@ function makeTN(cv,opt={}){
       const sg=P(-2.0,FLOOR+2.2,z);c.fillStyle='#0B0D10';c.fillRect(sg[0]-.12*s,sg[1]-.3*s,.24*s,.6*s);c.fillStyle='#E0414B';c.beginPath();c.arc(sg[0],sg[1]-.14*s,.08*s,0,6.3);c.fill();c.fillStyle='#2A2E36';c.beginPath();c.arc(sg[0],sg[1]+.14*s,.08*s,0,6.3);c.fill();
       if(SC.slogan){const sl=P(XR/2+2,FLOOR+5.2,z);c.fillStyle=SC.letters;c.font=`400 ${Math.max(5,.32*s)}px "Dela Gothic One",sans-serif`;c.fillText(SC.slogan,sl[0],sl[1])}}}
     // зал по срезам: от дальнего к ближнему
-    for(let z=Math.min(zW,zA+130);z>zA;z-=.5){const z1=z,z2=Math.max(zA,z-.5),u=U(z2),k=lit(z2);if(u>HALL+8)continue;
+    for(let z=Math.floor((odo+Math.min(zW,zA+130))*2)/2-odo;z>zA;z-=.5){const z1=z,z2=Math.max(zA,z-.5),u=z2===z-.5?U(z2):U(z-.5),k=lit(z2);if(u>HALL+8)continue;
       // путевая стена: мрамор, светлее вверху; внизу цоколь; у «Площади Восстания» лепной карниз
       quad(P(XL,FLOOR,z1),P(XL,1.9,z1),P(XL,1.9,z2),P(XL,FLOOR,z2),sh(SC.wall,k*.97));
       quad(P(XL,FLOOR,z1),P(XL,FLOOR+.55,z1),P(XL,FLOOR+.55,z2),P(XL,FLOOR,z2),sh(SC.plinth,k));
@@ -4020,10 +4022,10 @@ function makeTN(cv,opt={}){
       // колонны и арки (column) или пилоны и проёмы (pylon)
       if(T==='column'){const cu=((u%6)+6)%6;
         if(cu<.7){quad(P(XR,YP,z1),P(XR,2.05,z1),P(XR,2.05,z2),P(XR,YP,z2),sh(SC.wall,k));if(cu<.5)quad(P(XR,YP,z1),P(XR+.7,YP,z1),P(XR+.7,2.05,z1),P(XR,2.05,z1),sh(SC.wall,k*.8))}
-        else{const tt=(cu-.7)/5.3,ty=2.05+.75*Math.sin(Math.PI*tt);quad(P(XR,YP,z1),P(XR,ty,z1),P(XR,ty,z2),P(XR,YP,z2),sh([250,244,226],k));quad(P(XR,ty,z1),P(XR,3.1,z1),P(XR,3.1,z2),P(XR,ty,z2),sh(SC.ceil,k*.92))}}
+        else{const tf=q=>2.05+.75*Math.sin(Math.PI*Math.max(0,Math.min(1,(q-1)/5))),t1=tf(cu+.5),t2=tf(cu);quad(P(XR,YP,z1),P(XR,t1,z1),P(XR,t2,z2),P(XR,YP,z2),sh([250,244,226],k));quad(P(XR,t1,z1),P(XR,3.1,z1),P(XR,3.1,z2),P(XR,t2,z2),sh(SC.ceil,k*.92))}}
       if(T==='pylon'){const pu=((u%8)+8)%8;
         if(pu<5){quad(P(XR,YP,z1),P(XR,3.2,z1),P(XR,3.2,z2),P(XR,YP,z2),sh(SC.wall,k));if(pu<.5)quad(P(XR,YP,z1),P(XR+1.4,YP,z1),P(XR+1.4,3.2,z1),P(XR,3.2,z1),sh(SC.wall,k*.78))}
-        else{const tt=(pu-5)/3,ty=1.9+.8*Math.sin(Math.PI*tt);quad(P(XR,YP,z1),P(XR,ty,z1),P(XR,ty,z2),P(XR,YP,z2),sh([248,238,212],k));quad(P(XR,ty,z1),P(XR,3.2,z1),P(XR,3.2,z2),P(XR,ty,z2),sh(SC.wall,k*.95));
+        else{const tf=q=>1.9+.8*Math.sin(Math.PI*Math.max(0,Math.min(1,(q-5)/3))),t1=tf(pu+.5),t2=tf(pu);quad(P(XR,YP,z1),P(XR,t1,z1),P(XR,t2,z2),P(XR,YP,z2),sh([248,238,212],k));quad(P(XR,t1,z1),P(XR,3.2,z1),P(XR,3.2,z2),P(XR,t2,z2),sh(SC.wall,k*.95));
           if(pu>7.5)quad(P(XR,YP,z1),P(XR+1.4,YP,z1),P(XR+1.4,3.2,z1),P(XR,3.2,z1),sh(SC.wall,k*.7))}}
       // колонны у станций мелкого заложения (у «Автово» — стеклянные с позолотой), у наземной — тонкие стальные стойки
       if(FLAT){const cw=T==='ground'?.3:.6,cu=((u%6)+6)%6,cc=SC.glass?[214,232,238]:T==='ground'?[120,128,140]:SC.wall;
@@ -4064,8 +4066,8 @@ function makeTN(cv,opt={}){
       c.fillStyle=SC.letters;c.font='400 92px "Dela Gothic One",sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(STN[i],50,52);c.restore()}});
     // рельсы и контактный рельс в зале
     let prev=null;for(let z=Math.min(zW,zA+130);z>zA;z-=1){const a=P(-GAUGE,FLOOR+.16,z),b=P(GAUGE,FLOOR+.16,z),e=P(1.25,FLOOR+.22,z);
-      if(prev){c.lineCap='round';c.strokeStyle='#D2D8E0';c.lineWidth=Math.max(1,.07*a[2]);c.beginPath();c.moveTo(prev[0][0],prev[0][1]);c.lineTo(a[0],a[1]);c.moveTo(prev[1][0],prev[1][1]);c.lineTo(b[0],b[1]);c.stroke();
-        c.strokeStyle='#7A6A48';c.lineWidth=Math.max(1,.12*e[2]);c.beginPath();c.moveTo(prev[2][0],prev[2][1]);c.lineTo(e[0],e[1]);c.stroke()}
+      if(prev){c.lineCap='round';c.strokeStyle='#B4BAC2';c.lineWidth=Math.max(1,.06*a[2]);c.beginPath();c.moveTo(prev[0][0],prev[0][1]);c.lineTo(a[0],a[1]);c.moveTo(prev[1][0],prev[1][1]);c.lineTo(b[0],b[1]);c.stroke();
+        c.strokeStyle='#3A3E44';c.lineWidth=Math.max(1,.12*e[2]);c.beginPath();c.moveTo(prev[2][0],prev[2][1]);c.lineTo(e[0],e[1]);c.stroke()}
       prev=[a,b,e]}
   }
   // ---------- снаружи: небо, стрелка, соседний состав, фасад станции ----------
@@ -4074,27 +4076,43 @@ function makeTN(cv,opt={}){
   let exitT=0,exitLast=0;
   function rQuad(c,a,b,d,e,cl){c.fillStyle=cl;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.lineTo(d[0],d[1]);c.lineTo(e[0],e[1]);c.closePath();c.fill()}
   function rSeg(c,a,b,cl,lw){c.strokeStyle=cl;c.lineWidth=lw;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
-  function rGlow(c,x,y,r,cl){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,`rgba(${cl},.95)`);g.addColorStop(1,`rgba(${cl},0)`);c.fillStyle=g;c.fillRect(x-r,y-r,2*r,2*r)}
+  function rGlow(c,x,y,r0,cl){const r=Math.min(r0,H*.26),g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,`rgba(${cl},.95)`);g.addColorStop(1,`rgba(${cl},0)`);c.fillStyle=g;c.fillRect(x-r,y-r,2*r,2*r)}
   const RZ=[];for(let z=1.4;z<210;z*=1.06)RZ.push(z);
   function rideWall(c,X,zMax,h0,h1){const end=LEN-HALL;for(let n=Math.floor(Math.min(odo+zMax,end)/3);n*3>Math.max(PORTAL,odo+1.4);n--){const z1=n*3-odo,zb=Math.max(1.4,z1-3);if(z1<1.5)continue;
       const h=s=>h0+(h1-h0)*clamp2((s-PORTAL)/(end-PORTAL),0,1),a=P(X,FLOOR,z1),b=P(X,FLOOR,zb),d=P(X,FLOOR+h(n*3-3),zb),e=P(X,FLOOR+h(n*3),z1);
       rQuad(c,a,b,d,e,WX.wall[n%2]);rQuad(c,a,b,P(X,FLOOR+.5,zb),P(X,FLOOR+.5,z1),RD.wx==='snow'?'rgba(238,243,249,.85)':'rgba(40,42,46,.3)');
       if(RD.wx==='snow')rQuad(c,e,d,P(X,FLOOR+h(n*3-3)+.16,zb),P(X,FLOOR+h(n*3)+.16,z1),'#F0F4F8');
       rSeg(c,a,e,'rgba(0,0,0,.25)',Math.max(1,.05*a[2]))}}
-  function rideConsist(c,hallAt){const X0=-5.3,HW=1.35,base=FLOOR+.75,hh=2.95,CAR=19.6,zLim=hallAt;
+  function rideConsist(c,hallAt){const X0=-5.3,HW=1.35,base=FLOOR+.95,hh=2.7,CAR=19.6,zLim=hallAt;
     const Z0=RD.oncoming?(hallAt-8-exitT*12):(PORTAL+38-odo);if(Z0>210||Z0+120<1.6)return;
-    const on=RD.wx==='dusk',x=X0+HW;c.lineCap='round';
-    for(let n=5;n>=0;n--){const a0=Z0+n*CAR,a1=a0+CAR-.8;if(a1<1.8||a0>zLim)continue;const z1=Math.max(1.8,a0),z2=Math.min(a1,zLim);
-      rQuad(c,P(x,base,z2),P(x,base,z1),P(x,base+hh,z1),P(x,base+hh,z2),TR.body);
-      rQuad(c,P(x,base+.28,z2),P(x,base+.28,z1),P(x,base+.46,z1),P(x,base+.46,z2),TR.band);
-      rQuad(c,P(x,base+hh-.2,z2),P(x,base+hh-.2,z1),P(x,base+hh,z1),P(x,base+hh,z2),RD.wx==='snow'?'#F0F4F8':TR.roof);
-      [2.8,7.4,12,16.6].forEach(o=>{const d1=a0+o-.65,d2=a0+o+.65;if(d1>1.9&&d2<zLim){rQuad(c,P(x,base+.1,d2),P(x,base+.1,d1),P(x,base+2.2,d1),P(x,base+2.2,d2),TR.door);rQuad(c,P(x,base+1.2,d2-.1),P(x,base+1.2,d1+.1),P(x,base+2.05,d1+.1),P(x,base+2.05,d2-.1),on?'#F4D08A':TR.win);const m1=P(x,base+.1,(d1+d2)/2),m2=P(x,base+2.2,(d1+d2)/2);rSeg(c,m1,m2,'rgba(10,20,50,.6)',Math.max(1,.03*m1[2]))}});
-      [.8,5.1,9.7,14.3,18.1].forEach(o=>{const d1=a0+o-.1,d2=a0+o+1.2;if(d1>1.9&&d2<zLim)rQuad(c,P(x,base+1.1,d2),P(x,base+1.1,d1),P(x,base+2.1,d1),P(x,base+2.1,d2),on?'#F4D08A':TR.win)})}
-    if(Z0>1.8&&Z0<zLim){const A=P(X0-HW,base,Z0),B=P(X0+HW,base,Z0),D=P(X0+HW,base+hh,Z0),E=P(X0-HW,base+hh,Z0),s=A[2];rQuad(c,A,B,D,E,TR.end);c.fillStyle=TR.win;c.fillRect(A[0]+.3*s,E[1]+.45*s,2.1*s,1*s);c.fillStyle=TR.band;c.fillRect(A[0],A[1]-.45*s,2.7*s,.18*s);
-      [.5,2.2].forEach(q=>{c.fillStyle=RD.oncoming?'#FFF8DF':'#E6DFC4';c.beginPath();c.arc(A[0]+q*s,A[1]-.85*s,.11*s,0,6.3);c.fill();if(RD.oncoming)rGlow(c,A[0]+q*s,A[1]-.85*s,.9*s,'255,246,214')})}}
+    const on=RD.wx==='dusk',x=X0+HW,winC=on?'#F4D08A':TR.win,fq=(a,b,y1,y2,cl)=>rQuad(c,P(x,y1,b),P(x,y1,a),P(x,y2,a),P(x,y2,b),cl);c.lineCap='round';
+    for(let n=5;n>=0;n--){const a0=Z0+n*CAR,a1=a0+CAR-.8;if(a1<1.8||a0>zLim)continue;const z1=Math.max(1.8,a0),z2=Math.min(a1,zLim),near=a0<60;
+      // межвагонное пространство
+      if(a1+.8<zLim&&a1>1.8)fq(a1,a1+.8,base+.1,base+2.2,'#15171B');
+      // подвагонное оборудование
+      fq(z1,z2,FLOOR+.5,base,'#1D2025');
+      // тележки и колёса
+      [a0+3.2,a1-3.2].forEach(b=>{if(b<2.6||b>zLim)return;fq(Math.max(1.8,b-1.5),b+1.5,FLOOR+.3,FLOOR+.62,'#121417');if(near)[b-.95,b+.95].forEach(w=>{if(w<2.2)return;const m=P(x,FLOOR+.42,w),ex=Math.abs(P(x,FLOOR+.42,w+.42)[0]-m[0]),ey=.42*m[2];c.fillStyle='#0C0D10';c.beginPath();c.ellipse(m[0],m[1],Math.max(1,ex),ey,0,0,6.3);c.fill();c.fillStyle='#4A4E55';c.beginPath();c.ellipse(m[0],m[1],Math.max(.6,ex*.45),ey*.45,0,0,6.3);c.fill()})});
+      // кузов и скат крыши
+      fq(z1,z2,base,base+hh,TR.body);
+      rQuad(c,P(x,base+hh,z2),P(x,base+hh,z1),P(x-.5,base+hh+.32,z1),P(x-.5,base+hh+.32,z2),RD.wx==='snow'?'#F0F4F8':TR.roof);
+      fq(z1,z2,base+.3,base+.5,TR.band);
+      // окна с рамами
+      [.8,5.1,9.7,14.3,18.1].forEach(o=>{const d1=a0+o-.1,d2=a0+o+1.2;if(d1>1.9&&d2<zLim){fq(d1-.07,d2+.07,base+1.04,base+2.16,'rgba(235,240,246,.55)');fq(d1,d2,base+1.1,base+2.1,winC)}});
+      // двери: две створки, в каждой окно
+      [2.8,7.4,12,16.6].forEach(o=>{const d1=a0+o-.65,d2=a0+o+.65,mid=(d1+d2)/2;if(d1>1.9&&d2<zLim){fq(d1,d2,base+.06,base+2.3,TR.door);fq(d1+.09,mid-.09,base+1.15,base+2.05,winC);fq(mid+.09,d2-.09,base+1.15,base+2.05,winC);const m1=P(x,base+.06,mid),m2=P(x,base+2.3,mid);rSeg(c,m1,m2,'rgba(10,20,50,.65)',Math.max(1,.03*m1[2]))}})}
+    if(Z0>1.8&&Z0<zLim){const A=P(X0-HW,base,Z0),B=P(X0+HW,base,Z0),D=P(X0+HW,base+hh,Z0),E=P(X0-HW,base+hh,Z0),s=A[2],Tp=P(X0,base+hh+.42,Z0);
+      // лоб: сверху закруглён, снизу юбка и сцепка
+      rQuad(c,P(X0-HW,FLOOR+.5,Z0),P(X0+HW,FLOOR+.5,Z0),B,A,'#1D2025');
+      c.fillStyle=TR.end;c.beginPath();c.moveTo(A[0],A[1]);c.lineTo(E[0],E[1]);c.quadraticCurveTo(Tp[0],Tp[1],D[0],D[1]);c.lineTo(B[0],B[1]);c.closePath();c.fill();
+      c.fillStyle=TR.band;c.fillRect(A[0],A[1]-.42*s,B[0]-A[0],.2*s);
+      // два окна кабины с рамой, между ними стойка
+      c.fillStyle='rgba(20,28,44,.9)';c.fillRect(A[0]+.22*s,E[1]+.3*s,2.26*s,1.1*s);c.fillStyle=on?'#E9C88A':TR.win;c.fillRect(A[0]+.3*s,E[1]+.37*s,.98*s,.96*s);c.fillRect(A[0]+1.42*s,E[1]+.37*s,.98*s,.96*s);
+      const m=P(X0,FLOOR+.7,Z0);c.fillStyle='#0D0E11';c.fillRect(m[0]-.16*s,m[1]-.14*s,.32*s,.28*s);
+      [.42,2.28].forEach(q=>{c.fillStyle=RD.oncoming?'#FFF8DF':'#CFC9B0';c.beginPath();c.arc(A[0]+q*s,A[1]-.72*s,.1*s,0,6.3);c.fill();if(RD.oncoming)rGlow(c,A[0]+q*s,A[1]-.72*s,.7*s,'255,246,214')})}}
   function rideOutdoors(c,hallAt){const U=H/420,HZ=H*.47,zLim=Math.min(205,hallAt);
     const sk=c.createLinearGradient(0,0,0,HZ);sk.addColorStop(0,WX.sky[0]);sk.addColorStop(1,WX.sky[1]);c.fillStyle=sk;c.fillRect(0,0,W,HZ+1);
-    c.fillStyle=WX.cl;for(let i=0;i<6;i++){const x=(rnd2(i)*W*1.3+t*2.5*U)%(W*1.3)-W*.15,y=(.05+rnd2(i+4)*.27)*H;c.beginPath();c.ellipse(x,y,(90+rnd2(i+6)*120)*U,(10+rnd2(i+8)*15)*U,0,0,6.3);c.fill()}
+    c.fillStyle=WX.cl;{const sd=Math.abs(RD.c)*7e3;for(let i=0;i<7;i++){const cx=(rnd2(i+sd)*W*1.4+t*2*U)%(W*1.4)-W*.2,cy=(.05+rnd2(i+sd+4)*.3)*H,sc=.6+rnd2(i+sd+6)*.9;c.beginPath();for(let j=0;j<7;j++){const px=cx+(rnd2(i*9+j)-.5)*170*sc*U,py=cy+(rnd2(i*7+j+3)-.5)*14*sc*U,rx=(22+rnd2(i*5+j)*46)*sc*U,ry=(5+rnd2(i*3+j)*11)*sc*U;c.moveTo(px+rx,py);c.ellipse(px,py,rx,ry,0,0,6.3)}c.fill()}}
     if(RD.wx==='sunset')rGlow(c,W*.3,HZ-6*U,150*U,'255,214,150');
     c.fillStyle=WX.ground;c.fillRect(0,HZ,W,H-HZ);
     // фасад станции: окна вдоль крыши, красная «М», название; в проёме виден настоящий зал
@@ -4102,43 +4120,56 @@ function makeTN(cv,opt={}){
       if(RD.wx==='snow')rQuad(c,e,d,P(HF,FLOOR+7.25,zs),P(-HF,FLOOR+7.25,zs),'#F4F7FA');
       const w1=P(-HF+1,FLOOR+5.5,zs),w2=P(HF-1,FLOOR+6.6,zs);c.fillStyle=WX.glass;c.fillRect(w1[0],w2[1],w2[0]-w1[0],w1[1]-w2[1]);
       for(let x=-HF+1;x<=HF-1;x+=2)rSeg(c,P(x,FLOOR+5.5,zs),P(x,FLOOR+6.6,zs),WX.st,Math.max(1,.12*a[2]));
-      const o3=P(-7.4,FLOOR,zs),o4=P(-3.3,3.4,zs);c.fillStyle='#14161A';c.fillRect(o3[0],o4[1],o4[0]-o3[0],o3[1]-o4[1]);
-      const oa=P(XLs,FLOOR,zs),ob=P(7,3.4,zs);if(zs<95){c.save();c.beginPath();c.rect(oa[0],ob[1],ob[0]-oa[0],oa[1]-ob[1]);c.clip();hall(c,zs);c.restore()}else{c.fillStyle='#14161A';c.fillRect(oa[0],ob[1],ob[0]-oa[0],oa[1]-ob[1])}
-      const fs=.85*a[2];if(fs>4){const m=P(0,FLOOR+4.95,zs);c.textBaseline='middle';c.textAlign='center';c.fillStyle='#D93744';c.font=`800 ${fs}px Onest,sans-serif`;c.fillText('М',m[0]-10*a[2],m[1]);c.fillStyle=WX.ink;let f2=fs*.72;c.font=`700 ${f2}px Onest,sans-serif`;const mw=c.measureText(STN).width,room=12.5*a[2];if(mw>room){f2*=room/mw;c.font=`700 ${f2}px Onest,sans-serif`}c.fillText(STN,m[0]+7.6*a[2],m[1])}}
+      const o3=P(-7.4,FLOOR,zs),o4=P(-3.3,2.9,zs);c.fillStyle='#14161A';c.fillRect(o3[0],o4[1],o4[0]-o3[0],o3[1]-o4[1]);
+      const oa=P(XLs,FLOOR,zs),ob=P(3.4,2.9,zs);if(zs<95){c.save();c.beginPath();c.rect(oa[0],ob[1],ob[0]-oa[0],oa[1]-ob[1]);c.clip();hall(c,zs);c.restore();if(zs>70){c.globalAlpha=(zs-70)/25;c.fillStyle='#14161A';c.fillRect(oa[0],ob[1],ob[0]-oa[0],oa[1]-ob[1]);c.globalAlpha=1}}else{c.fillStyle='#14161A';c.fillRect(oa[0],ob[1],ob[0]-oa[0],oa[1]-ob[1])}
+      // бетонная рама проёмов: толщина стены и притолока
+      {const sp=a[2],fr=(x1,x2)=>{c.strokeStyle='#3C4048';c.lineWidth=Math.max(1,.34*sp);c.strokeRect(x1,ob[1],x2-x1,oa[1]-ob[1]);c.fillStyle='rgba(0,0,0,.35)';c.fillRect(x1,ob[1],x2-x1,.3*sp)};fr(oa[0],ob[0]);fr(o3[0],o4[0])}
+      // вывеска на крыше: выше стен и соседнего поезда, левее и правее стойки кабины
+      const sb1=P(.7,FLOOR+7.35,zs),sb2=P(14.2,FLOOR+8.45,zs);if(sb1[2]>3){c.strokeStyle='#30343B';c.lineWidth=Math.max(1,.1*a[2]);[2,8,13].forEach(x=>rSeg(c,P(x,FLOOR+7,zs),P(x,FLOOR+7.4,zs),'#30343B',Math.max(1,.1*a[2])));c.fillStyle='#16233F';c.fillRect(sb1[0],sb2[1],sb2[0]-sb1[0],sb1[1]-sb2[1]);
+        const my=(sb1[1]+sb2[1])/2,mx=P(-1.5,FLOOR+7.9,zs),fs=.8*a[2];c.fillStyle='#D93744';c.beginPath();c.arc(mx[0],mx[1],.62*a[2],0,6.3);c.fill();c.fillStyle='#fff';c.textBaseline='middle';c.textAlign='center';c.font=`800 ${fs}px Onest,sans-serif`;c.fillText('М',mx[0],my+.02*a[2]);
+        let f2=fs*.82;c.font=`700 ${f2}px Onest,sans-serif`;const mw=c.measureText(STN).width,room=12.6*a[2];if(mw>room){f2*=room/mw;c.font=`700 ${f2}px Onest,sans-serif`}c.fillStyle='#F2F5FA';c.fillText(STN,(sb1[0]+sb2[0])/2,my)}}
     // путь вдали
     c.lineCap='round';for(let i=RZ.length-2;i>=0;i--){if(RZ[i+1]>zLim)continue;const z1=RZ[i+1],z2=RZ[i];if(odo+z2<PORTAL)continue;rQuad(c,P(-2.3,FLOOR,z1),P(2.3,FLOOR,z1),P(2.3,FLOOR,z2),P(-2.3,FLOOR,z2),col(WX.bed[0],WX.bed[1],WX.bed[2],1))}
     // насыпь слева, стена, соседний путь и стрелка
-    for(let i=RZ.length-2;i>=0;i--){if(RZ[i+1]>zLim||odo+RZ[i]<PORTAL+6)continue;rQuad(c,P(-12,FLOOR,RZ[i+1]),P(-2,FLOOR,RZ[i+1]),P(-2,FLOOR,RZ[i]),P(-12,FLOOR,RZ[i]),col(WX.bed[0],WX.bed[1],WX.bed[2],.92))}
+    {const ed=RZ.filter(z=>z<=zLim&&odo+z>=PORTAL+6);if(ed.length>1){c.fillStyle=col(WX.bed[0],WX.bed[1],WX.bed[2],.92);c.beginPath();ed.forEach((z,i)=>{const q=P(-12,FLOOR,z);i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1])});ed.slice().reverse().forEach(z=>{const q=P(-2,FLOOR,z);c.lineTo(q[0],q[1])});c.closePath();c.fill()}}
     rideWall(c,-13,zLim,2.6,2.6);
-    for(let i=0;i<RZ.length-1;i++){if(RZ[i+1]>zLim)break;if(odo+RZ[i]<PORTAL+40)continue;const lw=Math.max(1,.07*F/RZ[i]);rSeg(c,P(-6.06,FLOOR+.17,RZ[i]),P(-6.06,FLOOR+.17,RZ[i+1]),'#D6DBE3',lw);rSeg(c,P(-4.54,FLOOR+.17,RZ[i]),P(-4.54,FLOOR+.17,RZ[i+1]),'#D6DBE3',lw)}
     const S0=PORTAL+12,S1=PORTAL+40,off=s=>{const q=clamp2((s-S0)/(S1-S0),0,1);return -5.3*q*q*(3-2*q)};
-    [-.76,.76].forEach(dx=>{for(let s=S1;s>S0;s-=1){const z1=s-odo,z2=s-1-odo;if(z2<1.6||z1>zLim)continue;const q=P(off(s-1)+dx,FLOOR+.17,z2);rSeg(c,P(off(s)+dx,FLOOR+.17,z1),q,'#D6DBE3',Math.max(1,.07*q[2]))}});
+    // шпалы отвода и соседнего пути
+    for(let k=Math.floor(Math.min(odo+Math.min(zLim,55),LEN-HALL)/1.5);k*1.5>Math.max(S0,odo+1.7);k--){const s=k*1.5,z=s-odo,xc=off(s),zb=Math.max(1.5,z-.3),e=.12*(s<S1?1:0);rQuad(c,P(xc-1.2,FLOOR+.05,z),P(xc+1.2,FLOOR+.05,z),P(xc+1.2,FLOOR+.05,zb),P(xc-1.2,FLOOR+.05,zb),col(WX.sleep[0],WX.sleep[1],WX.sleep[2],.95-e))}
+    const yRail=(fx,zFrom,w,cl)=>{for(let i=0;i<RZ.length-1;i++){if(RZ[i+1]>zLim)break;if(odo+RZ[i]<zFrom)continue;rSeg(c,P(fx,FLOOR+.17,RZ[i]),P(fx,FLOOR+.17,RZ[i+1]),cl,Math.max(1,w*F/RZ[i]))}};
+    yRail(-6.06,PORTAL+40,.09,'#3E3C38');yRail(-4.54,PORTAL+40,.09,'#3E3C38');yRail(-6.06,PORTAL+40,.04,'#B4BAC2');yRail(-4.54,PORTAL+40,.04,'#B4BAC2');yRail(-6.8,PORTAL+40,.11,'#34383E');
+    [-.76,.76].forEach(dx=>{for(let s=S1;s>S0;s-=1){const z1=s-odo,z2=s-1-odo;if(z2<1.6||z1>zLim)continue;const q=P(off(s-1)+dx,FLOOR+.17,z2),q1=P(off(s)+dx,FLOOR+.17,z1);rSeg(c,q1,q,'#3E3C38',Math.max(1,.09*q[2]));rSeg(c,q1,q,'#B4BAC2',Math.max(1,.04*q[2]))}});
     rideConsist(c,hallAt);
     // стена справа с кабелями
-    rideWall(c,3.4,zLim,4.3,3.2);
-    [1.7,1.85,2].forEach((y,i)=>{for(let j=0;j<RZ.length-1;j++){if(RZ[j+1]>zLim)break;if(odo+RZ[j]<PORTAL)continue;rSeg(c,P(3.35,FLOOR+y,RZ[j]),P(3.35,FLOOR+y,RZ[j+1]),i===1?'#5A3E2E':'#2A2C30',Math.max(1,.05*F/RZ[j]))}});
-    if(RD.wx==='dusk')for(let s=Math.floor(Math.min(odo+zLim,LEN-HALL)/18)*18;s>Math.max(PORTAL,odo+2);s-=18){const z=s-odo,q=P(3.3,FLOOR+3.1,z);rGlow(c,q[0],q[1],1.5*q[2],'255,214,150');const f=P(1.5,FLOOR,z+1);rGlow(c,f[0],f[1],1.2*f[2],'255,214,150')}
+    rideWall(c,3.4,zLim,3,2.4);
+    for(let k=Math.floor(Math.min(odo+Math.min(zLim,60),LEN-HALL)/2.5);k*2.5>Math.max(PORTAL,odo+1.6);k--){const z=k*2.5-odo,q=P(3.32,FLOOR+2.12,z);rSeg(c,P(3.38,FLOOR+1.58,z),q,'#3A3D42',Math.max(1,.05*q[2]))}
+    [1.7,1.85,2].forEach((y,i)=>{for(let j=0;j<RZ.length-1;j++){if(RZ[j+1]>zLim)break;if(odo+RZ[j]<PORTAL)continue;rSeg(c,P(3.3,FLOOR+y,RZ[j]),P(3.3,FLOOR+y,RZ[j+1]),i===1?'#4A3528':'#26282C',Math.max(1,.045*F/RZ[j]))}});
+    if(RD.wx==='dusk')for(let s=Math.floor(Math.min(odo+zLim,LEN-HALL)/18)*18;s>Math.max(PORTAL,odo+2);s-=18){const z=s-odo,q=P(3.3,FLOOR+3.3,z);rSeg(c,P(3.38,FLOOR+2.2,z),q,'#23262C',Math.max(1,.05*q[2]));c.fillStyle='#FFE7B8';c.beginPath();c.arc(q[0],q[1],.09*q[2],0,6.3);c.fill();rGlow(c,q[0],q[1],.7*q[2],'255,214,150');const f=P(1.5,FLOOR,z+1);rGlow(c,f[0],f[1],.7*f[2],'255,214,150')}
     // рельсы вдали (ближние рисуются вместе с тоннелем)
     [-GAUGE,GAUGE].forEach(x=>{for(let i=0;i<RZ.length-1;i++){if(RZ[i+1]>zLim)break;if(odo+RZ[i]<PORTAL||RZ[i]<70)continue;rSeg(c,P(x,FLOOR+.16,RZ[i]),P(x,FLOOR+.16,RZ[i+1]),'#D6DBE3',Math.max(1,.07*F/RZ[i]))}});
   }
   // прямоугольный бетонный тоннель
   function rideSquare(c,zp){const X=2.7,Y=FLOOR+4.3,a0=P(-X,FLOOR,zp),b0=P(X,Y,zp);c.fillStyle='#0E0F12';c.beginPath();c.rect(0,0,W,H);c.moveTo(a0[0],a0[1]);c.lineTo(a0[0],b0[1]);c.lineTo(b0[0],b0[1]);c.lineTo(b0[0],a0[1]);c.closePath();c.fill('evenodd');
-    const first=Math.ceil((odo+1.4)/3),last=Math.floor((odo+Math.min(zp,95))/3);
-    for(let n=last;n>=first;n--){const z=n*3-odo,zb=Math.max(1.5,z-3);if(z>zp)continue;const l=Math.min(1,.1+light(z)),m=n%2?1:.92;
-      rQuad(c,P(-X,FLOOR,z),P(-X,FLOOR,zb),P(-X,Y,zb),P(-X,Y,z),col(172,170,160,l*m));rQuad(c,P(X,FLOOR,z),P(X,FLOOR,zb),P(X,Y,zb),P(X,Y,z),col(172,170,160,l*m));rQuad(c,P(-X,Y,z),P(X,Y,z),P(X,Y,zb),P(-X,Y,zb),col(140,138,130,l*m));
-      rSeg(c,P(-X,FLOOR,z),P(-X,Y,z),'rgba(0,0,0,.35)',Math.max(1,.03*F/z));rSeg(c,P(X,FLOOR,z),P(X,Y,z),'rgba(0,0,0,.35)',Math.max(1,.03*F/z))}
-    for(let s=Math.floor((odo+Math.min(zp,90))/25)*25;s>odo+1.8;s-=25){const z=s-odo;rQuad(c,P(-.45,Y-.02,z+1.3),P(.45,Y-.02,z+1.3),P(.45,Y-.02,z),P(-.45,Y-.02,z),'#FFF3CF');const q=P(0,Y,z);rGlow(c,q[0],q[1],1.2*q[2],'255,236,190')}}
+    const first=Math.ceil((odo+1.4)/1.5),last=Math.floor((odo+Math.min(zp,95))/1.5);
+    for(let n=last;n>=first;n--){const z=n*1.5-odo,zb=Math.max(1.5,z-1.5);if(z>zp)continue;const l=Math.min(1,.12+light(z)*.9),m=(Math.floor(n/2)%2)?1:.965,f=col(158,155,146,l*m);
+      rQuad(c,P(-X,FLOOR,z),P(-X,FLOOR,zb),P(-X,Y,zb),P(-X,Y,z),f);rQuad(c,P(X,FLOOR,z),P(X,FLOOR,zb),P(X,Y,zb),P(X,Y,z),f);rQuad(c,P(-X,Y,z),P(X,Y,z),P(X,Y,zb),P(-X,Y,zb),col(128,126,118,l*m));
+      if(n%2===0){rSeg(c,P(-X,FLOOR,z),P(-X,Y,z),'rgba(0,0,0,.28)',Math.max(1,.025*F/z));rSeg(c,P(X,FLOOR,z),P(X,Y,z),'rgba(0,0,0,.28)',Math.max(1,.025*F/z));rSeg(c,P(-X,Y,z),P(X,Y,z),'rgba(0,0,0,.2)',Math.max(1,.025*F/z))}
+      if(z<50){const st=rnd2(n+70);if(st<.2)rQuad(c,P(X,Y,z),P(X,Y,zb),P(X,Y-1.2-st*5,zb),P(X,Y-1.2-st*5,z),'rgba(40,34,26,.18)');const st2=rnd2(n+90);if(st2<.2)rQuad(c,P(-X,Y,z),P(-X,Y,zb),P(-X,Y-1.2-st2*5,zb),P(-X,Y-1.2-st2*5,z),'rgba(40,34,26,.18)')}}
+    for(let s=Math.floor((odo+Math.min(zp,90))/25)*25;s>odo+1.8;s-=25){const z=s-odo;[-1.25,1.25].forEach(lx=>{rQuad(c,P(lx-.22,Y-.02,z+1.3),P(lx+.22,Y-.02,z+1.3),P(lx+.22,Y-.02,z),P(lx-.22,Y-.02,z),'#FFF3CF');const q=P(lx,Y,z+.6);rGlow(c,q[0],q[1],.55*q[2],'255,236,190')})}}
   // участок ремонта: полосатое ограждение и мигающие лампы
-  function rideRepair(c,z0,zp){const [A,B]=opt.repair,X=SQ?2.5:2.05;for(let s=Math.floor(B);s>A;s--){const z=s-odo;if(z<1.6||z>Math.min(zp,70))continue;const l=Math.max(.35,light(z));rQuad(c,P(X,FLOOR+.5,z+1),P(X,FLOOR+.5,z),P(X,FLOOR+1.15,z),P(X,FLOOR+1.15,z+1),s%2?col(226,178,40,l):col(30,30,32,l))}
-    for(let s=Math.floor(B/5)*5;s>=A;s-=5){const z=s-odo;if(z<1.8||z>Math.min(zp,70))continue;const q=P(X,FLOOR+1.5,z);rSeg(c,P(X,FLOOR+.5,z),q,'#45484E',Math.max(1,.05*q[2]));const on=Math.floor(t*2.4+s/5)%2===0;c.fillStyle=on?'#FFB238':'#5A3F16';c.beginPath();c.arc(q[0],q[1],.13*q[2],0,6.3);c.fill();if(on)rGlow(c,q[0],q[1],1.1*q[2],'255,178,56')}}
+  function rideRepair(c,z0,zp){const [A,B]=opt.repair,X=SQ?2.5:2.05;
+    for(let s=Math.floor(B);s>A;s--){const z=s-odo;if(z<1.6||z>Math.min(zp,70))continue;const l=Math.max(.32,light(z)),cl=s%2?col(214,168,44,l):col(34,34,36,l);
+      rQuad(c,P(X,FLOOR+.72,z+1),P(X,FLOOR+.72,z),P(X,FLOOR+.92,z),P(X,FLOOR+.92,z+1),cl);rQuad(c,P(X,FLOOR+1.16,z+1),P(X,FLOOR+1.16,z),P(X,FLOOR+1.32,z),P(X,FLOOR+1.32,z+1),s%2?col(34,34,36,l):col(214,168,44,l))}
+    for(let s=Math.floor(B/5)*5;s>=A;s-=5){const z=s-odo;if(z<1.8||z>Math.min(zp,70))continue;const q=P(X,FLOOR+1.5,z);rSeg(c,P(X,FLOOR,z),q,'#3A3D42',Math.max(1,.05*q[2]));const on=Math.floor(t*2.4+s/5)%2===0;c.fillStyle=on?'#FFB238':'#5A3F16';c.beginPath();c.arc(q[0],q[1],.08*q[2],0,6.3);c.fill();if(on)rGlow(c,q[0],q[1],.55*q[2],'255,178,56')}}
   // поверх сцены: вспышка на выезде, дождь, снег, закатный свет
   function rideOverlay(c,hallAt,zp,z0){const U=H/420,now=t;if(zp<-8){exitT+=Math.max(0,now-exitLast)}exitLast=now;
     if(hallAt<=z0)return;
     const g=zp>0?Math.max(0,1-zp/16):Math.max(0,1+zp/9),br=RD.wx==='dusk'?.2:.5;if(g>0){c.fillStyle=`rgba(255,250,236,${(br*g).toFixed(3)})`;c.fillRect(0,0,W,H)}
     const o=clamp2((8-zp)/14,0,1)*clamp2((hallAt-z0)/6,0,1);if(!o)return;
-    if(RD.wx==='rain'){c.lineCap='round';c.strokeStyle=`rgba(225,235,245,${(.42*o).toFixed(3)})`;c.lineWidth=1.4*U;for(let i=0;i<150;i++){const sp=1+rnd2(i)*.9,x=(rnd2(i+9)*W*1.1+t*90*U)%(W*1.1)-W*.05,y=(rnd2(i+21)*H+t*sp*760*U)%H;c.beginPath();c.moveTo(x,y);c.lineTo(x-4*U,y+24*U*sp);c.stroke()}
-      c.fillStyle=`rgba(255,255,255,${(.3*o).toFixed(3)})`;for(let i=0;i<60;i++){c.beginPath();c.arc(rnd2(i+40)*W,rnd2(i+70)*H*.86,(1+rnd2(i)*2.4)*U,0,6.3);c.fill()}}
-    if(RD.wx==='snow'){c.fillStyle=`rgba(255,255,255,${(.9*o).toFixed(3)})`;for(let i=0;i<150;i++){const sp=.5+rnd2(i)*1.2,x=(rnd2(i+9)*W+Math.sin(t+i)*14*U)%W,y=(rnd2(i+21)*H+t*sp*95*U)%H;c.beginPath();c.arc(x,y,(1+sp)*U,0,6.3);c.fill()}}
+    const VX=W/2,VY=H*.47,go=clamp2(kmh/60,.25,1.3);
+    if(RD.wx==='rain'){c.lineCap='round';c.strokeStyle=`rgba(214,226,240,${(.3*o).toFixed(3)})`;c.lineWidth=U;c.beginPath();for(let i=0;i<120;i++){const p=(rnd2(i)+t*(.9+rnd2(i+7)*.5)*go)%1,a=rnd2(i+3)*6.28,d=p*p*W*.8,x=VX+Math.cos(a)*d,y=VY+Math.sin(a)*d*.75,len=(3+p*22)*U;c.moveTo(x,y);c.lineTo(x+Math.cos(a)*len*.7,y+Math.sin(a)*len*.5+len*.75)}c.stroke();
+      c.fillStyle=`rgba(235,242,250,${(.16*o).toFixed(3)})`;c.beginPath();for(let i=0;i<34;i++){const dx=rnd2(i+40)*W,dy=(rnd2(i+70)*H*.84+t*(4+rnd2(i)*10)*U)%(H*.84),rr=(.7+rnd2(i+5)*1.5)*U;c.moveTo(dx+rr,dy);c.ellipse(dx,dy,rr,rr*1.5,0,0,6.3)}c.fill()}
+    if(RD.wx==='snow'){c.fillStyle=`rgba(255,255,255,${(.8*o).toFixed(3)})`;c.beginPath();for(let i=0;i<130;i++){const p=(rnd2(i)+t*(.22+rnd2(i+7)*.2)*go)%1,a=rnd2(i+3)*6.28,d=p*p*W*.8,x=VX+Math.cos(a)*d+Math.sin(t*.9+i)*5*U,y=VY+Math.sin(a)*d*.75+p*18*U,rr=(.35+p*p*3.2)*U;c.moveTo(x+rr,y);c.arc(x,y,rr,0,6.3)}c.fill()}
     if(RD.wx==='sunset'){const gr=c.createLinearGradient(0,0,W,0);gr.addColorStop(0,`rgba(255,150,90,${(.16*o).toFixed(3)})`);gr.addColorStop(1,`rgba(120,70,120,${(.1*o).toFixed(3)})`);c.fillStyle=gr;c.fillRect(0,0,W,H)}
   }
   function draw(){
@@ -4150,51 +4181,60 @@ function makeTN(cv,opt={}){
     // 1. кольца тоннеля: от ближних к дальним, каждое следующее обрезано предыдущим
     const zp=PORTAL-odo,zT=RD?Math.min(zMax,Math.max(z0,zp)):zMax,zOut=RD&&hallAt>z0&&zp<96;
     if(RD&&SQ){if(zOut)rideOutdoors(c,hallAt);else if(hallAt<=z0)hall(c,z0);if(zp>z0&&hallAt>z0)rideSquare(c,zp)}
-    c.save();
-    if(!SQ&&(!RD||zp>z0))for(let n=0;;n++){const z=z0+n*STEP-frac;if(z<z0-.001)continue;if(z>zT)break;
-      const [x,y,s]=P(0,0,z),r=R*s,l=light(z),alt=(Math.floor(odo+z)%2)?1:.93;
-      c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.clip();
-      c.fillStyle=col(70,63,56,l*alt);c.fill();
-      c.lineWidth=Math.max(1,.13*s);c.strokeStyle=col(26,24,22,l);c.stroke();
-      // потёки и сажа на отдельных кольцах
-      if(((Math.floor(odo+z)*37)%11)<2){c.strokeStyle=col(92,62,40,l*.8);c.lineWidth=Math.max(1,.05*s);c.beginPath();c.arc(x,y,r*.93,2.2,2.9);c.stroke()}
-      // болты по шву на ближних кольцах
-      if(z<14){c.fillStyle=col(120,118,112,l);for(let a=0;a<20;a++){const q=a/20*Math.PI*2+.08;c.beginPath();c.arc(x+Math.cos(q)*r*.985,y+Math.sin(q)*r*.985,Math.max(.8,.035*s),0,6.3);c.fill()}}
-    }
-    // зал станции в конце тоннеля
+    // зал станции и улица за тоннелем — самый дальний план
     if(!RD){if(hallAt<95)hall(c,Math.max(z0,hallAt))}
     else if(!SQ){if(zOut)rideOutdoors(c,hallAt);else if(hallAt<=z0)hall(c,z0)}
-    c.restore();
+    // кольца от дальних к ближним: каждое — полоса между своей окружностью и окружностью следующего; вдали кольца вдвое реже
+    if(!SQ&&(!RD||zp>z0)){const base=Math.floor(odo);
+      for(let n=Math.floor(zT-z0+frac);n>=0;n--){const z=z0+n*STEP-frac,k=base+n;if(z<z0-.001)continue;if(z>40&&k%2)continue;
+      const [x,y,s]=P(0,0,z),r=R*s,l=light(z),alt=(.86+.14*rnd2(k))*(.9+.1*rnd2(Math.floor(k/7)+500)),nz=z+(z>=39?2:1),q=P(0,0,nz);
+      c.beginPath();c.arc(x,y,r,0,6.3);c.moveTo(q[0]+R*q[2],q[1]);c.arc(q[0],q[1],R*q[2],0,6.3,true);
+      c.fillStyle=col(70,63,56,l*alt);c.fill('evenodd');
+      c.beginPath();c.arc(x,y,r,0,6.3);c.lineWidth=Math.max(1,.07*s);c.strokeStyle=col(34,31,28,l);c.stroke();
+      // стыки сегментов: у соседних колец вразбежку
+      if(z<30){c.beginPath();const off=(k%2)*.26;for(let a=0;a<6;a++){const q2=a/6*Math.PI*2+off,c1=Math.cos(q2),s1=Math.sin(q2);c.moveTo(x+c1*r,y+s1*r);c.lineTo(q[0]+c1*R*q[2],q[1]+s1*R*q[2])}c.lineWidth=Math.max(1,.035*s);c.strokeStyle=col(30,27,24,l);c.stroke()}
+      // потёки воды и сажа: на случайных кольцах, разной длины
+      if(z<60&&rnd2(k+40)<.22){const a0=.3+rnd2(k+41)*2.4,len=.25+rnd2(k+42)*.7;c.strokeStyle=col(44,36,28,l*.9);c.lineWidth=Math.max(1,R*(s-q[2])*.75);c.beginPath();c.arc(x,y,R*(s+q[2])/2,a0,a0+len);c.stroke()}
+      if(z<60&&rnd2(k+60)<.1){c.strokeStyle=col(110,84,56,l*.75);c.lineWidth=Math.max(1,.06*s);c.beginPath();c.arc(x,y,r*.96,2.2+rnd2(k+61)*.5,2.7+rnd2(k+62)*.6);c.stroke()}
+      // болты на шве вблизи: мелкие и тёмные
+      if(z<9){c.fillStyle=col(48,44,40,l);c.beginPath();const br=Math.max(.7,.022*s);for(let a=0;a<24;a++){const q2=a/24*Math.PI*2+.08,bx=x+Math.cos(q2)*r*.985,by=y+Math.sin(q2)*r*.985;c.moveTo(bx+br,by);c.arc(bx,by,br,0,6.3)}c.fill()}
+    }}
     // 2. всё, что на полу и на стенах: от дальнего к ближнему
-    const ZS=[];for(let z=Math.min(zMax,80);z>=z0;z-=.5)ZS.push(z);
+    const ZS=[];{const zE=Math.min(zMax,90);for(let z=z0;z<zE;z+=Math.max(.5,z*.07))ZS.unshift(z);ZS.unshift(zE)}
     for(let i=0;i<ZS.length-1;i++){const z1=ZS[i],z2=ZS[i+1],l=light(z2);
       const ou=RD&&odo+z2>=PORTAL,hw=ou?2.3:SQ?2.7:1.5,a=P(-hw,FLOOR,z1),b=P(hw,FLOOR,z1),cc=P(hw,FLOOR,z2),d=P(-hw,FLOOR,z2);
-      c.fillStyle=ou?col(WX.bed[0],WX.bed[1],WX.bed[2],1):col(96,94,88,l);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.lineTo(cc[0],cc[1]);c.lineTo(d[0],d[1]);c.fill();
+      c.fillStyle=ou?col(WX.bed[0],WX.bed[1],WX.bed[2],1):col(84,82,78,l);c.strokeStyle=c.fillStyle;c.lineWidth=1;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.lineTo(cc[0],cc[1]);c.lineTo(d[0],d[1]);c.closePath();c.fill();c.stroke();
       // лоток для воды по центру
       if(ou)continue;
       const m1=P(0,FLOOR,z1),m2=P(0,FLOOR,z2);c.strokeStyle=col(50,50,48,l);c.lineWidth=Math.max(1,.18*m2[2]);c.beginPath();c.moveTo(m1[0],m1[1]);c.lineTo(m2[0],m2[1]);c.stroke();
     }
     // шпалы
-    for(let z=Math.min(zMax,60);z>=z0;z-=.1){const s0=odo+z;if(((s0%.75)+.75)%.75>.1)continue;const l=light(z);
-      const a=P(-1.05,FLOOR+.06,z),b=P(1.05,FLOOR+.06,z),sl=RD&&odo+z>=PORTAL?WX.sleep:[58,52,46];c.strokeStyle=col(sl[0],sl[1],sl[2],l);c.lineWidth=Math.max(1,.2*a[2]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+    for(let k=Math.floor((odo+Math.min(zMax,60))/.75);k*.75-odo>=z0;k--){const z=k*.75-odo;if(z>30&&k%2)continue;const l=light(z),zb=Math.max(z0,z-.26),sl=RD&&odo+z>=PORTAL?WX.sleep:[118,114,106],tone=.9+.1*rnd2(k);
+      const a=P(-1.25,FLOOR+.05,z),b=P(1.25,FLOOR+.05,z),d=P(1.25,FLOOR+.05,zb),e=P(-1.25,FLOOR+.05,zb);c.fillStyle=col(sl[0],sl[1],sl[2],l*tone);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.lineTo(d[0],d[1]);c.lineTo(e[0],e[1]);c.closePath();c.fill();
+      // скрепления вблизи
+      if(z<14){c.fillStyle=col(38,36,34,l);[-GAUGE-.12,-GAUGE+.12,GAUGE-.12,GAUGE+.12].forEach(fx=>{const f=P(fx,FLOOR+.06,z-.08);c.fillRect(f[0]-.05*f[2],f[1]-.03*f[2],.1*f[2],.06*f[2])})}}
     // рельсы, контактный рельс, кабели — ломаными от дальнего к ближнему
     function rail(x,y,w,rgb,hi,lim){for(let i=0;i<ZS.length-1;i++){const z1=ZS[i],z2=ZS[i+1];if(lim!==undefined&&z1>lim)continue;const l=light(z2),p1=P(x,y,z1),p2=P(x,y,z2);
       c.strokeStyle=col(rgb[0],rgb[1],rgb[2],Math.min(1,l*hi));c.lineWidth=Math.max(1,w*p2[2]);c.beginPath();c.moveTo(p1[0],p1[1]);c.lineTo(p2[0],p2[1]);c.stroke()}}
-    rail(-GAUGE,FLOOR+.16,.07,[205,212,222],1.25);rail(GAUGE,FLOOR+.16,.07,[205,212,222],1.25);
-    rail(1.32,FLOOR+.22,.12,RD?[58,62,68]:[150,128,70],1);         // контактный рельс под защитным коробом
-    const wall=(ang,k=.965)=>[Math.cos(ang)*R*k,Math.sin(ang)*R*k];
+    // рельс: тёмная шейка и подошва, сверху узкая натёртая головка
+    c.lineCap='round';[-GAUGE,GAUGE].forEach(x=>{rail(x,FLOOR+.11,.11,[66,62,58],1);rail(x,FLOOR+.17,.05,RD&&RD.wx==='rain'?[214,222,232]:[176,182,190],1.2)});
+    rail(1.32,FLOOR+.22,.12,[52,56,62],1);rail(1.32,FLOOR+.29,.035,[104,110,118],1); // контактный рельс под защитным коробом
+    // опоры контактного рельса
+    for(let k=Math.floor((odo+Math.min(zMax,30))/4);k*4-odo>=z0;k--){const z=k*4-odo,l=light(z),a=P(1.32,FLOOR+.04,z),b=P(1.32,FLOOR+.2,z);c.strokeStyle=col(60,62,66,l);c.lineWidth=Math.max(1,.07*a[2]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+    const wall=(ang,k=.965)=>SQ?(ang>1?[-2.66,FLOOR+2+(ang-3.5)*2]:[2.62,FLOOR+2.6+ang*.5]):[Math.cos(ang)*R*k,Math.sin(ang)*R*k];
     const zW=RD?(zp>z0?zT:-1):zMax; // кабели и всё на стенах — только в тоннеле
     [[3.5],[3.56],[3.62],[3.7]].forEach(([ang],i)=>{const [x,y]=wall(ang);rail(x,y,.055,i===2?[60,40,30]:[26,26,30],1,zW)});
     {const [px,py]=wall(-.35,.97);rail(px,py,.09,[70,74,80],1,zW)}      // труба на правой стене
     // кронштейны кабелей, светильники, пикеты и светофоры
-    for(let z=Math.min(zW,70);z>=z0;z-=.05){const s=odo+z,l=light(z);
-      if(Math.abs(((s%1.5)+1.5)%1.5)<.05&&z<40){const a=P(...wall(3.45,.99),z),b=P(...wall(3.78,.99),z);c.strokeStyle=col(70,70,74,l);c.lineWidth=Math.max(1,.04*a[2]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
-      if(!SQ&&Math.abs(((s%25)+25)%25)<.05&&s<LEN-110-40){const [x,y,sc]=P(...wall(2.45,.95),z);const g=c.createRadialGradient(x,y,0,x,y,.9*sc);g.addColorStop(0,'rgba(255,236,190,.9)');g.addColorStop(1,'rgba(255,236,190,0)');c.fillStyle=g;c.beginPath();c.arc(x,y,.9*sc,0,6.3);c.fill();c.fillStyle='#FFF3D6';c.fillRect(x-.18*sc,y-.06*sc,.36*sc,.12*sc)}
-      if(Math.abs(((s%100)+100)%100-50)<.05&&z<30){const [x,y,sc]=P(...wall(-.12,.96),z);c.fillStyle=col(235,235,228,Math.max(.35,l));c.fillRect(x-.22*sc,y-.15*sc,.44*sc,.3*sc);
-        if(sc>14){c.fillStyle='#1A1A1A';c.font=`700 ${Math.round(.2*sc)}px Onest,sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(String(Math.round((s-50)/100)+12),x,y)}}
-      if(Math.abs(((s%230)+230)%230-120)<.05&&remain>40){const [x,y,sc]=P(...wall(-.55,.95),z);c.fillStyle='#0A0C10';c.fillRect(x-.16*sc,y-.42*sc,.32*sc,.84*sc);
-        const near=remain<260;[['#5EE6C1',-.2,!near],['#FFC861',.18,near]].forEach(([cl,dy,on])=>{c.fillStyle=on?cl:'#1E2229';c.beginPath();c.arc(x,y+dy*sc,.1*sc,0,6.3);c.fill();if(on){const g=c.createRadialGradient(x,y+dy*sc,0,x,y+dy*sc,.6*sc);g.addColorStop(0,cl+'99');g.addColorStop(1,cl+'00');c.fillStyle=g;c.beginPath();c.arc(x,y+dy*sc,.6*sc,0,6.3);c.fill()}})}
-    }
+    const zL=Math.min(zW,70);
+    // вдали детали проявляются плавно, а не возникают разом
+    const fadeIn=z=>Math.min(1,Math.max(0,(zL-z)/14));
+    for(let k=Math.floor((odo+Math.min(zL,40))/1.5);k*1.5-odo>=z0;k--){const z=k*1.5-odo,l=light(z),a=P(...wall(3.45,.99),z),b=P(...wall(3.78,.99),z);c.strokeStyle=col(70,70,74,l);c.lineWidth=Math.max(1,.04*a[2]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+    if(!SQ)for(let k=Math.floor((odo+zL)/25);k*25-odo>=z0;k--){const s=k*25,z=s-odo;if(s>=LEN-110-40)continue;const [x,y,sc]=P(...wall(2.45,.95),z);c.globalAlpha=fadeIn(z);const g=c.createRadialGradient(x,y,0,x,y,.9*sc);g.addColorStop(0,'rgba(255,236,190,.55)');g.addColorStop(1,'rgba(255,236,190,0)');c.fillStyle=g;c.beginPath();c.arc(x,y,.9*sc,0,6.3);c.fill();c.fillStyle='#2A2C30';c.fillRect(x-.24*sc,y-.09*sc,.48*sc,.18*sc);c.fillStyle='#FFF3D6';c.fillRect(x-.2*sc,y-.05*sc,.4*sc,.1*sc);c.globalAlpha=1}
+    for(let k=Math.floor((odo+Math.min(zL,30)-50)/100);k*100+50-odo>=z0;k--){const s=k*100+50,z=s-odo,l=light(z),[x,y,sc]=P(...wall(-.12,.96),z);c.fillStyle=col(235,235,228,Math.max(.35,l));c.fillRect(x-.22*sc,y-.15*sc,.44*sc,.3*sc);
+      if(sc>14){c.fillStyle='#1A1A1A';c.font=`700 ${Math.round(.2*sc)}px Onest,sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(String(Math.round((s-50)/100)+12),x,y)}}
+    if(remain>40)for(let k=Math.floor((odo+zL-120)/230);k*230+120-odo>=z0;k--){const z=k*230+120-odo,[x,y,sc]=P(...wall(-.55,.95),z);c.globalAlpha=fadeIn(z);c.fillStyle='#0A0C10';c.fillRect(x-.16*sc,y-.42*sc,.32*sc,.84*sc);
+      const near=remain<260;[['#5EE6C1',-.2,!near],['#FFC861',.18,near]].forEach(([cl,dy,on])=>{c.fillStyle=on?cl:'#1E2229';c.beginPath();c.arc(x,y+dy*sc,.1*sc,0,6.3);c.fill();if(on){const g=c.createRadialGradient(x,y+dy*sc,0,x,y+dy*sc,.6*sc);g.addColorStop(0,cl+'99');g.addColorStop(1,cl+'00');c.fillStyle=g;c.beginPath();c.arc(x,y+dy*sc,.6*sc,0,6.3);c.fill()}});c.globalAlpha=1}
     const vg=c.createLinearGradient(0,0,0,H);const dark=RD?(zp>z0?Math.min(1,zp/30):0):Math.min(1,Math.max(.12,hallAt/30));vg.addColorStop(0,`rgba(2,3,6,${.62*dark})`);vg.addColorStop(.55,`rgba(2,3,6,${.12*dark})`);vg.addColorStop(1,'rgba(2,3,6,0)');c.fillStyle=vg;c.fillRect(0,0,W,H);
     // свет фар на пути
     const hg=c.createRadialGradient(W/2,H*1.05,0,W/2,H*1.05,H*.9);hg.addColorStop(0,'rgba(255,240,200,.16)');hg.addColorStop(1,'rgba(255,240,200,0)');c.fillStyle=hg;c.fillRect(0,0,W,H);
@@ -4203,12 +4243,26 @@ function makeTN(cv,opt={}){
     // 3. кабина: рама лобового стекла с двумя окнами, дворники, блик на стекле, край пульта
     const fr=new Path2D();fr.rect(0,0,W,H);const rr=(x,y,w,h,r)=>{fr.moveTo(x+r,y);fr.arcTo(x+w,y,x+w,y+h,r);fr.arcTo(x+w,y+h,x,y+h,r);fr.arcTo(x,y+h,x,y,r);fr.arcTo(x,y,x+w,y,r);fr.closePath()};
     const pad=W*.025,mid=W*.012,top=H*.05,bot=H*.84,rad=H*.06;rr(pad,top,W/2-pad-mid,bot-top,rad);rr(W/2+mid,top,W/2-pad-mid,bot-top,rad);
-    c.fillStyle='#0B0F18';c.fill(fr,'evenodd');
+    c.fillStyle='#0B0F18';c.fill(fr,'evenodd');c.strokeStyle='#262D3A';c.lineWidth=Math.max(1,H*.009);c.stroke(fr);
     const dg=c.createLinearGradient(0,bot,0,H);dg.addColorStop(0,'#1F2633');dg.addColorStop(1,'#0B0F18');c.fillStyle=dg;c.fillRect(0,bot+2,W,H-bot);
-    c.strokeStyle='#05070B';c.lineWidth=H*.012;c.lineCap='round';{const wip=RD&&(RD.wx==='rain'||RD.wx==='snow')&&PORTAL-odo<8&&hallAt>z0,ang=wip?-.2-(Math.sin(t*2.6)+1)*.55:-.2,L=W*.19;[W*.12,W*.62].forEach(x1=>{const y1=bot-H*.02;c.beginPath();c.moveTo(x1,y1);c.lineTo(x1+Math.cos(ang)*L,y1+Math.sin(ang)*L);c.stroke()})}
+    {const wip=RD&&(RD.wx==='rain'||RD.wx==='snow')&&PORTAL-odo<8&&hallAt>z0,ang=wip?-.1-(Math.sin(t*2.6)+1)*.62:-.1,L=W*.2;c.lineCap='round';[W*.09,W*.59].forEach(x1=>{const y1=bot-H*.012,ca=Math.cos(ang),sa=Math.sin(ang),mx=x1+ca*L*.42,my=y1+sa*L*.42;
+      // рычаг, щётка на всю длину и ось
+      c.strokeStyle='#23272E';c.lineWidth=Math.max(1,H*.006);c.beginPath();c.moveTo(x1,y1);c.lineTo(mx,my);c.stroke();
+      c.strokeStyle='#07090C';c.lineWidth=Math.max(1.5,H*.01);c.beginPath();c.moveTo(x1+ca*L*.12,y1+sa*L*.12);c.lineTo(x1+ca*L,y1+sa*L);c.stroke();
+      c.strokeStyle='#3A3F48';c.lineWidth=Math.max(1,H*.003);c.beginPath();c.moveTo(x1+ca*L*.12,y1+sa*L*.12-H*.004);c.lineTo(x1+ca*L,y1+sa*L-H*.004);c.stroke();
+      c.fillStyle='#14171C';c.beginPath();c.arc(x1,y1,H*.014,0,6.3);c.fill()})}
     const gl=c.createLinearGradient(0,0,W,H);gl.addColorStop(0,'rgba(255,255,255,.07)');gl.addColorStop(.35,'rgba(255,255,255,0)');c.fillStyle=gl;c.fillRect(pad,top,W-pad*2,bot-top);
-    // мигающие лампочки на краю пульта
-    [['#5EE6C1',.42],['#FFC861',.47],['#5EE6C1',.53]].forEach(([cl,x],i)=>{c.fillStyle=(i===1&&Math.sin(t*4)<0)?'#3A2E12':cl;c.beginPath();c.arc(W*x,bot+(H-bot)*.55,H*.012,0,6.3);c.fill()});
+    // пульт: козырёк, щитки с приборами и тумблерами, лампы
+    {const dh=H-bot,pu=dh*.72,py=bot+dh*.16;c.fillStyle='#2A3240';c.fillRect(0,bot+1,W,Math.max(1,dh*.05));
+      const plate=(x,w)=>{c.fillStyle='#141923';c.strokeStyle='#2C3442';c.lineWidth=Math.max(1,H*.003);c.beginPath();c.roundRect(x,py,w,pu,dh*.1);c.fill();c.stroke()};
+      plate(W*.04,W*.28);plate(W*.36,W*.28);plate(W*.68,W*.28);
+      // стрелочные приборы слева
+      [.09,.18,.27].forEach((fx,i)=>{const cx=W*fx,cy=py+pu*.52,rr=pu*.36;c.fillStyle='#E4E6E0';c.beginPath();c.arc(cx,cy,rr,0,6.3);c.fill();c.strokeStyle='#596270';c.lineWidth=Math.max(1,H*.003);c.stroke();const a=-2.3+i*.9+Math.sin(t*.7+i)*.04;c.strokeStyle='#B3262A';c.lineWidth=Math.max(1,H*.004);c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(a)*rr*.8,cy+Math.sin(a)*rr*.8);c.stroke()});
+      // лампы в центре
+      [['#5EE6C1',.42],['#FFC861',.5],['#5EE6C1',.58]].forEach(([cl,x],i)=>{const cx=W*x,cy=py+pu*.5,rr=pu*.2;c.fillStyle='#07090D';c.beginPath();c.arc(cx,cy,rr*1.45,0,6.3);c.fill();c.fillStyle=(i===1&&Math.sin(t*4)<0)?'#3A2E12':cl;c.beginPath();c.arc(cx,cy,rr,0,6.3);c.fill()});
+      // тумблеры справа
+      for(let i=0;i<8;i++){const cx=W*(.71+i*.031),cy=py+pu*.5;c.fillStyle='#07090D';c.fillRect(cx-pu*.1,cy-pu*.28,pu*.2,pu*.56);c.fillStyle=i%3===1?'#8E96A3':'#C9CED6';c.fillRect(cx-pu*.06,cy+(i%3===1?.02:-.24)*pu,pu*.12,pu*.22)}
+    }
   }
   addEventListener('resize',()=>{W=0});
   requestAnimationFrame(frame);
@@ -4302,6 +4356,7 @@ function driveBind(){
   if(!DRV.keys){DRV.keys=e=>{if(view!=='drive'||e.target.tagName==='INPUT')return;const m={ArrowUp:'go',ArrowRight:'coast',ArrowDown:'brake'}[e.key];if(m){e.preventDefault();drvMode(m,true)}};document.addEventListener('keydown',DRV.keys)}
   if(DRV.msg)drvSay(DRV.msg.t,DRV.msg.cls,DRV.msg.who);
   if(DRV.resHtml)drvShowResult();
+  if(!DRV.animOn){const d=DRV;d.animOn=true;const loop=()=>{if(DRV!==d||view!=='drive'||d.done){d.animOn=false;return}drvChartPos(d);requestAnimationFrame(loop)};requestAnimationFrame(loop)}
 }
 function drvSay(t,cls,who){if(!DRV)return;DRV.msg={t,cls,who};const el=$('#drvSay');if(!el)return;el.className='drv-say'+(cls?' '+cls:'');el.innerHTML=`<small>${who||'Наставник'}</small>${esc(drvText(t))}`}
 function drvMode(m,user){
@@ -4317,9 +4372,9 @@ function drvStep(dt){
   const a={go:7,coast:-.7,brake:-11}[d.mode];
   d.v=d.started?Math.max(0,Math.min(90,d.v+a*dt)):0;
   d.s+=d.v/3.6*dt*1.8; // ускоренное время: перегон проходится за минуту с небольшим
-  d.T+=dt;d.trace.push([d.s,d.v]);if(d.trace.length>2500)d.trace.shift();
+  d.T+=dt;d.stepT=performance.now();
   // значок поезда на схеме линии едет вместе с нами
-  const tr=$('#train');if(tr){if(d.fx===undefined){d.fx=parseFloat(tr.style.left)||0;d.tx=x(STOPS[d.to].i)}tr.style.transition='none';tr.style.left=(d.fx+(d.tx-d.fx)*Math.min(1,d.s/d.L))+'px'}
+  const tr=$('#train');if(tr){if(d.fx===undefined){d.fx=parseFloat(tr.style.left)||0;d.tx=x(STOPS[d.to].i)}const px=Math.round(d.fx+(d.tx-d.fx)*Math.min(1,d.s/d.L));if(px!==d.tp){d.tp=px;tr.style.transition='none';tr.style.left=px+'px'}}
   drvJudge(dt);drvGauge();drvChart();drvLamps();if(d.tn)d.tn.target(Math.min(100,d.s/d.L*100),d.v);
   if((d.s>=d.L-25&&d.v<3&&d.started)||d.s>=d.L){if(d.s>=d.L&&d.v>=3){d.over=true;d.v=0}if(d.s>d.L)d.s=d.L;drvFinish()}
 }
@@ -4329,10 +4384,10 @@ function drvJudge(dt){
   if(d.started&&!(standing&&d.s<D_START)){d.tracked+=dt;if(d.v<B.lo-m&&B.lo>2)now='slow';else if(d.v>B.hi+m)now='fast';else{now='ok';d.inBand+=dt}
     // снижаешь скорость (тормоз или выбег) и не превышаешь разрешённую — это нормально, не ругаем
     if(now==='fast'&&dv<0&&d.mode!=='go'&&d.v<=z.ars+2){now='easing';d.inBand+=dt}}
-  const need=$('#drvNeed');if(need)need.textContent=B.txt;
-  const nextZ=d.Z.find(q=>q.from>d.s&&q.from-d.s<D_RAMP_DOWN+30&&q.ars<z.ars),sg=$('#drvSign');if(sg){sg.classList.toggle('hide',!nextZ);if(nextZ)sg.textContent=nextZ.ars}
+  const need=$('#drvNeed');if(need&&need.textContent!==B.txt)need.textContent=B.txt;
+  const nextZ=d.Z.find(q=>q.from>d.s&&q.from-d.s<D_RAMP_DOWN+30&&q.ars<z.ars),sg=$('#drvSign');if(sg){sg.classList.toggle('hide',!nextZ);if(nextZ&&sg.textContent!==String(nextZ.ars))sg.textContent=nextZ.ars}
   const short=standing&&d.ready&&d.s>=D_START&&d.s<d.L-25;if(short)now='slow';
-  const chip=$('#drvChip');if(chip){chip.className='drv-chip '+(now==='easing'?'ok':now==='free'?'':now);chip.textContent={ok:'В норме',slow:'Медленно',fast:'Быстро',easing:'Снижаем',free:d.ready?'Трогаемся':'Стоим'}[now]}
+  const chip=$('#drvChip');if(chip){const cc='drv-chip '+(now==='easing'?'ok':now==='free'?'':now),ct={ok:'В норме',slow:'Медленно',fast:'Быстро',easing:'Снижаем',free:d.ready?'Трогаемся':'Стоим'}[now];if(chip.className!==cc)chip.className=cc;if(chip.textContent!==ct)chip.textContent=ct}
   // поезд стоит у начала перегона дольше 5 секунд — напоминаем про «Разгон»
   if(d.ready&&standing&&d.s<D_START&&d.T-d.readyT>5&&d.T-d.lastSlow>7){d.lastSlow=d.lastAny=d.T;d.shown='slow';drvSay(d.D.stand.next()||'Нажми «Разгон».','bad')}
   if(short&&d.T-d.lastSlow>6){d.lastSlow=d.lastAny=d.T;d.shown='slow';drvSay(`До платформы ещё ${Math.round(d.L-d.s)} м. Подтянись: нажми «Разгон», потом плавно тормози.`,'bad')}
@@ -4355,29 +4410,51 @@ function drvJudge(dt){
 // спидометр: зелёная дуга — нужная скорость, красная — выше разрешённой
 function drvGauge(){
   const d=DRV,el=$('#drvGauge');if(!el)return;const B=drvBand(d.s),z=B.z,ang=x=>-210+Math.min(90,Math.max(0,x))/90*240,pt=(x,r)=>{const a=ang(x)*Math.PI/180;return [100+Math.cos(a)*r,92+Math.sin(a)*r]};
-  const arc=(a,b,r,c,w)=>{const [x1,y1]=pt(a,r),[x2,y2]=pt(b,r);return `<path d="M${x1} ${y1} A${r} ${r} 0 ${(b-a)/90*240>180?1:0} 1 ${x2} ${y2}" stroke="${c}" stroke-width="${w}" fill="none"/>`};
-  let ticks='';for(let k=0;k<=90;k+=10){const [a,b]=pt(k,70),[c,e]=pt(k,k%20?64:60);ticks+=`<path d="M${a} ${b} L${c} ${e}" stroke="#8C9CB6" stroke-width="${k%20?1:2}"/>`;if(k%20===0){const [tx,ty]=pt(k,50);ticks+=`<text x="${tx}" y="${ty+4}" text-anchor="middle" font-size="10" fill="#A3B3CF" font-family="Onest,sans-serif">${k}</text>`}}
-  const [nx,ny]=pt(d.v,62);
-  el.innerHTML=`<circle cx="100" cy="92" r="84" fill="#0B1220" stroke="#55627E" stroke-width="3"/>${arc(0,90,72,'#232C3E',8)}${arc(Math.min(z.ars,90),90,72,'#7A2A2A',8)}${arc(B.lo,Math.max(B.lo+1,B.hi),72,'#5EE6C1',8)}${ticks}
-    <path d="M100 92 L${nx} ${ny}" stroke="#FF8F6B" stroke-width="3.4" stroke-linecap="round"/><circle cx="100" cy="92" r="6" fill="#EEF2F8"/>
-    <text x="100" y="122" text-anchor="middle" font-size="22" fill="#EEF2F8" font-family="Dela Gothic One,sans-serif">${Math.round(d.v)}</text><text x="136" y="122" font-size="10" fill="#A3B3CF" font-family="Onest,sans-serif">км/ч</text>`;
+  const arcD=(a,b,r)=>{const [x1,y1]=pt(a,r),[x2,y2]=pt(b,r);return `M${x1} ${y1} A${r} ${r} 0 ${(b-a)/90*240>180?1:0} 1 ${x2} ${y2}`};
+  if(el.dataset.ready!=='1'){let ticks='';for(let k=0;k<=90;k+=10){const [a,b]=pt(k,70),[c,e]=pt(k,k%20?64:60);ticks+=`<path d="M${a} ${b} L${c} ${e}" stroke="#8C9CB6" stroke-width="${k%20?1:2}"/>`;if(k%20===0){const [tx,ty]=pt(k,50);ticks+=`<text x="${tx}" y="${ty+4}" text-anchor="middle" font-size="10" fill="#A3B3CF" font-family="Onest,sans-serif">${k}</text>`}}
+    el.innerHTML=`<circle cx="100" cy="92" r="84" fill="#0B1220" stroke="#55627E" stroke-width="3"/><path d="${arcD(0,90,72)}" stroke="#232C3E" stroke-width="8" fill="none"/><path data-g="red" stroke="#7A2A2A" stroke-width="8" fill="none"/><path data-g="ok" stroke="#5EE6C1" stroke-width="8" fill="none"/>${ticks}
+    <path data-g="needle" stroke="#FF8F6B" stroke-width="3.4" stroke-linecap="round"/><circle cx="100" cy="92" r="6" fill="#EEF2F8"/><text data-g="num" x="100" y="122" text-anchor="middle" font-size="22" fill="#EEF2F8" font-family="Dela Gothic One,sans-serif"></text><text x="136" y="122" font-size="10" fill="#A3B3CF" font-family="Onest,sans-serif">км/ч</text>`;
+    el.dataset.ready='1';d.gg=null}
+  if(!d.gg||!d.gg.el.isConnected){const q=n=>el.querySelector(`[data-g="${n}"]`);d.gg={el,red:q('red'),ok:q('ok'),needle:q('needle'),num:q('num'),ars:null,lo:null,hi:null,v:null,n:null}}
+  const G=d.gg,lo=Math.round(B.lo),hi=Math.round(B.hi),vq=Math.round(d.v*2),nm=Math.round(d.v);
+  if(G.ars!==z.ars){G.ars=z.ars;G.red.setAttribute('d',arcD(Math.min(z.ars,90),90,72))}
+  if(G.lo!==lo||G.hi!==hi){G.lo=lo;G.hi=hi;G.ok.setAttribute('d',arcD(B.lo,Math.max(B.lo+1,B.hi),72))}
+  if(G.v!==vq){G.v=vq;const [nx,ny]=pt(d.v,62);G.needle.setAttribute('d',`M100 92 L${nx} ${ny}`)}
+  if(G.n!==nm){G.n=nm;G.num.textContent=nm}
 }
 // линия скорости: впереди полкилометра; зелёная полоса — нужная скорость, пунктир — разрешённая, белая линия — как ехал машинист
 function drvChart(){
   const d=DRV,el=$('#drvChart');if(!el)return;
-  const narrow=innerWidth<700,W=narrow?420:800,X0=Math.max(0,d.s-(narrow?80:150)),X1=X0+(narrow?380:700),H=150;el.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  const sx=x=>(x-X0)/(X1-X0)*W,sy=k=>H-14-k/90*(H-24);
-  let out='',up=[],dn=[];for(let x=X0;x<=X1+5;x+=5){const b=drvBand(Math.min(d.L-.01,x));up.push(`${sx(x).toFixed(1)},${sy(b.hi).toFixed(1)}`);dn.unshift(`${sx(x).toFixed(1)},${sy(b.lo).toFixed(1)}`)}
-  out+=`<polygon points="${up.concat(dn).join(' ')}" fill="#5EE6C1" opacity=".28"/><polyline points="${up.join(' ')}" fill="none" stroke="#5EE6C1" stroke-width="1.5" opacity=".85"/><polyline points="${dn.join(' ')}" fill="none" stroke="#5EE6C1" stroke-width="1.5" opacity=".85"/>`;
-  d.Z.forEach((z,i)=>{if(z.to<X0||z.from>X1)return;const a=Math.max(z.from,X0),b=Math.min(z.to,X1);
-    out+=`<path d="M${sx(a)} ${sy(z.ars)} H${sx(b)}" stroke="#FF8F6B" stroke-width="1.5" stroke-dasharray="6 5" opacity=".9"/>`;
-    const prev=d.Z[i-1];if(z.from>=X0&&prev&&z.ars!==prev.ars)out+=`<g transform="translate(${sx(z.from)+4} 18)"><circle r="12" cx="12" cy="0" fill="#fff" stroke="#D93744" stroke-width="3"/><text x="12" y="4" text-anchor="middle" font-size="10" font-weight="800" font-family="Onest,sans-serif">${z.ars}</text></g>`});
-  let grid='';for(let k=0;k<=80;k+=20)grid+=`<path d="M0 ${sy(k)} H${W}" stroke="#22304F" stroke-width="1"/><text x="4" y="${sy(k)-3}" font-size="10" fill="#5A6B8A" font-family="Onest,sans-serif">${k}</text>`;
-  const st=sx(d.L),pts=d.trace.filter(p=>p[0]>=X0).map(p=>`${sx(p[0]).toFixed(1)},${sy(p[1]).toFixed(1)}`).join(' ');
-  el.innerHTML=`<rect width="${W}" height="${H}" fill="#0C1530" rx="8"/>${grid}${out}${st<W?`<path d="M${st} 6 V${H-6}" stroke="#E8CF95" stroke-width="2"/><text x="${st-6}" y="${H-20}" text-anchor="end" font-size="11" fill="#E8CF95" font-family="Onest,sans-serif">станция</text>`:''}
-    <polyline points="${pts}" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><path d="M${sx(d.s)} 4 V${H-4}" stroke="#FFC861" stroke-width="2"/><circle cx="${sx(d.s)}" cy="${sy(d.v)}" r="5" fill="#FFC861"/>`;
+  const narrow=innerWidth<700,W=narrow?420:800,SP=narrow?380:700,H=150,PX=W/SP,sy=k=>H-14-k/90*(H-24);
+  let C=d.cc;
+  if(!C||C.el!==el||!el.isConnected||C.narrow!==narrow){
+    el.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    let grid='';for(let k=0;k<=80;k+=20)grid+=`<path d="M0 ${sy(k)} H${W}" stroke="#22304F" stroke-width="1"/><text x="4" y="${sy(k)-3}" font-size="10" fill="#5A6B8A" font-family="Onest,sans-serif">${k}</text>`;
+    const up=[],dn=[];for(let x=0;x<=d.L;x+=5){const b=drvBand(Math.min(d.L-.01,x));up.push(`${(x*PX).toFixed(1)},${sy(b.hi).toFixed(1)}`);dn.unshift(`${(x*PX).toFixed(1)},${sy(b.lo).toFixed(1)}`)}
+    let zones='';d.Z.forEach((z,i)=>{zones+=`<path d="M${z.from*PX} ${sy(z.ars)} H${z.to*PX}" stroke="#FF8F6B" stroke-width="1.5" stroke-dasharray="6 5" opacity=".9"/>`;
+      const prev=d.Z[i-1];if(prev&&z.ars!==prev.ars)zones+=`<g transform="translate(${z.from*PX+4} 18)"><circle r="12" cx="12" cy="0" fill="#fff" stroke="#D93744" stroke-width="3"/><text x="12" y="4" text-anchor="middle" font-size="10" font-weight="800" font-family="Onest,sans-serif">${z.ars}</text></g>`});
+    const st=d.L*PX;
+    el.innerHTML=`<rect width="${W}" height="${H}" fill="#0C1530" rx="8"/>${grid}<g data-c="road"><polygon points="${up.concat(dn).join(' ')}" fill="#5EE6C1" opacity=".28"/><polyline points="${up.join(' ')}" fill="none" stroke="#5EE6C1" stroke-width="1.5" opacity=".85"/><polyline points="${dn.join(' ')}" fill="none" stroke="#5EE6C1" stroke-width="1.5" opacity=".85"/>${zones}<path d="M${st} 6 V${H-6}" stroke="#E8CF95" stroke-width="2"/><text x="${st-6}" y="${H-20}" text-anchor="end" font-size="11" fill="#E8CF95" font-family="Onest,sans-serif">станция</text><g data-c="trace"></g></g><path data-c="now" d="M0 4 V${H-4}" stroke="#FFC861" stroke-width="2"/><circle data-c="dot" r="5" fill="#FFC861"/>`;
+    const q=n=>el.querySelector(`[data-c="${n}"]`);
+    C=d.cc={el,narrow,PX,SP,sy,road:q('road'),trace:q('trace'),now:q('now'),dot:q('dot'),line:null,pts:[]};
+    // уже проеханное рисуем сразу (экран мог перерисоваться посреди перегона)
+    d.trace.forEach(p=>drvTraceAdd(C,p));
+  }
+  if(!d.trace.length||d.s-d.trace[d.trace.length-1][0]>=3){const p=[d.s,d.v];d.trace.push(p);drvTraceAdd(C,p)}
+  drvChartPos(d);
 }
-function drvLamps(){const d=DRV,z=drvZone(d.s);document.querySelectorAll('.drv-ars i').forEach(i=>{const k=+i.dataset.v;i.className=k===z.ars?(d.v>z.ars+2?'over':'on'):''})}
+// белая линия: кусками, чтобы не переписывать всю длинную линию при каждой новой точке
+function drvTraceAdd(C,p){
+  if(!C.line||C.pts.length>=60){const last=C.pts[C.pts.length-1];C.line=document.createElementNS('http://www.w3.org/2000/svg','polyline');C.line.setAttribute('fill','none');C.line.setAttribute('stroke','#fff');C.line.setAttribute('stroke-width','2.5');C.line.setAttribute('stroke-linejoin','round');C.trace.appendChild(C.line);C.pts=last?[last]:[]}
+  C.pts.push(`${(p[0]*C.PX).toFixed(1)},${C.sy(p[1]).toFixed(1)}`);C.line.setAttribute('points',C.pts.join(' '));
+}
+// сдвиг дороги и бегунок: каждый кадр, между шагами расчёта позиция досчитывается
+function drvChartPos(d){
+  const C=d.cc;if(!C||!C.el.isConnected)return;
+  const s=Math.min(d.L,d.s+(d.done?0:d.v/3.6*1.8*Math.min(.1,(performance.now()-(d.stepT||0))/1000))),X0=Math.max(0,s-(C.narrow?80:150)),x=(s-X0)*C.PX;
+  C.road.setAttribute('transform',`translate(${(-X0*C.PX).toFixed(2)} 0)`);C.now.setAttribute('transform',`translate(${x.toFixed(2)} 0)`);C.dot.setAttribute('cx',x.toFixed(2));C.dot.setAttribute('cy',C.sy(d.v).toFixed(2));
+}
+function drvLamps(){const d=DRV,z=drvZone(d.s),key=z.ars+(d.v>z.ars+2?'o':'n'),box=$('.drv-ars');if(!box||(d.lk===key&&d.lb===box))return;d.lk=key;d.lb=box;box.querySelectorAll('i').forEach(i=>{const k=+i.dataset.v;i.className=k===z.ars?(d.v>z.ars+2?'over':'on'):''})}
 // приехали: итог перегона, двери открываются, объявление станции — и сразу задание (остановки у знака на красной ветке нет)
 function drvFinish(){
   const d=DRV;if(d.done)return;d.done=true;clearInterval(d.timer);if(d.keys)document.removeEventListener('keydown',d.keys);
