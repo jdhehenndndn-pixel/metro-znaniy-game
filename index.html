@@ -708,10 +708,13 @@ body.is-intro .panel.scene .scene-content{min-height:calc(100svh - 32px)}
 .drv-say{margin:0;align-self:stretch;background:#24407E;border-radius:4px 16px 16px 16px;padding:10px 14px;font-size:16px;transition:background .3s}
 .drv-say small{display:block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
 .drv-say.ok{background:#1A4C66}.drv-say.bad{background:#4A2F55}.drv-say.warn{background:#5A2A22}
-.drv-result{background:var(--card);border:1px solid var(--amber);border-radius:20px;padding:14px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
-.drv-result b{font:400 22px var(--f-display)}
+.drv-result{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(5,9,20,.72);overflow:auto}
+.drv-card{width:min(520px,100%);background:var(--card);border:1px solid var(--amber);border-radius:22px;padding:20px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+.drv-card b{font:400 24px var(--f-display)}
+.drv-card p{margin:0;font-size:17px;line-height:1.4}
+.drv-card .btn{align-self:stretch;justify-content:center;margin-top:4px}
 .drv-stars{font-size:30px;letter-spacing:4px;color:#3B475E}.drv-stars i{font-style:normal}.drv-stars .on{color:var(--amber)}
-.drv-result small{font-size:15px;color:var(--soft)}
+.drv-card small{font-size:15px;color:var(--soft)}
 @media (max-width:700px){.drv-desk{grid-template-columns:1fr;justify-items:center}.drv-right{width:100%}.drv-gauge svg{width:190px}.drv-win{aspect-ratio:4/3}.drv-btn{font-size:15px;padding:16px 4px}.drv-sign{width:46px;height:46px;font-size:18px;border-width:6px}.drv-ava svg{width:56px;height:56px}}
 </style>
 
@@ -4276,7 +4279,7 @@ function vDrive(){
 function drive(to){
   moving=true;rideTo=to;view='drive';
   const pr=drvProfile(to);
-  DRV={to,L:pr.L,Z:pr.Z,v:0,s:0,mode:'coast',T:0,started:false,done:false,arsOn:false,overFor:0,warnZ:null,arsHits:0,inBand:0,tracked:0,
+  DRV={to,L:pr.L,Z:pr.Z,v:0,s:0,mode:'coast',T:0,started:false,done:false,arsOn:false,overFor:0,warnZ:null,arsHits:0,inBand:0,tracked:0,okM:0,ps:0,devs:0,devFor:0,devOpen:false,
     state:'',stateFor:0,shown:'',lastPraise:-99,lastSlow:-99,lastFast:-99,lastAny:0,pv:0,trace:[],timer:0,tn:null,
     D:{ok:drvDeck(DRV_PRAISE),slow:drvDeck(DRV_SLOW),fast:drvDeck(DRV_FAST),back:drvDeck(DRV_BACK),stand:drvDeck(['Поезд стоит, а пассажиры ждут. Нажми «Разгон», {n}!','Двери закрыты, можно ехать: жми «Разгон».','Пассажиры смотрят на часы. Трогаемся?','Светофор зелёный — самое время нажать «Разгон».'])}};
   renderPanel();
@@ -4298,6 +4301,7 @@ function driveBind(){
   if(!DRV.timer){let last=performance.now();DRV.timer=setInterval(()=>{const now=performance.now(),dt=Math.min(.25,(now-last)/1000);last=now;drvStep(dt)},50)}
   if(!DRV.keys){DRV.keys=e=>{if(view!=='drive'||e.target.tagName==='INPUT')return;const m={ArrowUp:'go',ArrowRight:'coast',ArrowDown:'brake'}[e.key];if(m){e.preventDefault();drvMode(m,true)}};document.addEventListener('keydown',DRV.keys)}
   if(DRV.msg)drvSay(DRV.msg.t,DRV.msg.cls,DRV.msg.who);
+  if(DRV.resHtml)drvShowResult();
 }
 function drvSay(t,cls,who){if(!DRV)return;DRV.msg={t,cls,who};const el=$('#drvSay');if(!el)return;el.className='drv-say'+(cls?' '+cls:'');el.innerHTML=`<small>${who||'Наставник'}</small>${esc(drvText(t))}`}
 function drvMode(m,user){
@@ -4339,6 +4343,8 @@ function drvJudge(dt){
   else{d.overFor=0;d.warnZ=null}
   if(d.overFor>=2.5){d.overFor=0;d.arsOn=true;d.arsHits++;drvMode('brake');drvTone(1500,.25,'square',.08);
     drvSay(d.arsHits===1?'Сработала АРС: поезд сам включил тормоз, потому что скорость выше разрешённой. Следи за лампами АРС!':d.arsHits===2?'Снова сработала АРС. Горящая лампа показывает, сколько сейчас можно.':`АРС тормозит за тебя уже ${d.arsHits}-й раз. Сбрасывай скорость заранее, как только видишь знак.`,'warn','Автоматика');return}
+  // сколько метров прошли в нужной скорости; отклонение — вышли из полосы больше чем на секунду
+  {const ds=d.s-d.ps;d.ps=d.s;if(now==='ok'||now==='easing'){d.okM+=ds;d.devFor=0;d.devOpen=false}else if(now==='slow'||now==='fast'){d.devFor+=dt;if(d.devFor>1&&!d.devOpen){d.devOpen=true;d.devs++}}}
   if(now!==d.state){d.state=now;d.stateFor=0}else d.stateFor+=dt;
   const t=d.T,lo=Math.round(B.lo),hi=Math.round(B.hi);
   if(now==='ok'&&d.stateFor>.6&&(d.shown==='slow'||d.shown==='fast')){d.shown='back';const b=d.D.back.next();if(b)drvSay(b,'ok')}
@@ -4375,14 +4381,34 @@ function drvLamps(){const d=DRV,z=drvZone(d.s);document.querySelectorAll('.drv-a
 // приехали: итог перегона, двери открываются, объявление станции — и сразу задание (остановки у знака на красной ветке нет)
 function drvFinish(){
   const d=DRV;if(d.done)return;d.done=true;clearInterval(d.timer);if(d.keys)document.removeEventListener('keydown',d.keys);
-  const to=d.to,st=STOPS[to],pct=d.tracked?Math.round(d.inBand/d.tracked*100):0,stars=d.over?1:pct>=75&&!d.arsHits?3:pct>=50?2:1;
+  const to=d.to,st=STOPS[to],okPct=d.s>0?Math.round(Math.min(1,d.okM/d.s)*100):0,stars=d.over?1:okPct>=75&&!d.arsHits?3:okPct>=50?2:1;
   const Ln=S.lines[S.line];Ln.drive=Ln.drive||{};if(!Ln.drive[st.id]||stars>Ln.drive[st.id])Ln.drive[st.id]=stars;save();
-  const res=$('#drvResult');if(res){res.hidden=false;res.innerHTML=`<b>${esc(st.name)}</b><div class="drv-stars" aria-label="Звёзд: ${stars} из 3">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div><small>${S.name.trim()?esc(S.name.trim())+', поезд':'Поезд'} шёл в нужной скорости ${pct}% пути${d.arsHits?`, АРС тормозила за тебя ${d.arsHits} раз`:''}</small>`}
-  drvSay(d.over?'Экстренное торможение! Поезд не успел остановиться у платформы. Перед станцией тормози заранее, вместе с линией скорости.':stars===3?'Блестяще, {n}! Так водят поезда лучшие машинисты Петербурга.':stars===2?'Хорошо, {n}! Ещё немного ровнее, и будет три звезды.':'Доехали! В следующий раз смотри на зелёную полосу и лампы АРС.',d.over?'warn':'ok');
+  // итог ждёт кнопку: читать можно сколько нужно
+  const km=runKm(to),kmF=n=>n.toFixed(1).replace('.',','),
+    tier=d.over?'over':stars===3?'top':stars===2?'mid':'low',say_=drvText(drvResultLine(tier).replace(/\{p\}/g,okPct).replace(/\{d\}/g,drvDevs(d.devs)));
+  d.resHtml=`<div class="drv-card" role="dialog" aria-label="Итог перегона"><b>${esc(st.name)}</b><div class="drv-stars" aria-label="Звёзд: ${stars} из 3">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div><p>${esc(say_)}</p><small>Перегон ${kmF(km)} км, в нужной скорости ${kmF(km*okPct/100)} км${d.arsHits?`. АРС тормозила за тебя: ${d.arsHits}`:''}</small><button class="btn primary" type="button" id="drvNext">К вопросам ${ARROW}</button></div>`;
+  drvShowResult();
+  drvSay(say_,d.over?'warn':'ok');
   doorsSound();
-  Promise.all([wait(300).then(()=>say(withXfer(P('arrive',{station:st.name}),st.id))),wait(2600)]).then(()=>{
-    if(DRV!==d)return;DRV=null;transfer=false;moving=false;S.cur=to;save();view='station';task=newTask();render();autoAsk(true)});
+  wait(300).then(()=>{if(DRV===d)say(withXfer(P('arrive',{station:st.name}),st.id))});
 }
+function drvShowResult(){
+  const d=DRV,res=$('#drvResult');if(!d||!d.resHtml||!res)return;res.innerHTML=d.resHtml;res.hidden=false;
+  const b=$('#drvNext');if(!b)return;
+  b.addEventListener('click',()=>{if(DRV!==d)return;hush();DRV=null;transfer=false;moving=false;S.cur=d.to;save();view='station';task=newTask();render();autoAsk(true)});
+  try{b.focus({preventScroll:true})}catch(e){}
+}
+// фразы наставника в итоге; не повторяются, пока не кончится весь список
+const DRV_RESULT={
+  top:['{n}, {p}% пути в нужной скорости, {d}. Так водят лучшие машинисты Петербурга.','Блестяще, {n}! {p}% пути в нужной скорости, {d}. Пассажиры даже не заметили торможения.','{n}, это работа настоящего профессионала: {p}% пути ровно по линии, {d}.','Диспетчер доволен, {n}: {p}% пути в нужной скорости, {d}. Держи такой темп и дальше.'],
+  mid:['{n}, {p}% пути в нужной скорости, {d}. Хорошая поездка, а следующий перегон будет ещё ровнее.','Неплохо, {n}! {p}% пути по линии, {d}. До трёх звёзд совсем чуть-чуть.','{n}, уверенно доехали: {p}% пути в нужной скорости, {d}. Чуть раньше реагируй на линию, и будет идеально.','Хорошо идёшь, {n}. {p}% пути в нужной скорости, {d}. С каждым перегоном рука всё твёрже.'],
+  low:['{n}, {p}% пути в нужной скорости, {d}. Перегон был непростой, но я в тебя верю: всё наверстаешь.','Доехали, {n}, а это главное. {p}% пути в нужной скорости, {d}. На следующем перегоне получится лучше, я в тебя верю.','{n}, {p}% пути по линии, {d}. Следи за зелёной полосой и лампами АРС, и всё наверстаешь.','Не беда, {n}. {p}% пути в нужной скорости, {d}. Каждый машинист с этого начинал, у тебя всё впереди.'],
+  over:['{n}, поезд не успел остановиться у платформы: сработало экстренное торможение. Перед станцией тормози заранее, вместе с линией скорости. Я в тебя верю, всё наверстаешь.','Экстренное торможение, {n}! До этого было {p}% пути в нужной скорости, {d}. В следующий раз начни тормозить чуть раньше, и всё получится.']
+};
+const drvResDecks={};
+function drvResultLine(k){let l=drvResDecks[k]&&drvResDecks[k].next();if(!l){drvResDecks[k]=drvDeck(DRV_RESULT[k]);l=drvResDecks[k].next()}return l}
+// «без отклонений», «1 отклонение», «3 отклонения», «5 отклонений»
+function drvDevs(n){const a=n%100,b=n%10,w=a>10&&a<20?'отклонений':b===1?'отклонение':b>=2&&b<=4?'отклонения':'отклонений';return n?`${n} ${w}`:'без отклонений'}
 
 // переход на другую ветку: при пересадке поезд сразу едет на её первую станцию
 function switchLine(k,isTransfer){
